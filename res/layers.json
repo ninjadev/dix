@@ -1,0 +1,10 @@
+[
+  {
+    "type": "spinningCubeLayer",
+    "displayName": "SpinningCube",
+    "startFrame": 0,
+    "endFrame": 1000,
+    "color": "red",
+    "config": {}
+  }
+]
