@@ -80,8 +80,26 @@ function spinningCubeLayer(layer) {
     }
   }
 
+  let Moon = class Moon {
+    constructor() {
+      this.mesh = new THREE.Mesh(
+          new THREE.SphereGeometry(30, 32, 32),
+          new THREE.MeshBasicMaterial({color: 'white'}));
+    }
+
+    update(relativeFrame) {
+      let x = Math.cos(relativeFrame / 240) * 100;
+      let y = 100 + Math.sin(relativeFrame / 300) * 20;
+      let z = -100;
+      this.mesh.position.set(x, y, z);
+    }
+  }
+
   this.cg = new CubeGrid(20, 20, 10, 5);
   this.scene.add(this.cg.mesh);
+
+  this.moon = new Moon();
+  this.scene.add(this.moon.mesh);
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
@@ -101,6 +119,7 @@ spinningCubeLayer.prototype.resize = function() {
 
 spinningCubeLayer.prototype.update = function(frame, relativeFrame) {
   this.cg.update(relativeFrame);
+  this.moon.update(relativeFrame);
 };
 
 spinningCubeLayer.prototype.render = function(renderer, interpolation) {
