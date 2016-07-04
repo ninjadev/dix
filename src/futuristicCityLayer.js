@@ -1,7 +1,7 @@
 /**
  * @constructor
  */
-function spinningCubeLayer(layer) {
+function futuristicCityLayer(layer) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
@@ -104,23 +104,23 @@ function spinningCubeLayer(layer) {
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
 
-spinningCubeLayer.prototype.getEffectComposerPass = function() {
+futuristicCityLayer.prototype.getEffectComposerPass = function() {
   return this.renderPass;
 };
 
-spinningCubeLayer.prototype.start = function() {
+futuristicCityLayer.prototype.start = function() {
 };
 
-spinningCubeLayer.prototype.end = function() {
+futuristicCityLayer.prototype.end = function() {
 };
 
-spinningCubeLayer.prototype.resize = function() {
+futuristicCityLayer.prototype.resize = function() {
 };
 
-spinningCubeLayer.prototype.update = function(frame, relativeFrame) {
+futuristicCityLayer.prototype.update = function(frame, relativeFrame) {
   this.cg.update(relativeFrame);
   this.moon.update(relativeFrame);
 };
 
-spinningCubeLayer.prototype.render = function(renderer, interpolation) {
+futuristicCityLayer.prototype.render = function(renderer, interpolation) {
 };
