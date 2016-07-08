@@ -1,7 +1,7 @@
 [
   {
-    "type": "spinningCubeLayer",
-    "displayName": "SpinningCube",
+    "type": "futuristicCityLayer",
+    "displayName": "Futuristic City Layer",
     "startFrame": 0,
     "endFrame": 1000,
     "color": "red",
