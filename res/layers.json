@@ -6,5 +6,13 @@
     "endFrame": 4923,
     "color": "red",
     "config": {}
+  },
+  {
+    "type": "tunnelsplosionLayer",
+    "displayName": "tunnelsplosion",
+    "startFrame": 3101,
+    "endFrame": 3987,
+    "color": "red",
+    "config": {}
   }
 ]
