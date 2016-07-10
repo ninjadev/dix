@@ -1,9 +1,9 @@
 [
   {
-    "type": "spinningCubeLayer",
-    "displayName": "SpinningCube",
-    "startFrame": 0,
-    "endFrame": 1000,
+    "type": "twisterLayer",
+    "displayName": "twister",
+    "startFrame": 3987,
+    "endFrame": 4923,
     "color": "red",
     "config": {}
   }
