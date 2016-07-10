@@ -1,5 +1,13 @@
 [
   {
+    "type": "audioExampleLayer",
+    "displayName": "audioExample",
+    "startFrame": 5000,
+    "endFrame": 6500,
+    "color": "yellow",
+    "config": {}
+  },
+  {
     "type": "clockLayer",
     "displayName": "clock",
     "startFrame": 1500,
