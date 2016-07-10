@@ -1,5 +1,13 @@
 [
   {
+    "type": "clockLayer",
+    "displayName": "clock",
+    "startFrame": 1500,
+    "endFrame": 3100,
+    "color": "blue",
+    "config": {}
+  },
+  {
     "type": "twisterLayer",
     "displayName": "twister",
     "startFrame": 3987,
