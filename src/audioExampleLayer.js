@@ -24,6 +24,8 @@ function audioExampleLayer(layer) {
   this.camera.position.z = 100;
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
+
+  this.snareAnalysis = new audioAnalysisSanitizer('snare.wav', 'spectral_energy', 0.25)
 }
 
 audioExampleLayer.prototype.getEffectComposerPass = function() {
@@ -41,7 +43,7 @@ audioExampleLayer.prototype.resize = function() {
 
 audioExampleLayer.prototype.update = function(frame, relativeFrame) {
   this.cube.scale.z = 5 * (
-      1 + Math.max(window.audioAnalysis['snare.wav']['spectral_energy'][frame], 0)
+      1 + Math.max(this.snareAnalysis.getValue(frame), 0)
     );
 };
 
