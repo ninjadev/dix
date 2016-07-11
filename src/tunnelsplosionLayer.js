@@ -56,18 +56,18 @@ function tunnelsplosionLayer(layer) {
     side: THREE.DoubleSide
   });
   this.tunnelRenderMaterial = new THREE.MeshStandardMaterial({
-      map: Loader.loadTexture('res/tunnelbg.png'),
-      bumpMap: Loader.loadTexture('res/map.jpg'),
+      map: Loader.loadTexture('res/rails.jpg'),
+      bumpMap: Loader.loadTexture('res/gears.jpg'),
       side: THREE.DoubleSide
     });
   this.tunnelGlowMaterial = new THREE.MeshBasicMaterial({
-      map: Loader.loadTexture('res/map.jpg'),
+      map: Loader.loadTexture('res/gears.jpg'),
       side: THREE.DoubleSide
     });
   this.tunnel = new THREE.Mesh(
     new THREE.TubeGeometry(this.curve, 200, 55, 24),
     this.tunnelRenderMaterial);
-  this.tunnelRenderMaterial.map.repeat.set(64, 1);
+  this.tunnelRenderMaterial.map.repeat.set(256, 8);
   this.tunnelRenderMaterial.map.wrapS = this.tunnelRenderMaterial.map.wrapT = THREE.RepeatWrapping;
   this.tunnelRenderMaterial.bumpMap.repeat.set(64, 1);
   this.tunnelRenderMaterial.bumpMap.wrapS = this.tunnelRenderMaterial.bumpMap.wrapT = THREE.RepeatWrapping;
