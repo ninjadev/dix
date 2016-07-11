@@ -16,6 +16,7 @@ function titleLayer(layer) {
                                transparent: true,
                                map: new THREE.Texture(this.canvas)
                              }));
+  this.cube.material.map.minFilter = THREE.LinearFilter;
   this.background = new THREE.Mesh(new THREE.BoxGeometry(160, 90, 1),
                              new THREE.MeshBasicMaterial({ color: 0xffffff }));
   this.scene.add(this.background);
