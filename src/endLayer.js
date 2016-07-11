@@ -15,6 +15,7 @@ function endLayer(layer) {
                                color: 0xffffff,
                                map: new THREE.Texture(this.canvas)
                              }));
+  this.cube.material.map.minFilter = THREE.LinearFilter;
 
   if (!document.getElementById('steamy-font')) {
     var s = document.createElement('style');
