@@ -4,7 +4,13 @@
     "displayName": "audioExample",
     "startFrame": 5000,
     "endFrame": 6500,
-    "color": "yellow",
+    "color": "yellow"
+  },
+    "type": "endLayer",
+    "displayName": "end",
+    "startFrame": 9303,
+    "endFrame": 9580,
+    "color": "red",
     "config": {}
   },
   {
