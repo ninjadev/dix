@@ -45,9 +45,7 @@ clockLayer.prototype.init_clock_model = function() {
         Loader.loadAjax(objPath, function(text) {
             var object = objLoader.parse(text);
             object.traverse(function(child) {
-                console.log("hit");
                 if (child instanceof THREE.Mesh) {
-                    console.log(child);
                     child.material = material;
                 }
             });
@@ -56,7 +54,7 @@ clockLayer.prototype.init_clock_model = function() {
     };
     loadObject(prefix + 'clock_body.obj', clock_material);
     this.scene.add(clock_body)
-}
+};
 
 clockLayer.prototype.getEffectComposerPass = function() {
   return this.renderPass;
