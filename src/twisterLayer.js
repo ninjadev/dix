@@ -37,6 +37,9 @@ function twisterLayer(layer) {
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 
+  this.snareAnalysis = new audioAnalysisSanitizer('snare.wav', 'spectral_energy', 0.03);
+  this.kickAnalysis = new audioAnalysisSanitizer('kick.wav', 'spectral_energy', 0.1);
+
   var partialCubeResources = [
       {image: new Image(), src: 'res/bluecloud_rt.jpg'},
       {image: new Image(), src: 'res/bluecloud_lf.jpg'},
@@ -108,6 +111,10 @@ twisterLayer.prototype.resize = function() {
 };
 
 twisterLayer.prototype.update = function(frame, relativeFrame) {
+
+  relativeFrame += this.snareAnalysis.getValue(frame) * 20;
+  var size = 1 + this.kickAnalysis.getValue(frame) * 0.2;
+
   this.cube.material.twisterTime  = relativeFrame / 10;
   this.cube.material.twisterAmount  = 0;
   this.scrollerOffset = -9 * relativeFrame + 1200;
@@ -126,6 +133,8 @@ twisterLayer.prototype.update = function(frame, relativeFrame) {
     var w = (2. * twisterTime + (2. + 4 * Math.cos(twisterTime / 10.)) * Math.sin(twisterTime / 27.) * position.y * Math.sin(twisterTime / 20.)) / 20.;
     rotation.set(Math.cos(w), 0., Math.sin(w), 0., 1., 0., -Math.sin(w), 0., -Math.cos(w));
     var newPosition = position.clone().applyMatrix3(rotation);
+    newPosition.x *= size;
+    newPosition.z *= size;
     newPosition.x += 3. * Math.sin(position.y / 11. + twisterTime + (1. + .5 * Math.sin(twisterTime / 3.)));
     this.cube.geometry.vertices[i].copy(newPosition);
   }
