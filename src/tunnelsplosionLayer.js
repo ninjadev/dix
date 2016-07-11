@@ -148,23 +148,25 @@ tunnelsplosionLayer.prototype.resize = function() {
 
 tunnelsplosionLayer.prototype.update = function(frame, relativeFrame) {
 
-  if(BEAT && BEAN % 24 == 12) {
-    this.ball.scale.set(3, 3, 3);
-    this.pointLight.intensity = 1;
-    this.cameraOffset.set(
-        Math.random() * 40,
-        Math.random() * 20,
-        Math.random() * 40);
-    this.cameraDistance = 10 + Math.pow(Math.random(), 2) * 80;
-    this.cameraZRotation = 0.7 + Math.random() - 0.5;
-    this.cameraZRotation = Math.random() * Math.PI * 2;
-    this.currentColorIndex = (this.currentColorIndex + 1) % this.colors.length;
-    this.lightDistance = 0;
-    this.distanceOffset = 15000 * Math.random();
+  if(frame < 6645) {
+    if(BEAT && BEAN % 24 == 12) {
+      this.ball.scale.set(3, 3, 3);
+      this.pointLight.intensity = 1;
+      this.cameraOffset.set(
+          Math.random() * 40,
+          Math.random() * 20,
+          Math.random() * 40);
+      this.cameraDistance = 10 + Math.pow(Math.random(), 2) * 80;
+      this.cameraZRotation = 0.7 + Math.random() - 0.5;
+      this.cameraZRotation = Math.random() * Math.PI * 2;
+      this.currentColorIndex = (this.currentColorIndex + 1) % this.colors.length;
+      this.lightDistance = 0;
+      this.distanceOffset = 15000 * Math.random();
+    }
   }
 
-  this.ball.rotation.x = Math.sin(frame / 10);
-  this.ball.rotation.y = Math.cos(frame / 10);
+  this.ball.rotation.x = Math.sin(frame / 27);
+  this.ball.rotation.y = Math.cos(frame / 37);
   this.pointLight.color.copy(this.colors[this.currentColorIndex]);
   this.colorBall.material.color.copy(this.colors[this.currentColorIndex]);
   this.tunnelGlowMaterial.color.copy(
@@ -174,6 +176,10 @@ tunnelsplosionLayer.prototype.update = function(frame, relativeFrame) {
   this.ball.position.y = relativeFrame;
   */
   this.lightDistance += 8;
+  if(frame >= 6645) {
+    this.lightDistance = 0;
+    this.cameraDistance = -10;
+  }
   this.ball.position.copy(this.curve.getPoint((relativeFrame + this.distanceOffset + this.cameraDistance * 4) / 20000));
   this.pointLight.position.copy(this.ball.position);
   this.pointLight.position.copy(this.curve.getPoint((relativeFrame + this.distanceOffset + this.cameraDistance * 4 + this.lightDistance) / 20000));
@@ -189,9 +195,15 @@ tunnelsplosionLayer.prototype.update = function(frame, relativeFrame) {
   this.camera.position.y = Math.sin(frame / 100) * 100;
   */
 
-  this.spawnParticle({
-    position: this.curve.getPoint((relativeFrame + this.distanceOffset + this.cameraDistance * 3 + this.lightDistance) / 20000)
-  });
+  if(frame < 6645) {
+    this.spawnParticle({
+      position: this.curve.getPoint((relativeFrame + this.distanceOffset + this.cameraDistance * 3 + this.lightDistance) / 20000)
+    });
+  } else {
+    this.spawnParticle({
+      position: this.curve.getPoint((relativeFrame + this.distanceOffset + this.cameraDistance * 6 + this.lightDistance) / 20000)
+    });
+  }
 
   for(var i = 0; i < this.particles.liveCount; i++) {
     var particle = this.particles[i];
