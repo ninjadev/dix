@@ -55,7 +55,6 @@ function twisterLayer(layer) {
       loadedCount++;
       if(loadedCount == 6) {
         cubemap.needsUpdate = true;
-        console.log('el updato');
       }
     });
   }
