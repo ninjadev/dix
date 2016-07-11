@@ -6,6 +6,7 @@
     "endFrame": 6500,
     "color": "yellow"
   },
+  {
     "type": "endLayer",
     "displayName": "end",
     "startFrame": 9303,
