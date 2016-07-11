@@ -16,6 +16,20 @@ function endLayer(layer) {
                                map: new THREE.Texture(this.canvas)
                              }));
 
+  if (!document.getElementById('steamy-font')) {
+    var s = document.createElement('style');
+    s.setAttribute('id', 'steamy-font');
+    Loader.loadAjax('res/steamy.base64', function(response) {
+      s.innerHTML = [
+        "@font-face {",
+        "font-family: 'steamy';",
+      "src: url(data:application/x-font-opentype;charset=utf-8;base64," + response + ") format('opentype');",
+          "}"
+      ].join('\n');
+    })
+    document.body.appendChild(s);
+  }
+
   this.scene.add(this.cube);
 
   this.camera.position.z = 5;
@@ -44,23 +58,24 @@ endLayer.prototype.update = function(frame, relativeFrame) {
 };
 
 endLayer.prototype.render = function(renderer, interpolation) {
-  this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  this.canvasCtx.fillStyle = 'white';
+  this.canvasCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   this.canvasCtx.textAlign = 'center';
   this.canvasCtx.textBaseline = 'middle';
-  this.canvasCtx.fillStyle = 'white';
+  this.canvasCtx.fillStyle = 'black';
 
   if(BEAN >= 2015) {
-    this.canvasCtx.font = (3 * GU) + 'px monospace';
+    this.canvasCtx.font = (2.5 * GU) + 'px steamy';
     this.canvasCtx.fillText('NIN', 4 * GU, 4.5 * GU);
   }
 
   if(BEAN >= 2024) {
-    this.canvasCtx.font = (3 * GU) + 'px monospace';
+    this.canvasCtx.font = (2.5 * GU) + 'px steamy';
     this.canvasCtx.fillText('JA', 8 * GU, 4.5 * GU);
   }
 
   if(BEAN >= 2033) {
-    this.canvasCtx.font = (3 * GU) + 'px monospace';
+    this.canvasCtx.font = (2.5 * GU) + 'px steamy';
     this.canvasCtx.fillText('DEV', 12.2 * GU, 4.5 * GU);
   }
 
