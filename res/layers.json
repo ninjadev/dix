@@ -1,18 +1,19 @@
 [
   {
+    "type": "spinwiresLayer",
+    "displayName": "spinwires",
+    "startFrame": 4872,
+    "endFrame": 5758,
+    "color": "red",
+    "config": {}
+  },
+  {
     "type": "titleLayer",
     "displayName": "title",
     "startFrame": 0,
     "endFrame": 1329,
     "color": "red",
     "config": {}
-  },
-  {
-    "type": "audioExampleLayer",
-    "displayName": "audioExample",
-    "startFrame": 5000,
-    "endFrame": 5750,
-    "color": "yellow"
   },
   {
     "type": "endLayer",
