@@ -1,7 +1,7 @@
 /**
  * @constructor
  */
-function endLayer(layer) {
+function titleLayer(layer) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
@@ -37,47 +37,42 @@ function endLayer(layer) {
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
 
-endLayer.prototype.getEffectComposerPass = function() {
+titleLayer.prototype.getEffectComposerPass = function() {
   return this.renderPass;
 };
 
-endLayer.prototype.start = function() {
+titleLayer.prototype.start = function() {
 };
 
-endLayer.prototype.end = function() {
+titleLayer.prototype.end = function() {
 };
 
-endLayer.prototype.resize = function() {
+titleLayer.prototype.resize = function() {
   this.canvas.width = 16 * GU;
   this.canvas.height = 9 * GU;
 };
 
-endLayer.prototype.update = function(frame, relativeFrame) {
+titleLayer.prototype.update = function(frame, relativeFrame) {
   this.relativeFrame = relativeFrame;
   this.frame = frame;
 };
 
-endLayer.prototype.render = function(renderer, interpolation) {
+titleLayer.prototype.render = function(renderer, interpolation) {
   this.canvasCtx.fillStyle = 'white';
   this.canvasCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   this.canvasCtx.textAlign = 'center';
   this.canvasCtx.textBaseline = 'middle';
+  this.canvasCtx.strokeStyle = 'black';
+
+  this.canvasCtx.font = (1.5 * GU) + 'px steamy';
+  this.canvasCtx.globalAlpha = smoothstep(0, 1, (this.relativeFrame - 300) / 200);
+  this.canvasCtx.setLineDash([Math.max(0, (this.relativeFrame - 100) / 200 * GU), 10000 * GU]);
   this.canvasCtx.fillStyle = 'black';
-
-  if(BEAN >= 2015) {
-    this.canvasCtx.font = (2.5 * GU) + 'px steamy';
-    this.canvasCtx.fillText('NIN', 4 * GU, 4.5 * GU);
-  }
-
-  if(BEAN >= 2024) {
-    this.canvasCtx.font = (2.5 * GU) + 'px steamy';
-    this.canvasCtx.fillText('JA', 8 * GU, 4.5 * GU);
-  }
-
-  if(BEAN >= 2033) {
-    this.canvasCtx.font = (2.5 * GU) + 'px steamy';
-    this.canvasCtx.fillText('DEV', 12.2 * GU, 4.5 * GU);
-  }
+  this.canvasCtx.fillText('CRANKWORK', 8 * GU, 3.6 * GU);
+  this.canvasCtx.fillText('STEAMFIST', 8 * GU, 5.4 * GU);
+  this.canvasCtx.globalAlpha = 1 - this.canvasCtx.globalAlpha;
+  this.canvasCtx.strokeText('CRANKWORK', 8 * GU, 3.6 * GU);
+  this.canvasCtx.strokeText('STEAMFIST', 8 * GU, 5.4 * GU);
 
   this.cube.material.map.needsUpdate = true;
 };

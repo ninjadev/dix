@@ -1,9 +1,17 @@
 [
   {
+    "type": "titleLayer",
+    "displayName": "title",
+    "startFrame": 0,
+    "endFrame": 1329,
+    "color": "red",
+    "config": {}
+  },
+  {
     "type": "audioExampleLayer",
     "displayName": "audioExample",
     "startFrame": 5000,
-    "endFrame": 6500,
+    "endFrame": 5750,
     "color": "yellow"
   },
   {
@@ -17,7 +25,7 @@
   {
     "type": "clockLayer",
     "displayName": "clock",
-    "startFrame": 1500,
+    "startFrame": 1329,
     "endFrame": 3100,
     "color": "blue",
     "config": {}
@@ -33,9 +41,17 @@
   {
     "type": "tunnelsplosionLayer",
     "displayName": "tunnelsplosion",
-    "startFrame": 3101,
-    "endFrame": 3987,
+    "startFrame": 5761,
+    "endFrame": 6647,
     "color": "red",
+    "config": {}
+  },
+  {
+    "type": "drLayer",
+    "displayName": "dr",
+    "startFrame": 1295,
+    "endFrame": 9716,
+    "color": "pink",
     "config": {}
   }
 ]
