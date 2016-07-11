@@ -38,7 +38,7 @@ function twisterLayer(layer) {
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 
   this.snareAnalysis = new audioAnalysisSanitizer('snare.wav', 'spectral_energy', 0.03);
-  this.kickAnalysis = new audioAnalysisSanitizer('kick.wav', 'spectral_energy', 0.1);
+  this.kickAnalysis = new audioAnalysisSanitizer('kick.wav', 'spectral_energy', 0.05);
 
   var partialCubeResources = [
       {image: new Image(), src: 'res/bluecloud_rt.jpg'},
@@ -112,7 +112,7 @@ twisterLayer.prototype.resize = function() {
 twisterLayer.prototype.update = function(frame, relativeFrame) {
 
   relativeFrame += this.snareAnalysis.getValue(frame) * 20;
-  var size = 1 + this.kickAnalysis.getValue(frame) * 0.2;
+  var size = 1 + this.kickAnalysis.getValue(frame) * 0.12;
 
   this.cube.material.twisterTime  = relativeFrame / 10;
   this.cube.material.twisterAmount  = 0;
@@ -160,7 +160,7 @@ twisterLayer.prototype.render = function(renderer, interpolation) {
   this.canvasCtx.translate(-this.canvas.width / 2, -this.canvas.height / 2);
   this.canvasCtx.font = '100px monospace';
   this.canvasCtx.fillStyle = 'rgb(221, 176, 109)';
-  var message = 'desire // farbrausch // cocoon // sandsmark // mrdoob // solskogen crew // darklite // excess // gargaj // ephidrena // rgba // outracks // panda cube // relapse // fnuque // truck';
+  var message = 'desire // farbrausch // cocoon // sandsmark // mrdoob // solskogen crew // darklite // excess // gargaj // ephidrena // rgba // outracks // panda cube // relapse // fnuque // truck // insert more greetings here';
   this.canvasCtx.fillText(message, this.scrollerOffset, 1024 - 300);
   this.canvasCtx.fillText(message, this.scrollerOffset, 1024 + 512 - 300);
   this.canvasCtx.restore();
