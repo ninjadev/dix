@@ -62,5 +62,16 @@
     "endFrame": 9716,
     "color": "pink",
     "config": {}
+  },
+  {
+    "type": "BloomLayer",
+    "displayName": "bloom",
+    "startFrame": 1333,
+    "endFrame": 9305,
+    "color": "pink",
+    "config": {
+      "amount": 1.1,
+      "noStabs": true
+    }
   }
 ]
