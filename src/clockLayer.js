@@ -84,6 +84,26 @@ clockLayer.prototype.init_clock_model = function() {
   this.gear4.position.y = -3.1167 + 1.984; 
   this.gear4.position.z = -(1.974 + 0.236); // rev
 
+  this.gear5 = new THREE.Object3D();
+  this.gear5.position.x = 0 + 0;
+  this.gear5.position.y = 0 + 0; 
+  this.gear5.position.z = -(1.62 + 0.1); // rev
+
+  this.gear6 = new THREE.Object3D();
+  this.gear6.position.x = 0.966 + 0;
+  this.gear6.position.y = 0.671 + 0; 
+  this.gear6.position.z = -(1.560 + 0); // rev
+
+  this.gear7 = new THREE.Object3D();
+  this.gear7.position.x = -0.208 + 0.24 + 0.24 - 0.06;
+  this.gear7.position.y = 1.577 + 1.62 - 1.58 - 0.02; 
+  this.gear7.position.z = -(2.701 - 1.29 - 0.02); // rev
+
+  this.gear8 = new THREE.Object3D();
+  this.gear8.position.x = -0.311 + 0;
+  this.gear8.position.y = -3.1167 + 1.984; 
+  this.gear8.position.z = -(1.974 + 0.236); // rev
+
   var loadObject = function (objPath, material, three_object) {
     var objLoader = new THREE.OBJLoader();
     Loader.loadAjax(objPath, function(text) {
@@ -107,6 +127,10 @@ clockLayer.prototype.init_clock_model = function() {
   loadObject(prefix + 'gear2.obj', clock_material, this.gear2);
   loadObject(prefix + 'gear3.obj', clock_material, this.gear3);
   loadObject(prefix + 'gear4.obj', clock_material, this.gear4);
+  loadObject(prefix + 'gear3.obj', clock_material, this.gear5);
+  loadObject(prefix + 'gear3.obj', clock_material, this.gear6);
+  loadObject(prefix + 'gear5.obj', clock_material, this.gear7);
+  //loadObject(prefix + 'gear8.obj', clock_material, this.gear8);
   this.scene.add(this.clock_body);
   this.scene.add(this.pendulum);
   this.scene.add(this.second_hand);
@@ -116,6 +140,10 @@ clockLayer.prototype.init_clock_model = function() {
   this.scene.add(this.gear2);
   this.scene.add(this.gear3);
   this.scene.add(this.gear4);
+  this.scene.add(this.gear5);
+  this.scene.add(this.gear6);
+  this.scene.add(this.gear7);
+  this.scene.add(this.gear8);
 }
 
 clockLayer.prototype.getEffectComposerPass = function() {
@@ -145,6 +173,10 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
   this.gear2.rotation.z = -0.01 * frame;
   this.gear3.rotation.z = -0.01 * frame;
   this.gear4.rotation.z = -0.01 * frame;
+  this.gear5.rotation.z = -0.01 * frame;
+  this.gear6.rotation.z = -0.01 * frame;
+  this.gear7.rotation.z = -0.01 * frame;
+  this.gear8.rotation.z = -0.01 * frame;
 };
 
 clockLayer.prototype.render = function(renderer, interpolation) {
