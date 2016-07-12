@@ -97,7 +97,7 @@ clockLayer.prototype.init_clock_model = function() {
   this.gear7 = new THREE.Object3D();
   this.gear7.position.x = -0.208 + 0.24 + 0.24 - 0.06;
   this.gear7.position.y = 1.577 + 1.62 - 1.58 - 0.02; 
-  this.gear7.position.z = -(2.701 - 1.29 - 0.02); // rev
+  this.gear7.position.z = -(2.701 - 1.29 - 0.02 - 0.34); // rev
 
   this.gear8 = new THREE.Object3D();
   this.gear8.position.x = -0.09;
@@ -114,9 +114,7 @@ clockLayer.prototype.init_clock_model = function() {
     Loader.loadAjax(objPath, function(text) {
       var object = objLoader.parse(text);
       object.traverse(function(child) {
-        console.log("hit");
         if (child instanceof THREE.Mesh) {
-            console.log(child);
             child.material = material;
         }
       });
@@ -172,21 +170,31 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
 
   this.pendulum.rotation.z = 0.3 * Math.sin(frame / 20);
 
-  this.clock_speed = 1;
+  var clock_speed = 1;
 
-  this.second_hand.rotation.z = -0.1 * frame;
-  this.minute_hand.rotation.z = -0.1 * frame / 60 ;
-  this.hour_hand.rotation.z = -0.1 * frame / 3600;
+  var angle1 = clock_speed * frame * -0.1;
+  var angle2 = -angle1 * 24 / 34;
+  var angle3 = -angle2 * 10 / 34;
+  var angle4 = -angle3 * 10 / 34;
+  var angle5 = -angle4 * 10 / 34;
+  var angle6 = -angle5 * 10 / 34;
+  var angle7 = -angle6 * 10 / 34;
+  var angle8 = -angle7 * 12 / 12;
+  var angle9 = -angle8 * 12 / 24;
+  
+  this.second_hand.rotation.z = angle1;
+  this.minute_hand.rotation.z = angle5;
+  this.hour_hand.rotation.z = angle9;
 
-  this.gear1.rotation.z = -0.01 * frame;
-  this.gear2.rotation.z = -0.01 * frame;
-  this.gear3.rotation.z = -0.01 * frame;
-  this.gear4.rotation.z = -0.01 * frame;
-  this.gear5.rotation.z = -0.01 * frame;
-  this.gear6.rotation.z = -0.01 * frame;
-  this.gear7.rotation.z = -0.01 * frame;
-  this.gear8.rotation.z = -0.01 * frame;
-  this.gear9.rotation.z = -0.01 * frame;
+  this.gear1.rotation.z = angle1;
+  this.gear2.rotation.z = angle2;
+  this.gear3.rotation.z = angle3;
+  this.gear4.rotation.z = angle4;
+  this.gear5.rotation.z = angle5 - 0.03;
+  this.gear6.rotation.z = angle6;
+  this.gear7.rotation.z = angle7;
+  this.gear8.rotation.z = angle8;
+  this.gear9.rotation.z = angle9;
 };
 
 clockLayer.prototype.render = function(renderer, interpolation) {
