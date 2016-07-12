@@ -65,7 +65,7 @@ titleLayer.prototype.update = function(frame, relativeFrame) {
 
 titleLayer.prototype.render = function(renderer, interpolation) {
   this.canvasCtx.save();
-  var scale = lerp(5, 1, (this.frame - 995) / (1273 - 995));
+  var scale = smoothstep(5, 1, (this.frame - 995) / (1273 - 995));
   var x = lerp(-8, 8, (this.frame - 200) / 2000);
   var y = -1.1;
   x = smoothstep(x, 0, (this.frame - 995) / (1217 - 995));
