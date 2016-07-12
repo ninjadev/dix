@@ -1,0 +1,11 @@
+# Blender MTL File: 'gear2.blend'
+# Material Count: 1
+
+newmtl Material.006
+Ns 96.078431
+Ka 0.760870 0.760870 0.760870
+Kd 0.369662 0.305061 0.043584
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 3
