@@ -2,12 +2,16 @@ uniform float time;
 uniform sampler2D tDiffuse;
 
 varying vec2 vUv;
-varying vec3 vPosition;
+varying vec4 vModelPosition;
 
 void main() {
-    vec3 color = vec3(.1, .1, .1);
-    if(vPosition.z > time && vPosition.z < time + 2.) {
-        color = vec3(1., 1., 1.);    
+    vec4 dark = vec4(.1, .1, .1, .2);
+    vec4 light = vec4(1., 1., 1., 1.);
+    float width = 1.0;
+    vec4 color = mix(light * 3., dark, min(1., abs(vModelPosition.x / width)));
+    color = color + mix(light * .2, vec4(0.), min(1., abs(vModelPosition.x / width / 5.)));
+    if(vModelPosition.z < 0.) {
+        color = dark;
     }
-    gl_FragColor = vec4(color, 1.);
+    gl_FragColor = color;
 }
