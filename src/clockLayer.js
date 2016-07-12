@@ -66,8 +66,23 @@ clockLayer.prototype.init_clock_model = function() {
 
   this.gear1 = new THREE.Object3D();
   this.gear1.position.x = 0.17 - 0.177;
-  this.gear1.position.y = -0.41 + 0.51; 
+  this.gear1.position.y = -0.41 + 0.41; 
   this.gear1.position.z = -(2.24 + 0.04); // rev
+
+  this.gear2 = new THREE.Object3D();
+  this.gear2.position.x = -1.400 + 0;
+  this.gear2.position.y = 0.643 + 0; 
+  this.gear2.position.z = -(2.400 + 0); // rev
+
+  this.gear3 = new THREE.Object3D();
+  this.gear3.position.x = -1.335 + 0;
+  this.gear3.position.y = -0.536 + 0; 
+  this.gear3.position.z = -(2.172 + 0); // rev
+
+  this.gear4 = new THREE.Object3D();
+  this.gear4.position.x = -0.311 + 0;
+  this.gear4.position.y = -3.1167 + 1.984; 
+  this.gear4.position.z = -(1.974 + 0.236); // rev
 
   var loadObject = function (objPath, material, three_object) {
     var objLoader = new THREE.OBJLoader();
@@ -89,12 +104,18 @@ clockLayer.prototype.init_clock_model = function() {
   loadObject(prefix + 'minute_hand.obj', clock_material, this.minute_hand);
   loadObject(prefix + 'hour_hand.obj', clock_material, this.hour_hand);
   loadObject(prefix + 'gear1.obj', clock_material, this.gear1);
+  loadObject(prefix + 'gear2.obj', clock_material, this.gear2);
+  loadObject(prefix + 'gear3.obj', clock_material, this.gear3);
+  loadObject(prefix + 'gear4.obj', clock_material, this.gear4);
   this.scene.add(this.clock_body);
   this.scene.add(this.pendulum);
   this.scene.add(this.second_hand);
   this.scene.add(this.minute_hand);
   this.scene.add(this.hour_hand);
   this.scene.add(this.gear1);
+  this.scene.add(this.gear2);
+  this.scene.add(this.gear3);
+  this.scene.add(this.gear4);
 }
 
 clockLayer.prototype.getEffectComposerPass = function() {
@@ -121,6 +142,9 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
   this.hour_hand.rotation.z = -0.1 * frame / 3600;
 
   this.gear1.rotation.z = -0.01 * frame;
+  this.gear2.rotation.z = -0.01 * frame;
+  this.gear3.rotation.z = -0.01 * frame;
+  this.gear4.rotation.z = -0.01 * frame;
 };
 
 clockLayer.prototype.render = function(renderer, interpolation) {
