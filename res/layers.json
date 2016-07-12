@@ -34,7 +34,7 @@
   {
     "type": "twisterLayer",
     "displayName": "twister",
-    "startFrame": 7523,
+    "startFrame": 7531,
     "endFrame": 9296,
     "color": "red",
     "config": {}
@@ -73,5 +73,13 @@
       "amount": 1.1,
       "noStabs": true
     }
+  },
+  {
+    "type": "distortionLayer",
+    "displayName": "distortion",
+    "startFrame": 7531,
+    "endFrame": 7586,
+    "color": "pink",
+    "config": {}
   }
 ]
