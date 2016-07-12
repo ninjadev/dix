@@ -46,7 +46,7 @@ clockLayer.prototype.init_clock_model = function() {
 
   this.pendulum = new THREE.Object3D();
   this.pendulum.position.x = 0;
-  this.pendulum.position.y = 0.43 + 0.13 + 0.0;  // Tweek last param until it looks good.
+  this.pendulum.position.y = 0.43 + 0.13 + 0.13;  // Tweek last param until it looks good.
   this.pendulum.position.z = -2.621;
 
   this.second_hand = new THREE.Object3D();
@@ -168,9 +168,9 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
   this.cube.rotation.x = Math.sin(frame / 10);
   this.cube.rotation.y = Math.cos(frame / 10);
 
-  this.pendulum.rotation.z = 0.3 * Math.sin(frame / 20);
+  var clock_speed = 0.02 + 0.3 * Math.floor(relativeFrame / 500);
 
-  var clock_speed = 1;
+  this.pendulum.rotation.z = 0.3 * Math.sin(frame * clock_speed * 2.5);
 
   var angle1 = clock_speed * frame * -0.1;
   var angle2 = -angle1 * 24 / 34;
