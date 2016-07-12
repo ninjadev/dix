@@ -100,9 +100,14 @@ clockLayer.prototype.init_clock_model = function() {
   this.gear7.position.z = -(2.701 - 1.29 - 0.02); // rev
 
   this.gear8 = new THREE.Object3D();
-  this.gear8.position.x = -0.311 + 0;
-  this.gear8.position.y = -3.1167 + 1.984; 
-  this.gear8.position.z = -(1.974 + 0.236); // rev
+  this.gear8.position.x = -0.09;
+  this.gear8.position.y = 0.98; 
+  this.gear8.position.z = -1.03; // rev
+
+  this.gear9 = new THREE.Object3D();
+  this.gear9.position.x = 0;
+  this.gear9.position.y = 0; 
+  this.gear9.position.z = -1.03; // rev
 
   var loadObject = function (objPath, material, three_object) {
     var objLoader = new THREE.OBJLoader();
@@ -129,8 +134,9 @@ clockLayer.prototype.init_clock_model = function() {
   loadObject(prefix + 'gear4.obj', clock_material, this.gear4);
   loadObject(prefix + 'gear3.obj', clock_material, this.gear5);
   loadObject(prefix + 'gear3.obj', clock_material, this.gear6);
-  loadObject(prefix + 'gear5.obj', clock_material, this.gear7);
-  //loadObject(prefix + 'gear8.obj', clock_material, this.gear8);
+  loadObject(prefix + 'gear7.obj', clock_material, this.gear7);
+  loadObject(prefix + 'gear8.obj', clock_material, this.gear8);
+  loadObject(prefix + 'gear9.obj', clock_material, this.gear9);
   this.scene.add(this.clock_body);
   this.scene.add(this.pendulum);
   this.scene.add(this.second_hand);
@@ -144,6 +150,7 @@ clockLayer.prototype.init_clock_model = function() {
   this.scene.add(this.gear6);
   this.scene.add(this.gear7);
   this.scene.add(this.gear8);
+  this.scene.add(this.gear9);
 }
 
 clockLayer.prototype.getEffectComposerPass = function() {
@@ -165,6 +172,8 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
 
   this.pendulum.rotation.z = 0.3 * Math.sin(frame / 20);
 
+  this.clock_speed = 1;
+
   this.second_hand.rotation.z = -0.1 * frame;
   this.minute_hand.rotation.z = -0.1 * frame / 60 ;
   this.hour_hand.rotation.z = -0.1 * frame / 3600;
@@ -177,6 +186,7 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
   this.gear6.rotation.z = -0.01 * frame;
   this.gear7.rotation.z = -0.01 * frame;
   this.gear8.rotation.z = -0.01 * frame;
+  this.gear9.rotation.z = -0.01 * frame;
 };
 
 clockLayer.prototype.render = function(renderer, interpolation) {
