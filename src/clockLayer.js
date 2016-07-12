@@ -16,6 +16,11 @@ function clockLayer(layer) {
   light.position.set( 10, 10, 10 );
   this.scene.add(light);
 
+
+  var light2 = new THREE.PointLight( 0xffffff, 1, 100 );
+  light2.position.set( -10, -10, -10 );
+  this.scene.add(light2);
+
   var pointLight = new THREE.PointLight( 0xFFFFFF );
   pointLight.position.x = 10;
   pointLight.position.y = 50;
@@ -59,6 +64,11 @@ clockLayer.prototype.init_clock_model = function() {
   this.hour_hand.position.y = 0.004;
   this.hour_hand.position.z = -5.196;
 
+  this.gear1 = new THREE.Object3D();
+  this.gear1.position.x = 0.17 - 0.177;
+  this.gear1.position.y = -0.41 + 0.51; 
+  this.gear1.position.z = -(2.24 + 0.04); // rev
+
   var loadObject = function (objPath, material, three_object) {
     var objLoader = new THREE.OBJLoader();
     Loader.loadAjax(objPath, function(text) {
@@ -78,11 +88,13 @@ clockLayer.prototype.init_clock_model = function() {
   loadObject(prefix + 'second_hand.obj', clock_material, this.second_hand);
   loadObject(prefix + 'minute_hand.obj', clock_material, this.minute_hand);
   loadObject(prefix + 'hour_hand.obj', clock_material, this.hour_hand);
+  loadObject(prefix + 'gear1.obj', clock_material, this.gear1);
   this.scene.add(this.clock_body);
   this.scene.add(this.pendulum);
   this.scene.add(this.second_hand);
   this.scene.add(this.minute_hand);
   this.scene.add(this.hour_hand);
+  this.scene.add(this.gear1);
 }
 
 clockLayer.prototype.getEffectComposerPass = function() {
@@ -107,6 +119,8 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
   this.second_hand.rotation.z = -0.1 * frame;
   this.minute_hand.rotation.z = -0.1 * frame / 60 ;
   this.hour_hand.rotation.z = -0.1 * frame / 3600;
+
+  this.gear1.rotation.z = -0.01 * frame;
 };
 
 clockLayer.prototype.render = function(renderer, interpolation) {
