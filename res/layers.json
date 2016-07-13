@@ -2,7 +2,7 @@
   {
     "type": "spinwiresLayer",
     "displayName": "spinwires",
-    "startFrame": 4872,
+    "startFrame": 4877,
     "endFrame": 5758,
     "color": "red",
     "config": {}
@@ -42,8 +42,8 @@
   {
     "type": "phonographLayer",
     "displayName": "phonographLayer",
-    "startFrame": 3988,
-    "endFrame": 4873,
+    "startFrame": 3986,
+    "endFrame": 4878,
     "color": "red",
     "config": {}
   },
