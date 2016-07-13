@@ -133,7 +133,7 @@ function spinwiresLayer(layer) {
     points.push(points[0]);
     var curve = new THREE.SplineCurve3(points);
     this.curves.push(curve);
-    var tubeGeometry = new THREE.TubeGeometryEx(curve, 80, 1, 8);
+    var tubeGeometry = new THREE.TubeGeometryEx(curve, 32, 1, 8);
     var shaderMaterial = new THREE.ShaderMaterial(SHADERS.spinwires);
     shaderMaterial.transparent = true;
     this.shaderMaterial = shaderMaterial;
