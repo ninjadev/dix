@@ -94,6 +94,26 @@ function twisterLayer(layer, demo) {
 
   this.scene.add(this.cube);
   this.cube.rotation.z = Math.PI / 2;
+
+
+
+  this.numberOfParticles = 3500;
+  this.particles = []
+  this.material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  this.geometry = new THREE.SphereGeometry(0.3, 8, 6);
+  for(var i = 0; i < this.numberOfParticles; i++) {
+    particle = new THREE.Mesh(this.geometry,this.material);
+    particle.position.x = Math.random() * (120) - 60;
+    particle.position.x += Math.sign(particle.position.x) * 5;
+    particle.position.y = Math.random() * (120) - 60;
+    particle.position.y += Math.sign(particle.position.y) * 5;
+    particle.position.z = Math.random() * (120) - 60;
+    particle.position.z += Math.sign(particle.position.z) * 5;
+    particle.scale = 1;
+    particle.visible = false;
+    this.particles.push(particle);
+    this.scene.add(particle);
+  }
 }
 
 twisterLayer.prototype.getEffectComposerPass = function() {
@@ -114,7 +134,7 @@ twisterLayer.prototype.resize = function() {
 };
 
 twisterLayer.prototype.update = function(frame, relativeFrame) {
-
+  var backup_frame = relativeFrame;
   relativeFrame += this.snareAnalysis.getValue(frame) * 20;
   var size = 1 + this.kickAnalysis.getValue(frame) * 0.12;
 
@@ -145,6 +165,17 @@ twisterLayer.prototype.update = function(frame, relativeFrame) {
   this.cube.geometry.verticesNeedUpdate = true;
   this.cube.geometry.computeFaceNormals();
   this.cube.geometry.computeVertexNormals();
+
+  // particles!
+  var threshold = this.snareAnalysis.getValue(frame);
+  var snareScale = threshold > 1 ? threshold / 2: 1;
+  for(var i; i < this.numberOfParticles; i++){
+    var particle = this.particles[i];
+    particle.visible = backup_frame >= 886 ? true : false;
+    particle.scale.x = snareScale;
+    particle.scale.y = snareScale;
+    particle.scale.z = snareScale;
+  }
 };
 
 twisterLayer.prototype.rigMaterialsForGlowPass = function() {
