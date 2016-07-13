@@ -22,8 +22,11 @@ function clockLayer(layer) {
   pointLight.position.z = 130;
   this.scene.add(pointLight);
 
-  this.camera.position.z = 10;
-  this.camera.position.y = 0;
+  this.camera.position.x = 12;
+  this.camera.position.y = 2;
+  this.camera.position.z = 12;
+
+  this.camera.lookAt(new THREE.Vector3(0,-2.8,0));
 
   this.set_positions();
 
