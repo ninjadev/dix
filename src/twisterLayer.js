@@ -83,7 +83,7 @@ function twisterLayer(layer) {
     roughness: 0.2,
     metalness: 0.7,
     bumpMap: canvasTexture,
-    bumpMapScale: .1,
+    bumpMapScale: 10.,
     envMap: cubemap,
     envMapIntensity: 2
   });
