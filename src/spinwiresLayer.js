@@ -263,22 +263,6 @@ spinwiresLayer.prototype.update = function(frame, relativeFrame) {
     light.position.copy(this.curves[i].getPoint((2.75 - speed * relativeFrame / 100 / Math.PI / 2) % 1));
     lightCenter.position.copy(light.position);
   }
-
-  for(var i = 0; i < this.tubes.length; i++) {
-    var tubeGeometry = this.tubeGeometries[i];
-    var tube = this.tubes[i];
-    for(var j = 0; j < tubeGeometry.vertices.length; j++) {
-      var step = clamp(0, (-j + relativeFrame * 100 - i * tubeGeometry.vertices.length), 1);
-      var vertex = tubeGeometry.vertices[j];
-      var center = tubeGeometry.centers[j];
-      var radius = tubeGeometry.radii[j];
-      var index = tubeGeometry.indexes[j];
-      vertex.x = center.x + radius.x * step;
-      vertex.y = center.y + radius.y * step;
-      vertex.z = center.z + radius.z * step;
-    }
-    tube.geometry.fromGeometry(tubeGeometry);
-  }
 };
 
 spinwiresLayer.prototype.render = function(renderer, interpolation) {
