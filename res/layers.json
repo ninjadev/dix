@@ -50,7 +50,7 @@
   {
     "type": "tunnelsplosionLayer",
     "displayName": "tunnelsplosion",
-    "startFrame": 5761,
+    "startFrame": 5758,
     "endFrame": 6646,
     "color": "red",
     "config": {}

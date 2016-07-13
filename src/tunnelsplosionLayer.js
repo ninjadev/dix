@@ -8,10 +8,13 @@ function tunnelsplosionLayer(layer) {
   this.lightDistance = 0;
   this.distanceOffset = 0;
 
-  this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 1, 10000);
+  this.camera = new THREE.PerspectiveCamera(35, 16 / 9, 1, 10000);
   this.cameraOffset = new THREE.Vector3(0, 0, 0);
   this.cameraDistance = 50;
   this.cameraZRotation = 0;
+
+  this.snareAnalysis = new audioAnalysisSanitizer('snare.wav', 'spectral_energy', 0.1);
+  this.kickAnalysis = new audioAnalysisSanitizer('kick.wav', 'spectral_energy', 1);
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
   this.renderPass.clear = true;
@@ -33,7 +36,7 @@ function tunnelsplosionLayer(layer) {
   ];
 
   this.ambientLight = new THREE.AmbientLight(0xffffff)
-  this.ambientLight.intensity = 0.2;
+  this.ambientLight.intensity = 1;
   this.scene.add(this.ambientLight);
 
   var wireframeMaterial = new THREE.MeshBasicMaterial({
@@ -56,23 +59,26 @@ function tunnelsplosionLayer(layer) {
     side: THREE.DoubleSide
   });
   this.tunnelRenderMaterial = new THREE.MeshStandardMaterial({
-      map: Loader.loadTexture('res/rails.jpg'),
-      bumpMap: Loader.loadTexture('res/gears.jpg'),
-      side: THREE.DoubleSide
+      map: Loader.loadTexture('res/brick.jpg'),
+      bumpMap: Loader.loadTexture('res/brick.jpg'),
+      bumpMapScale: 10,
+      side: THREE.DoubleSide,
+      metalness: 1,
+      roughness: 0.5
     });
   this.tunnelGlowMaterial = new THREE.MeshBasicMaterial({
-      map: Loader.loadTexture('res/gears.jpg'),
+      map: Loader.loadTexture('res/brick.jpg'),
       side: THREE.DoubleSide
     });
   this.tunnel = new THREE.Mesh(
-    new THREE.TubeGeometry(this.curve, 200, 55, 24),
+    new THREE.TubeGeometryEx(this.curve, 200, 55, 64),
     this.tunnelRenderMaterial);
   this.tunnelRenderMaterial.map.repeat.set(256, 8);
   this.tunnelRenderMaterial.map.wrapS = this.tunnelRenderMaterial.map.wrapT = THREE.RepeatWrapping;
-  this.tunnelRenderMaterial.bumpMap.repeat.set(64, 1);
+  this.tunnelRenderMaterial.bumpMap.repeat.set(256, 8);
   this.tunnelRenderMaterial.bumpMap.wrapS = this.tunnelRenderMaterial.bumpMap.wrapT = THREE.RepeatWrapping;
   this.tunnelRenderMaterial.bumpScale = 0.1;
-  this.tunnelGlowMaterial.map.repeat.set(64, 1);
+  this.tunnelGlowMaterial.map.repeat.set(256, 8);
   this.tunnelGlowMaterial.map.wrapS = this.tunnelGlowMaterial.map.wrapT = THREE.RepeatWrapping;
   this.scene.add(this.tunnel);
   this.ball = new THREE.Object3D();
@@ -100,7 +106,7 @@ function tunnelsplosionLayer(layer) {
   this.particles.liveCount = 0;
   this.particleContainer = new THREE.Object3D();
   this.scene.add(this.particleContainer);
-  for(var i = 0; i < 1000; i++) {
+  for(var i = 0; i < 10000; i++) {
     var particle = this.colorBall.clone();
     this.particles.push(particle);
   }
@@ -123,12 +129,12 @@ tunnelsplosionLayer.prototype.explode = function() {
   var origo = new THREE.Vector3(0, 0, 0);
   this.particleContainer.rotation.copy(this.ball.rotation);
   this.particleContainer.position.copy(this.ball.position);
-  this.spawnEmitter(new THREE.Vector3(10, 0, 0), new THREE.Vector3(2, 0, 0), 12);
-  this.spawnEmitter(new THREE.Vector3(0, 10, 0), new THREE.Vector3(0, 2, 0), 12);
-  this.spawnEmitter(new THREE.Vector3(0, 0, 10), new THREE.Vector3(0, 0, 2), 12);
-  this.spawnEmitter(new THREE.Vector3(-10, 0, 0), new THREE.Vector3(-2, 0, 0), 12);
-  this.spawnEmitter(new THREE.Vector3(0, -10, 0), new THREE.Vector3(0, -2, 0), 12);
-  this.spawnEmitter(new THREE.Vector3(0, 0, -10), new THREE.Vector3(0, 0, -2), 12);
+  this.spawnEmitter(new THREE.Vector3(10, 0, 0), new THREE.Vector3(4, 0, 0), 12);
+  this.spawnEmitter(new THREE.Vector3(0, 10, 0), new THREE.Vector3(0, 4, 0), 12);
+  this.spawnEmitter(new THREE.Vector3(0, 0, 10), new THREE.Vector3(0, 0, 4), 12);
+  this.spawnEmitter(new THREE.Vector3(-10, 0, 0), new THREE.Vector3(-4, 0, 0), 12);
+  this.spawnEmitter(new THREE.Vector3(0, -10, 0), new THREE.Vector3(0, -4, 0), 12);
+  this.spawnEmitter(new THREE.Vector3(0, 0, -10), new THREE.Vector3(0, 0, -4), 12);
 }
 
 tunnelsplosionLayer.prototype.getEffectComposerPass = function() {
@@ -148,8 +154,26 @@ tunnelsplosionLayer.prototype.resize = function() {
 
 tunnelsplosionLayer.prototype.update = function(frame, relativeFrame) {
 
+  relativeFrame -= this.kickAnalysis.getValue(frame);
+  relativeFrame += 1 * this.snareAnalysis.getValue(frame);
+
+  for(var j = 0; j < this.tunnel.geometry.vertices.length; j++) {
+    var vertex = this.tunnel.geometry.vertices[j];
+    var center = this.tunnel.geometry.centers[j];
+    var radius = this.tunnel.geometry.radii[j];
+    var index = this.tunnel.geometry.indexes[j];
+    vertex.x = center.x + radius.x * (1 + 0.2 * Math.cos(relativeFrame / 20) * Math.sin(relativeFrame / 20 + 2 * j / 64 * Math.PI * 2));
+    vertex.y = center.y + radius.y * (1 + 0.2 * Math.sin(relativeFrame / 20 + 2 * j / 64 * Math.PI * 2));
+    vertex.z = center.z + radius.z * (1 + 0.2 * Math.sin(relativeFrame / 20 + 2 * j / 64 * Math.PI * 2));
+  }
+  this.tunnel.geometry.verticesNeedUpdate = true;
+
+
   if(frame < 6645) {
-    if(BEAT && BEAN % 24 == 12) {
+    if(BEAN % 48 == 9) {
+      this.lightDistance = -500;
+    }
+    if(relativeFrame == 0 || BEAT && BEAN % 48 == 36) {
       this.ball.scale.set(3, 3, 3);
       this.pointLight.intensity = 1;
       this.cameraOffset.set(
@@ -233,10 +257,16 @@ tunnelsplosionLayer.prototype.update = function(frame, relativeFrame) {
     this.spawnParticle(emitter);
   }
 
-  this.pointLight.intensity *= 0.98;
-  this.pointLightWhite.intensity *= 0.98;
-  if(BEAT && BEAN % 12 == 0) {
-    //this.explode();
+  this.pointLight.intensity *= 0.99;
+  this.pointLightWhite.intensity *= 0.99;
+  if(BEAT && BEAN % 48 == 0) {
+    this.explode();
+  }
+  if(BEAT && BEAN % 48 == 9) {
+    this.explode();
+  }
+  if(BEAT && BEAN % 48 == 18) {
+    this.explode();
   }
   this.ball.scale.x = lerp(this.ball.scale.x, 1, 0.05);
   this.ball.scale.y = lerp(this.ball.scale.y, 1, 0.05);
