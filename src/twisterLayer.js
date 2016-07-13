@@ -160,7 +160,7 @@ twisterLayer.prototype.render = function(renderer, interpolation) {
   this.canvasCtx.translate(-this.canvas.width / 2, -this.canvas.height / 2);
   this.canvasCtx.font = '100px monospace';
   this.canvasCtx.fillStyle = 'rgb(221, 176, 109)';
-  var message = 'desire // farbrausch // cocoon // sandsmark // mrdoob // solskogen crew // darklite // excess // gargaj // ephidrena // rgba // outracks // panda cube // relapse // fnuque // truck // insert more greetings here';
+  var message = 'desire // farbrausch // cocoon // sandsmark // mrdoob // solskogen crew // darklite // excess // gargaj // ephidrena // rgba // outracks // panda cube // relapse // fnuque // truck // rohtie // T-101 // insert more greetings here';
   this.canvasCtx.fillText(message, this.scrollerOffset, 1024 - 250);
   this.canvasCtx.fillText(message, this.scrollerOffset, 1024 + 512 - 250);
   this.canvasCtx.restore();
