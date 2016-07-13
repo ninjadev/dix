@@ -13,9 +13,11 @@ function spinwiresLayer(layer) {
   this.scene.add(this.refractionCamera);
   this.scene.add(this.reflectionCamera);
 
+
   this.barLightHolderRenderMaterial = new THREE.MeshStandardMaterial({
       map: Loader.loadTexture('res/floor.jpg')
   });
+
   this.barLightHolder = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 29), this.barLightHolderRenderMaterial);
   this.scene.add(this.barLightHolder);
   this.barLightHolder.position.z = 100;
@@ -76,6 +78,14 @@ function spinwiresLayer(layer) {
   this.scene.add(this.floor);
 
   this.cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
+  this.cubeGeometry.vertices.push(new THREE.Vector3(5, 0, 5));
+  this.cubeGeometry.vertices.push(new THREE.Vector3(-5, 0, 5));
+  this.cubeGeometry.vertices.push(new THREE.Vector3(5, 0, -5));
+  this.cubeGeometry.vertices.push(new THREE.Vector3(-5, 0, -5));
+  this.cubeGeometry.vertices.push(new THREE.Vector3(0, 5, 5));
+  this.cubeGeometry.vertices.push(new THREE.Vector3(0, -5, 5));
+  this.cubeGeometry.vertices.push(new THREE.Vector3(0, 5, -5));
+  this.cubeGeometry.vertices.push(new THREE.Vector3(0, -5, -5));
   this.geometries = [];
 
   this.debugCubeCounter = 0;
@@ -123,15 +133,14 @@ function spinwiresLayer(layer) {
     points.push(points[0]);
     var curve = new THREE.SplineCurve3(points);
     this.curves.push(curve);
-    var tubeGeometry = new THREE.TubeGeometry(curve, 100, 1, 8);
+    var tubeGeometry = new THREE.TubeGeometryEx(curve, 80, 1, 8);
     var shaderMaterial = new THREE.ShaderMaterial(SHADERS.spinwires);
     shaderMaterial.transparent = true;
     this.shaderMaterial = shaderMaterial;
     this.refractionCamera.renderTarget.mapping = THREE.CubeRefractionMapping;
     var refractionMaterial = new THREE.MeshBasicMaterial({
       envMap: this.refractionCamera.renderTarget,
-      refractionRatio: 0.98,
-      reflectivity: 0.95
+      reflectivity: 0.98
     });
     this.refractionMaterial = refractionMaterial;
     var reflectionMaterial = new THREE.MeshStandardMaterial({
@@ -215,7 +224,7 @@ spinwiresLayer.prototype.update = function(frame, relativeFrame) {
   }
   this.barLight.position.z = 100 - 27 / 2 + lightOpening * 27 / 2;
   this.barLightGodRay.position.z = 100 - 27 / 2 + lightOpening * 27 / 2;
-  var speed = smoothstep(0, 1, (relativeFrame) / 1000);
+  var speed = smoothstep(0.2, 1, (relativeFrame) / 1000);
   this.mainObject.rotation.y = speed * relativeFrame / 100;
   this.disc.rotation.y = speed * relativeFrame / 100;
   this.rod.rotation.y = speed * relativeFrame / 100;
@@ -252,6 +261,21 @@ spinwiresLayer.prototype.update = function(frame, relativeFrame) {
     var lightCenter = this.lightCenters[i]; 
     light.position.copy(this.curves[i].getPoint((2.75 - speed * relativeFrame / 100 / Math.PI / 2) % 1));
     lightCenter.position.copy(light.position);
+  }
+
+  for(var i = 0; i < this.tubes.length; i++) {
+    var tube = this.tubes[i];
+    for(var j = 0; j < tube.geometry.vertices.length; j++) {
+      var step = clamp(0, (-j + relativeFrame * 100 - i * tube.geometry.vertices.length), 1);
+      var vertex = tube.geometry.vertices[j];
+      var center = tube.geometry.centers[j];
+      var radius = tube.geometry.radii[j];
+      var index = tube.geometry.indexes[j];
+      vertex.x = center.x + radius.x * step;
+      vertex.y = center.y + radius.y * step;
+      vertex.z = center.z + radius.z * step;
+    }
+    tube.geometry.verticesNeedUpdate = true;
   }
 };
 
