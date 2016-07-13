@@ -1,7 +1,7 @@
 /**
  * @constructor
  */
-function spinwiresLayer(layer) {
+function spinwiresLayer(layer, demo) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
@@ -31,12 +31,12 @@ function spinwiresLayer(layer) {
   this.barLight.position.y = 33.9;
 
   this.barLightGodRay = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 60, 27),
+    new THREE.BoxGeometry(1, 50, 27),
     new THREE.ShaderMaterial(SHADERS.godray));
   this.barLightGodRay.material.transparent = true;
   this.scene.add(this.barLightGodRay);
   this.barLightGodRay.position.z = 100;
-  this.barLightGodRay.position.y = 5;
+  this.barLightGodRay.position.y = 10;
 
   this.blackoutMaterial = new THREE.MeshBasicMaterial({color: 0});
 
@@ -116,9 +116,10 @@ function spinwiresLayer(layer) {
 
   this.curves = [];
   this.tubes = [];
+  this.tubeGeometries = [];
   this.lights = [];
   this.lightCenters = [];
-  var lightCenterGeometry = new THREE.SphereGeometry(0.8, 32, 32);
+  var lightCenterGeometry = new THREE.SphereGeometry(0.9, 32, 32);
   this.mainObject = new THREE.Object3D();
   for(var i = 0; i < this.cube.geometry.vertices.length; i++) {
     var points = [];
@@ -131,9 +132,9 @@ function spinwiresLayer(layer) {
       points.push(point);
     }
     points.push(points[0]);
-    var curve = new THREE.SplineCurve3(points);
+    var curve = new THREE.CatmullRomCurve3(points);
     this.curves.push(curve);
-    var tubeGeometry = new THREE.TubeGeometryEx(curve, 32, 1, 8);
+    var tubeGeometry = new THREE.TubeGeometryEx(curve, 100, 1, 12);
     var shaderMaterial = new THREE.ShaderMaterial(SHADERS.spinwires);
     shaderMaterial.transparent = true;
     this.shaderMaterial = shaderMaterial;
@@ -148,17 +149,17 @@ function spinwiresLayer(layer) {
       envMapIntensity: 1,
       color: 0xb5a642,     
       metalness: 1,
-      roughnessMap: Loader.loadTexture('res/bluecloud_dn.jpg')
+      roughnessMap: Loader.loadTexture('res/brick.jpg')
     });
     reflectionMaterial.roughnessMap.wrapS = reflectionMaterial.roughnessMap.wrapT = THREE.RepeatWrapping;
     reflectionMaterial.roughnessMap.repeat.set(1, 50);
     this.reflectionMaterial = reflectionMaterial;
-    var tube = new THREE.Mesh(tubeGeometry, shaderMaterial);
-    //tube.add(new THREE.Mesh(tubeGeometryInner, refractionMaterial));
+    var tube = new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(tubeGeometry), shaderMaterial);
+    this.tubeGeometries.push(tubeGeometry);
     this.tubes.push(tube);
     this.mainObject.add(tube);
     var light = new THREE.PointLight();
-    light.intensity = 0.00002;
+    light.intensity = 0.0003;
     this.mainObject.add(light);
     this.lights.push(light);
     var lightCenter = new THREE.Mesh(lightCenterGeometry, new THREE.MeshBasicMaterial());
@@ -262,32 +263,16 @@ spinwiresLayer.prototype.update = function(frame, relativeFrame) {
     light.position.copy(this.curves[i].getPoint((2.75 - speed * relativeFrame / 100 / Math.PI / 2) % 1));
     lightCenter.position.copy(light.position);
   }
-
-  for(var i = 0; i < this.tubes.length; i++) {
-    var tube = this.tubes[i];
-    for(var j = 0; j < tube.geometry.vertices.length; j++) {
-      var step = clamp(0, (-j + relativeFrame * 100 - i * tube.geometry.vertices.length), 1);
-      var vertex = tube.geometry.vertices[j];
-      var center = tube.geometry.centers[j];
-      var radius = tube.geometry.radii[j];
-      var index = tube.geometry.indexes[j];
-      vertex.x = center.x + radius.x * step;
-      vertex.y = center.y + radius.y * step;
-      vertex.z = center.z + radius.z * step;
-    }
-    tube.geometry.verticesNeedUpdate = true;
-  }
 };
 
 spinwiresLayer.prototype.render = function(renderer, interpolation) {
   this.rigMaterialsForRenderPass();
   this.scene.remove(this.mainObject);
-  this.scene.add(this.disc);
+  this.scene.remove(this.disc);
+  this.scene.remove(this.rod);
   this.reflectionCamera.updateCubeMap(renderer, this.scene);
-  this.disc.material = new THREE.MeshStandardMaterial({
-    color: 0xb5a642,
-    metalness: 0.8
-  });
+  this.scene.add(this.disc);
+  this.scene.add(this.rod);
   this.refractionCamera.updateCubeMap(renderer, this.scene);
   this.scene.add(this.mainObject);
   this.rigMaterialsForGlowPass();
@@ -306,12 +291,14 @@ spinwiresLayer.prototype.rigMaterialsForGlowPass = function() {
       this.mainObject.add(this.lightCenters[i]);
     }
   }
-  this.barLightHolder.material = this.blackoutMaterial;
+  this.scene.add(this.disc);
   this.disc.material = this.shaderMaterial;
+  this.barLightHolder.material = this.blackoutMaterial;
   this.scene.remove(this.skyBox);
   this.floor.material = this.blackoutMaterial;
   this.rod.material = this.blackoutMaterial;
-  this.scene.add(this.godray);
+  this.scene.add(this.barLightGodRay);
+  this.scene.add(this.mainObject);
 }
 
 spinwiresLayer.prototype.rigMaterialsForRenderPass = function() {
@@ -320,10 +307,14 @@ spinwiresLayer.prototype.rigMaterialsForRenderPass = function() {
     this.mainObject.add(this.lights[i]);
     this.mainObject.remove(this.lightCenters[i]);
   }
-  this.scene.remove(this.godray);
+  this.scene.remove(this.barLightGodRay);
   this.barLightHolder.material = this.barLightHolderRenderMaterial;
+  this.scene.add(this.disc);
+  this.scene.add(this.rod);
   this.disc.material = this.reflectionMaterial;
+  this.rod.material = this.reflectionMaterial;
   this.scene.add(this.skyBox);
   this.floor.material = this.floorMaterial;
   this.rod.material = this.reflectionMaterial;
+  this.scene.add(this.mainObject);
 }
