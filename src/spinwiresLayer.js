@@ -31,12 +31,12 @@ function spinwiresLayer(layer) {
   this.barLight.position.y = 33.9;
 
   this.barLightGodRay = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 60, 27),
+    new THREE.BoxGeometry(1, 50, 27),
     new THREE.ShaderMaterial(SHADERS.godray));
   this.barLightGodRay.material.transparent = true;
   this.scene.add(this.barLightGodRay);
   this.barLightGodRay.position.z = 100;
-  this.barLightGodRay.position.y = 5;
+  this.barLightGodRay.position.y = 10;
 
   this.blackoutMaterial = new THREE.MeshBasicMaterial({color: 0});
 
