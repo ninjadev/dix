@@ -1,1 +1,21 @@
-{}
+{
+  "CubesLayer": {
+    "position": [
+      {
+        "startFrame": 6646,
+        "endFrame": 7530,
+        "points": [
+          [0,3.92,-52.75],
+          [-219.38,56.3,-358.56]
+        ]   
+      }
+    ], 
+    "lookAt": [
+      {
+        "startFrame": 6646,
+        "endFrame": 7530,
+        "point": [164.98,7.58,-769.71] 
+      }
+    ]  
+  }
+}

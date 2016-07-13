@@ -48,6 +48,14 @@
     "config": {}
   },
   {
+    "type": "cubesLayer",
+    "displayName": "cubes",
+    "startFrame": 6646,
+    "endFrame": 7530,
+    "color": "red",
+    "config": {}
+  },
+  {
     "type": "tunnelsplosionLayer",
     "displayName": "tunnelsplosion",
     "startFrame": 5758,
