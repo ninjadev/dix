@@ -41,12 +41,12 @@ function twisterLayer(layer) {
   this.kickAnalysis = new audioAnalysisSanitizer('kick.wav', 'spectral_energy', 0.05);
 
   var partialCubeResources = [
-      {image: new Image(), src: 'res/bluecloud_rt.jpg'},
-      {image: new Image(), src: 'res/bluecloud_lf.jpg'},
-      {image: new Image(), src: 'res/bluecloud_up.jpg'},
-      {image: new Image(), src: 'res/bluecloud_dn.jpg'},
-      {image: new Image(), src: 'res/bluecloud_bk.jpg'},
-      {image: new Image(), src: 'res/bluecloud_ft.jpg'}
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'}
   ];
   var loadedCount = 0;
   var cubemap = new THREE.CubeTexture(partialCubeResources.map(function(item) {return item.image;}));
