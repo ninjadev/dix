@@ -5,7 +5,7 @@ function clockLayer(layer) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
-  this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.001, 100);
+  this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.001, 10000);
 
   var light = new THREE.PointLight( 0xffffff, 1, 100 );
   light.position.set( 10, 10, 10 );
@@ -30,9 +30,9 @@ function clockLayer(layer) {
 
   this.set_positions();
 
-  this.init_clock_model();
-
   this.init_room();
+
+  this.init_clock_model();
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
@@ -41,6 +41,7 @@ clockLayer.prototype.init_clock_model = function() {
   var prefix = 'res/clock/';
   var clock_body = new THREE.Object3D();
   var clock_material = new THREE.MeshStandardMaterial({
+    envMap: this.cubemap,
     color: 0xB5A642,
     metalness: 0.9,
     roughness: 0.4,
@@ -107,19 +108,54 @@ clockLayer.prototype.init_clock_model = function() {
 }
 
 clockLayer.prototype.init_room = function() {
-  var skyGeometry = new THREE.BoxGeometry(50, 35, 50);
-  var skyBox = new THREE.Mesh(skyGeometry, new THREE.MeshStandardMaterial({
-    color: 0x404040,
-    map: Loader.loadTexture('res/brick.jpg'),
-    metalness: 0,
-    roughness: 1,
-    side: THREE.DoubleSide
-  }));
-  skyBox.material.map.wrapS = skyBox.material.map.wrapT = THREE.RepeatWrapping;
-  skyBox.material.map.repeat.set(2, 1);
+  var partialCubeResources = [
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'}
+  ];
+  var loadedCount = 0;
+  var cubemap = new THREE.CubeTexture(partialCubeResources.map(function(item) {return item.image;}));
+  this.cubemap = cubemap;
+  for(var i = 0; i < partialCubeResources.length; i++) {
+    Loader.load(partialCubeResources[i].src, partialCubeResources[i].image, function() {
+      loadedCount++;
+      if(loadedCount == 6) {
+        cubemap.needsUpdate = true;
+      }
+    });
+  }
+  var skyGeometry = new THREE.BoxGeometry(100, 100, 100);
+  var cubeShader = THREE.ShaderLib.cube;
+  var cubeUniforms = THREE.UniformsUtils.clone(cubeShader.uniforms);
+  cubeUniforms.tCube.value = cubemap;
+  var skyMaterial = new THREE.ShaderMaterial({
+    fragmentShader: cubeShader.fragmentShader,
+    vertexShader: cubeShader.vertexShader,
+    uniforms: cubeUniforms,
+    side: THREE.BackSide
+  });
+  var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
   this.scene.add(skyBox);
   this.skyBox = skyBox;
-  this.skyBox.position.y = 5;
+
+  this.concreteFloor = new THREE.Mesh(
+      new THREE.PlaneGeometry(100, 100),
+      new THREE.MeshStandardMaterial({
+        map: Loader.loadTexture('res/concrete.jpg'),
+        normalMap: Loader.loadTexture('res/concrete-normal.jpg'),
+        normalScale: new THREE.Vector2(0.1, 0.1)
+      }));
+  this.concreteFloor.material.map.wrapS = this.concreteFloor.material.map.wrapT = THREE.RepeatWrapping;
+  this.concreteFloor.material.map.repeat.set(4, 4);
+  this.concreteFloor.material.normalMap.wrapS = this.concreteFloor.material.normalMap.wrapT = THREE.RepeatWrapping;
+  this.concreteFloor.material.normalMap.repeat.set(4, 4);
+  this.scene.add(this.concreteFloor);
+  this.concreteFloor.rotation.x = -Math.PI / 2;
+  this.concreteFloor.position.y = -13;
+
   this.ceilingLight = new THREE.PointLight({
     color: 0xddffff
   });
