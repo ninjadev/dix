@@ -81,5 +81,13 @@
     "endFrame": 7586,
     "color": "pink",
     "config": {}
+  },
+  {
+    "type": "vignetteLayer",
+    "displayName": "vignette",
+    "startFrame": 0,
+    "endFrame": 9305,
+    "color": "pink",
+    "config": {}
   }
 ]
