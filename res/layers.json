@@ -24,9 +24,17 @@
     "config": {}
   },
   {
+    "type": "gearLayer",
+    "displayName": "gear",
+    "startFrame": 1329,
+    "endFrame": 1600,
+    "color": "blue",
+    "config": {}
+  },
+  {
     "type": "clockLayer",
     "displayName": "clock",
-    "startFrame": 1329,
+    "startFrame": 1601,
     "endFrame": 3100,
     "color": "blue",
     "config": {}
@@ -58,7 +66,7 @@
   {
     "type": "drLayer",
     "displayName": "dr",
-    "startFrame": 1295,
+    "startFrame": 1605,
     "endFrame": 9716,
     "color": "pink",
     "config": {}
@@ -66,7 +74,7 @@
   {
     "type": "BloomLayer",
     "displayName": "bloom",
-    "startFrame": 1333,
+    "startFrame": 1613,
     "endFrame": 9305,
     "color": "pink",
     "config": {
@@ -85,7 +93,7 @@
   {
     "type": "vignetteLayer",
     "displayName": "vignette",
-    "startFrame": 0,
+    "startFrame": 1612,
     "endFrame": 9305,
     "color": "pink",
     "config": {}
