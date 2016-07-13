@@ -1,7 +1,7 @@
 /**
  * @constructor
  */
-function twisterLayer(layer) {
+function twisterLayer(layer, demo) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
   this.scrollerOffset = 0;

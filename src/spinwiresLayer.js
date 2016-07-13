@@ -1,7 +1,7 @@
 /**
  * @constructor
  */
-function spinwiresLayer(layer) {
+function spinwiresLayer(layer, demo) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 

@@ -1,7 +1,7 @@
 /*
  * @constructor
  */
-function tunnelsplosionLayer(layer) {
+function tunnelsplosionLayer(layer, demo) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
