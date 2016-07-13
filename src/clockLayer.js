@@ -43,7 +43,8 @@ clockLayer.prototype.init_clock_model = function() {
     roughness: 0.4,
     side: THREE.DoubleSide
   });
-  this.clock_body = new THREE.Object3D();
+  this.clock_body_front = new THREE.Object3D();
+  this.clock_body_back = new THREE.Object3D();
   this.pendulum = new THREE.Object3D();
   this.second_hand = new THREE.Object3D();
   this.minute_hand = new THREE.Object3D();
@@ -70,7 +71,8 @@ clockLayer.prototype.init_clock_model = function() {
       three_object.add(object);
     });
   };
-  loadObject(prefix + 'clock_body.obj', clock_material, this.clock_body);
+  loadObject(prefix + 'clock_body_front.obj', clock_material, this.clock_body_front);
+  loadObject(prefix + 'clock_body_back.obj', clock_material, this.clock_body_back);
   loadObject(prefix + 'pendulum.obj', clock_material, this.pendulum);
   loadObject(prefix + 'second_hand.obj', clock_material, this.second_hand);
   loadObject(prefix + 'minute_hand.obj', clock_material, this.minute_hand);
@@ -84,7 +86,8 @@ clockLayer.prototype.init_clock_model = function() {
   loadObject(prefix + 'gear7.obj', clock_material, this.gear7);
   loadObject(prefix + 'gear8.obj', clock_material, this.gear8);
   loadObject(prefix + 'gear9.obj', clock_material, this.gear9);
-  this.scene.add(this.clock_body);
+  this.scene.add(this.clock_body_front);
+  this.scene.add(this.clock_body_back);
   this.scene.add(this.pendulum);
   this.scene.add(this.second_hand);
   this.scene.add(this.minute_hand);
@@ -137,6 +140,10 @@ clockLayer.prototype.init_room = function() {
 
 clockLayer.prototype.set_positions = function() {
   // Location of the parts as the scene loads.
+  this.clock_body_back_init_position_x = 0;
+  this.clock_body_back_init_position_y = 0;
+  this.clock_body_back_init_position_z = -21;
+
   this.pendulum_init_position_x = 12;
   this.pendulum_init_position_y = 10;
   this.pendulum_init_position_z = -12;
@@ -192,6 +199,10 @@ clockLayer.prototype.set_positions = function() {
 
 
   //Positions of parts on the assembled clock.
+  this.clock_body_back_clock_position_x = 0;
+  this.clock_body_back_clock_position_y = 0;
+  this.clock_body_back_clock_position_z = 0;
+
   this.pendulum_clock_position_x = 0;
   this.pendulum_clock_position_y = 0.43 + 0.13 + 0.13;  // Tweek last param until it looks good.
   this.pendulum_clock_position_z = -2.621;
@@ -260,11 +271,15 @@ clockLayer.prototype.resize = function() {
 
 clockLayer.prototype.update = function(frame, relativeFrame) {
   var start_clock_time = 630;
-  var start_assembly_time = 100;
+  var start_assembly_time = 0;
   var end_assembly_time = 600;
 
   if(relativeFrame > start_assembly_time && relativeFrame < end_assembly_time) {
-    var animation_progress = (relativeFrame - start_assembly_time)/(end_assembly_time-start_assembly_time) * 1.6;
+    var animation_progress = (relativeFrame - start_assembly_time)/(end_assembly_time-start_assembly_time) * 1.7;
+
+    this.clock_body_back.position.set(  smoothstep(this.clock_body_back_init_position_x, this.clock_body_back_clock_position_x, animation_progress - 0.70),
+                                        smoothstep(this.clock_body_back_init_position_y, this.clock_body_back_clock_position_y, animation_progress - 0.70),
+                                        smoothstep(this.clock_body_back_init_position_z, this.clock_body_back_clock_position_z, animation_progress - 0.70));
 
     this.second_hand.position.set(  smoothstep(this.second_hand_init_position_x, this.second_hand_clock_position_x, animation_progress - 0.60),
                                     smoothstep(this.second_hand_init_position_y, this.second_hand_clock_position_y, animation_progress - 0.60),
@@ -283,7 +298,7 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
     this.gear1.position.set(  smoothstep(this.gear1_init_position_x, this.gear1_clock_position_x, animation_progress - 0.40),
                               smoothstep(this.gear1_init_position_y, this.gear1_clock_position_y, animation_progress - 0.40),
                               smoothstep(this.gear1_init_position_z, this.gear1_clock_position_z, animation_progress - 0.40));
-    this.gear2.position.set(  smoothstep(this.gear2_init_position_x, this.gear2_clock_position_x, animation_progress - 0.35),
+    this.gear2.position.set(  smoothstep(this.gear3r2_init_position_x, this.gear2_clock_position_x, animation_progress - 0.35),
                               smoothstep(this.gear2_init_position_y, this.gear2_clock_position_y, animation_progress - 0.35),
                               smoothstep(this.gear2_init_position_z, this.gear2_clock_position_z, animation_progress - 0.35));
     this.gear3.position.set(  smoothstep(this.gear3_init_position_x, this.gear3_clock_position_x, animation_progress - 0.30),
@@ -314,7 +329,7 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
 
     this.pendulum.rotation.z = 0.3 * Math.sin(frame * clock_speed * 2.5);
 
-    var angle1 = clock_speed * frame * -0.1;
+    var angle1 = clock_speed * (relativeFrame - start_clock_time ) * -0.1;
     var angle2 = -angle1 * 24 / 34;
     var angle3 = -angle2 * 10 / 34;
     var angle4 = -angle3 * 10 / 34;

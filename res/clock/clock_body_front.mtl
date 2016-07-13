@@ -1,5 +1,5 @@
-# Blender MTL File: 'clock12.blend'
-# Material Count: 30
+# Blender MTL File: 'clock_body_front.blend'
+# Material Count: 28
 
 newmtl Material
 Ns 96.078431
@@ -209,24 +209,6 @@ d 1.000000
 illum 2
 
 newmtl Material.051
-Ns 96.078431
-Ka 0.000000 0.000000 0.000000
-Kd 0.717016 0.590328 0.083693
-Ks 0.500000 0.500000 0.500000
-Ni 1.000000
-d 1.000000
-illum 2
-
-newmtl Material.052
-Ns 96.078431
-Ka 0.000000 0.000000 0.000000
-Kd 0.717016 0.590328 0.083693
-Ks 0.500000 0.500000 0.500000
-Ni 1.000000
-d 1.000000
-illum 2
-
-newmtl Material.054
 Ns 96.078431
 Ka 0.000000 0.000000 0.000000
 Kd 0.717016 0.590328 0.083693
