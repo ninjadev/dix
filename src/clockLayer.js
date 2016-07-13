@@ -40,8 +40,10 @@ function clockLayer(layer) {
 clockLayer.prototype.init_clock_model = function() {
   var prefix = 'res/clock/';
   var clock_body = new THREE.Object3D();
-  var clock_material = new THREE.MeshLambertMaterial({
+  var clock_material = new THREE.MeshStandardMaterial({
     color: 0xB5A642,
+    metalness: 0.9,
+    roughness: 0.4,
     side: THREE.DoubleSide
   });
   this.clock_body = new THREE.Object3D();
