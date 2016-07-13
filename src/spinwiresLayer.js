@@ -116,9 +116,10 @@ function spinwiresLayer(layer, demo) {
 
   this.curves = [];
   this.tubes = [];
+  this.tubeGeometries = [];
   this.lights = [];
   this.lightCenters = [];
-  var lightCenterGeometry = new THREE.SphereGeometry(0.8, 32, 32);
+  var lightCenterGeometry = new THREE.SphereGeometry(0.9, 32, 32);
   this.mainObject = new THREE.Object3D();
   for(var i = 0; i < this.cube.geometry.vertices.length; i++) {
     var points = [];
@@ -131,9 +132,9 @@ function spinwiresLayer(layer, demo) {
       points.push(point);
     }
     points.push(points[0]);
-    var curve = new THREE.SplineCurve3(points);
+    var curve = new THREE.CatmullRomCurve3(points);
     this.curves.push(curve);
-    var tubeGeometry = new THREE.TubeGeometryEx(curve, 32, 1, 8);
+    var tubeGeometry = new THREE.TubeGeometryEx(curve, 100, 1, 12);
     var shaderMaterial = new THREE.ShaderMaterial(SHADERS.spinwires);
     shaderMaterial.transparent = true;
     this.shaderMaterial = shaderMaterial;
@@ -153,8 +154,8 @@ function spinwiresLayer(layer, demo) {
     reflectionMaterial.roughnessMap.wrapS = reflectionMaterial.roughnessMap.wrapT = THREE.RepeatWrapping;
     reflectionMaterial.roughnessMap.repeat.set(1, 50);
     this.reflectionMaterial = reflectionMaterial;
-    var tube = new THREE.Mesh(tubeGeometry, shaderMaterial);
-    //tube.add(new THREE.Mesh(tubeGeometryInner, refractionMaterial));
+    var tube = new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(tubeGeometry), shaderMaterial);
+    this.tubeGeometries.push(tubeGeometry);
     this.tubes.push(tube);
     this.mainObject.add(tube);
     var light = new THREE.PointLight();
@@ -264,18 +265,19 @@ spinwiresLayer.prototype.update = function(frame, relativeFrame) {
   }
 
   for(var i = 0; i < this.tubes.length; i++) {
+    var tubeGeometry = this.tubeGeometries[i];
     var tube = this.tubes[i];
-    for(var j = 0; j < tube.geometry.vertices.length; j++) {
-      var step = clamp(0, (-j + relativeFrame * 100 - i * tube.geometry.vertices.length), 1);
-      var vertex = tube.geometry.vertices[j];
-      var center = tube.geometry.centers[j];
-      var radius = tube.geometry.radii[j];
-      var index = tube.geometry.indexes[j];
+    for(var j = 0; j < tubeGeometry.vertices.length; j++) {
+      var step = clamp(0, (-j + relativeFrame * 100 - i * tubeGeometry.vertices.length), 1);
+      var vertex = tubeGeometry.vertices[j];
+      var center = tubeGeometry.centers[j];
+      var radius = tubeGeometry.radii[j];
+      var index = tubeGeometry.indexes[j];
       vertex.x = center.x + radius.x * step;
       vertex.y = center.y + radius.y * step;
       vertex.z = center.z + radius.z * step;
     }
-    tube.geometry.verticesNeedUpdate = true;
+    tube.geometry.fromGeometry(tubeGeometry);
   }
 };
 
