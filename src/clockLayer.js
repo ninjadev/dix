@@ -32,6 +32,8 @@ function clockLayer(layer) {
 
   this.init_clock_model();
 
+  this.init_room();
+
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
 
@@ -150,6 +152,43 @@ clockLayer.prototype.init_clock_model = function() {
   this.scene.add(this.gear8);
   this.scene.add(this.gear9);
 }
+
+clockLayer.prototype.init_room = function() {
+  var skyGeometry = new THREE.BoxGeometry(50, 35, 50);
+  var skyBox = new THREE.Mesh(skyGeometry, new THREE.MeshStandardMaterial({
+    color: 0x404040,
+    map: Loader.loadTexture('res/brick.jpg'),
+    metalness: 0,
+    roughness: 1,
+    side: THREE.DoubleSide
+  }));
+  skyBox.material.map.wrapS = skyBox.material.map.wrapT = THREE.RepeatWrapping;
+  skyBox.material.map.repeat.set(2, 1);
+  this.scene.add(skyBox);
+  this.skyBox = skyBox;
+  this.skyBox.position.y = 5;
+  this.ceilingLight = new THREE.PointLight({
+    color: 0xddffff
+  });
+  this.ceilingLight.intensity = 1;
+  this.ceilingLight.position.x = 0;
+  this.ceilingLight.position.y = -2.5;
+  this.ceilingLight.position.z = 0;
+  this.scene.add(this.ceilingLight);
+
+  this.ambientLight = new THREE.AmbientLight(0x202020);
+  this.scene.add(this.ambientLight);
+
+  this.floorMaterial = new THREE.MeshStandardMaterial({
+    map: Loader.loadTexture('res/floor.jpg')
+  });
+  this.floorMaterial.map.repeat.set(0.5, 0.5);
+  this.floor = new THREE.Mesh(new THREE.BoxGeometry(20, 7.5, 20), this.floorMaterial);
+  this.floor.position.y = -15;
+  this.scene.add(this.floor);
+}
+
+
 
 clockLayer.prototype.getEffectComposerPass = function() {
   return this.renderPass;
