@@ -149,7 +149,7 @@ function spinwiresLayer(layer, demo) {
       envMapIntensity: 1,
       color: 0xb5a642,     
       metalness: 1,
-      roughnessMap: Loader.loadTexture('res/bluecloud_dn.jpg')
+      roughnessMap: Loader.loadTexture('res/brick.jpg')
     });
     reflectionMaterial.roughnessMap.wrapS = reflectionMaterial.roughnessMap.wrapT = THREE.RepeatWrapping;
     reflectionMaterial.roughnessMap.repeat.set(1, 50);
@@ -159,7 +159,7 @@ function spinwiresLayer(layer, demo) {
     this.tubes.push(tube);
     this.mainObject.add(tube);
     var light = new THREE.PointLight();
-    light.intensity = 0.00002;
+    light.intensity = 0.0003;
     this.mainObject.add(light);
     this.lights.push(light);
     var lightCenter = new THREE.Mesh(lightCenterGeometry, new THREE.MeshBasicMaterial());
@@ -284,12 +284,11 @@ spinwiresLayer.prototype.update = function(frame, relativeFrame) {
 spinwiresLayer.prototype.render = function(renderer, interpolation) {
   this.rigMaterialsForRenderPass();
   this.scene.remove(this.mainObject);
-  this.scene.add(this.disc);
+  this.scene.remove(this.disc);
+  this.scene.remove(this.rod);
   this.reflectionCamera.updateCubeMap(renderer, this.scene);
-  this.disc.material = new THREE.MeshStandardMaterial({
-    color: 0xb5a642,
-    metalness: 0.8
-  });
+  this.scene.add(this.disc);
+  this.scene.add(this.rod);
   this.refractionCamera.updateCubeMap(renderer, this.scene);
   this.scene.add(this.mainObject);
   this.rigMaterialsForGlowPass();
@@ -308,12 +307,14 @@ spinwiresLayer.prototype.rigMaterialsForGlowPass = function() {
       this.mainObject.add(this.lightCenters[i]);
     }
   }
-  this.barLightHolder.material = this.blackoutMaterial;
+  this.scene.add(this.disc);
   this.disc.material = this.shaderMaterial;
+  this.barLightHolder.material = this.blackoutMaterial;
   this.scene.remove(this.skyBox);
   this.floor.material = this.blackoutMaterial;
   this.rod.material = this.blackoutMaterial;
-  this.scene.add(this.godray);
+  this.scene.add(this.barLightGodRay);
+  this.scene.add(this.mainObject);
 }
 
 spinwiresLayer.prototype.rigMaterialsForRenderPass = function() {
@@ -322,10 +323,14 @@ spinwiresLayer.prototype.rigMaterialsForRenderPass = function() {
     this.mainObject.add(this.lights[i]);
     this.mainObject.remove(this.lightCenters[i]);
   }
-  this.scene.remove(this.godray);
+  this.scene.remove(this.barLightGodRay);
   this.barLightHolder.material = this.barLightHolderRenderMaterial;
+  this.scene.add(this.disc);
+  this.scene.add(this.rod);
   this.disc.material = this.reflectionMaterial;
+  this.rod.material = this.reflectionMaterial;
   this.scene.add(this.skyBox);
   this.floor.material = this.floorMaterial;
   this.rod.material = this.reflectionMaterial;
+  this.scene.add(this.mainObject);
 }
