@@ -107,8 +107,8 @@ phonographLayer.prototype.initPhonographModel = function() {
   loadObject(
     prefix + 'hismastervoice.obj',
     {x: 0, y: 0, z: 0},
-    new THREE.MeshLambertMaterial({
-      color: 0xB5A642,
+    new THREE.MeshStandardMaterial({
+      map: Loader.loadTexture(prefix + 'hismastervoice/_Wood_Cherry_Original_1.jpg'),
       side: THREE.DoubleSide
     }),
     function(object) {
