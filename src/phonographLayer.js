@@ -1,7 +1,7 @@
 /**
  * @constructor
  */
-function phonographLayer(layer) {
+function phonographLayer(layer, demo) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
