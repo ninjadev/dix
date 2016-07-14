@@ -66,7 +66,7 @@
   {
     "type": "drLayer",
     "displayName": "dr",
-    "startFrame": 1605,
+    "startFrame": 1331,
     "endFrame": 9716,
     "color": "pink",
     "config": {}
@@ -74,7 +74,7 @@
   {
     "type": "BloomLayer",
     "displayName": "bloom",
-    "startFrame": 1613,
+    "startFrame": 0,
     "endFrame": 9305,
     "color": "pink",
     "config": {
@@ -93,7 +93,7 @@
   {
     "type": "vignetteLayer",
     "displayName": "vignette",
-    "startFrame": 1612,
+    "startFrame": 0,
     "endFrame": 9305,
     "color": "pink",
     "config": {}

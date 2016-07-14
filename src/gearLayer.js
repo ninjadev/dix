@@ -25,8 +25,6 @@ function gearLayer(layer) {
   this.camera.position.y = 0;
   this.camera.position.z = 4;
 
-
-
   this.init_gear();
 
   this.plane = new THREE.Mesh(new THREE.PlaneGeometry(21, 12),
@@ -79,7 +77,14 @@ gearLayer.prototype.resize = function() {
 };
 
 gearLayer.prototype.update = function(frame, relativeFrame) {
-  this.plane.material.uniforms.time.value = relativeFrame;
+  this.plane.material.uniforms.time.value = frame;
+
+  this.gear.rotation.z = relativeFrame * 0.04;
+
+  this.gear.rotation.x = Math.PI * 2 * 0.75 + relativeFrame * 0.005;
+
+  this.gear.position.x = -1 + 2 * relativeFrame / 270;
+  this.gear.position.y = -0.5 + Math.pow(1.0 * relativeFrame / 270, 2);
 };
 
 gearLayer.prototype.render = function(renderer, interpolation) {
