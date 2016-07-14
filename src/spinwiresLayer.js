@@ -232,7 +232,7 @@ function spinwiresLayer(layer, demo) {
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
   this.renderPass.clear = true;
-  var bloomPass = new THREE.BloomPass(2);
+  var bloomPass = new THREE.BloomPass(2, 25, 4, 1024);
   this.glowEffectComposer = new THREE.EffectComposer(demo.renderer);
   this.glowEffectComposer.addPass(this.renderPass);
   this.glowEffectComposer.addPass(bloomPass);
