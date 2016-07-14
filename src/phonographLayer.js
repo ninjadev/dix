@@ -17,8 +17,12 @@ function phonographLayer(layer) {
   pointLight.position.z = 130;
   this.scene.add(pointLight);
 
+  // Whole phonograph with particles
   this.camera.position.set(0.21, 0.83, -0.21);
-  // this.camera.lookAt(new THREE.Vector3(0.44, 0.56, -2.12));
+
+  // Handle detail
+  //this.camera.position.set(0.88,0.45,-2.01);
+  //this.camera.lookAt(new THREE.Vector3(0.64,0.4,-2.16));
 
   this.particleDirection = [-0.99, 0.6, 0.56];
   this.spawnPosition = [
@@ -111,6 +115,16 @@ phonographLayer.prototype.initPhonographModel = function() {
       )
     }
   );
+  loadObject(
+    prefix + 'handle.obj',
+    {x: 0.64971, y: -0.40482, z: 2.1225},
+    new THREE.MeshStandardMaterial({
+      map: Loader.loadTexture(prefix + 'hismastervoice/Wood_Cherry_Original.jpg')
+    }),
+    function(object) {
+      that.handleObject = object;
+    }
+  );
   this.scene.add(this.phonographModel);
 };
 
@@ -136,7 +150,6 @@ phonographLayer.prototype.update = function(frame, relativeFrame) {
   this.phonographModel.position.y = Math.max(0, 0.01 * this.kickAnalysis.getValue(frame));
 
   var numNewParticles = 0 | Math.max(0, 2 * soundIntensityDiff + 0.5);
-  //console.log(numNewParticles);
 
   for (var i = 0; i < this.numParticles; i++) {
     var particle = this.particles[i];
@@ -167,6 +180,9 @@ phonographLayer.prototype.update = function(frame, relativeFrame) {
 
   if (this.recordObject) {
     this.recordObject.rotation.set(0, 0.05 * relativeFrame, 0);
+  }
+  if (this.handleObject) {
+    this.handleObject.rotation.set(-0.08 * relativeFrame, 0, 0)
   }
 };
 
