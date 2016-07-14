@@ -8,14 +8,6 @@
     "config": {}
   },
   {
-    "type": "spinwiresLayer",
-    "displayName": "spinwires",
-    "startFrame": 4877,
-    "endFrame": 5758,
-    "color": "red",
-    "config": {}
-  },
-  {
     "type": "titleLayer",
     "displayName": "title",
     "startFrame": 0,
@@ -67,7 +59,7 @@
     "type": "phonographLayer",
     "displayName": "phonographLayer",
     "startFrame": 3986,
-    "endFrame": 4878,
+    "endFrame": 5759,
     "color": "red",
     "config": {}
   },
