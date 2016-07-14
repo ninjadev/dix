@@ -190,14 +190,14 @@ phonographLayer.prototype.updateSpinwires = function(frame, relativeFrame) {
 };
 phonographLayer.prototype.update = function(frame, relativeFrame) {
   this.updateSpinwires(frame, relativeFrame - 887);
-  var soundIntensity = this.guitarAnalysis.getValue(frame) +
+  var soundIntensity = this.guitarAnalysis.getValue(frame) * (BEAN < 1056 ? 1 : 0) +
     this.snareAnalysis.getValue(frame) +
     this.kickAnalysis.getValue(frame);
   var soundIntensityDiff = soundIntensity - this.previousSoundIntensity;
   this.phonographModel.position.x = Math.max(0, 0.005 * this.snareAnalysis.getValue(frame));
   this.phonographModel.position.y = Math.max(0, 0.01 * this.kickAnalysis.getValue(frame));
 
-  var numNewParticles = 0 | Math.max(0, 2 * soundIntensityDiff + 0.5);
+  var numNewParticles = 0 | Math.max(0, (BEAN < 1056 ? 2 : 5) * soundIntensityDiff + 0.5);
 
   for (var i = 0; i < this.numParticles; i++) {
     var particle = this.particles[i];
