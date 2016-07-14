@@ -32,17 +32,25 @@
     "config": {}
   },
   {
-    "type": "gearLayer",
-    "displayName": "gear",
+    "type": "gearRedLayer",
+    "displayName": "gearRed",
     "startFrame": 1329,
     "endFrame": 1600,
+    "color": "red",
+    "config": {}
+  },
+  {
+    "type": "gearBlueLayer",
+    "displayName": "gearBlue",
+    "startFrame": 1601,
+    "endFrame": 1870,
     "color": "blue",
     "config": {}
   },
   {
     "type": "clockLayer",
     "displayName": "clock",
-    "startFrame": 1601,
+    "startFrame": 1871,
     "endFrame": 3100,
     "color": "blue",
     "config": {}

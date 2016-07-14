@@ -1,4 +1,5 @@
 {
     "tDiffuse": { "type": "t", "value": null },
+    "variant": { "type": "f", "value": null },
     "time": { "type": "f", "value": null }
 }
