@@ -18,13 +18,13 @@ function phonographLayer(layer) {
   this.scene.add(pointLight);
 
   this.camera.position.set(0.21, 0.83, -0.21);
-  this.camera.lookAt(0.21, 0.83, 0);
+  // this.camera.lookAt(new THREE.Vector3(0.44, 0.56, -2.12));
 
   this.particleDirection = [-0.99, 0.6, 0.56];
   this.spawnPosition = [
-    0.62 + 0.25 * this.particleDirection[0],
+    0.62 + 0.25 * this.particleDirection[0] - 0.151,
     0.82 + 0.25 * this.particleDirection[1],
-    -2.35 + 0.25 * this.particleDirection[2],
+    -2.35 + 0.25 * this.particleDirection[2] + 0.115
   ];
   this.particles = [];
   this.numParticles = 100;
@@ -62,11 +62,7 @@ phonographLayer.prototype.initPhonographModel = function() {
   var that = this;
   var prefix = 'res/phonograph/';
   this.phonographModel = new THREE.Object3D();
-  var material = new THREE.MeshLambertMaterial({
-    color: 0xB5A642,
-    side: THREE.DoubleSide
-  });
-  var loadObject = function(objPath, material) {
+  var loadObject = function(objPath, offset, material, callback) {
     var objLoader = new THREE.OBJLoader();
     Loader.loadAjax(objPath, function(text) {
       var object = objLoader.parse(text);
@@ -75,10 +71,46 @@ phonographLayer.prototype.initPhonographModel = function() {
           child.material = material;
         }
       });
-      that.phonographModel.add(object);
+
+      var pivot = new THREE.Object3D();
+      pivot.position.set(-offset.x, -offset.y, -offset.z);
+      object.position.set(
+        object.position.x + offset.x,
+        object.position.y + offset.y,
+        object.position.z + offset.z
+      );
+      pivot.add(object);
+
+      that.phonographModel.add(pivot);
+      callback(pivot);
     });
   };
-  loadObject(prefix + 'hismastervoice.obj', material);
+  loadObject(
+    prefix + 'hismastervoice.obj',
+    {x: 0, y: 0, z: 0},
+    new THREE.MeshLambertMaterial({
+      color: 0xB5A642,
+      side: THREE.DoubleSide
+    }),
+    function(object) {
+      that.phonoGraphObject = object;
+    }
+  );
+  loadObject(
+    prefix + 'record.obj',
+    {x: -0.5925, y: 0, z: 2.237},
+    new THREE.MeshStandardMaterial({
+      map: Loader.loadTexture(prefix + 'hismastervoice/text_disco.jpg')
+    }),
+    function(object) {
+      that.recordObject = object;
+      that.recordObject.position.set(
+        object.position.x - 0.151,
+        object.position.y,
+        object.position.z + 0.115
+      )
+    }
+  );
   this.scene.add(this.phonographModel);
 };
 
@@ -131,6 +163,11 @@ phonographLayer.prototype.update = function(frame, relativeFrame) {
   }
   this.currentParticleIndex = (this.currentParticleIndex + numNewParticles) % this.numParticles;
   this.previousSoundIntensity = soundIntensity;
+
+
+  if (this.recordObject) {
+    this.recordObject.rotation.set(0, 0.05 * relativeFrame, 0);
+  }
 };
 
 phonographLayer.prototype.render = function(renderer, interpolation) {
