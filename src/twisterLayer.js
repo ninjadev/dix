@@ -109,6 +109,8 @@ twisterLayer.prototype.end = function() {
 twisterLayer.prototype.resize = function() {
   this.canvas.width = 1024;
   this.canvas.height = 2048;
+  this.glowEffectComposer.setSize(16 * GU, 9 * GU);
+  this.finalEffectComposer.setSize(16 * GU, 9 * GU);
 };
 
 twisterLayer.prototype.update = function(frame, relativeFrame) {

@@ -18,13 +18,32 @@ function tunnelsplosionLayer(layer, demo) {
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
   this.renderPass.clear = true;
-  var bloomPass = new THREE.BloomPass(2);
+  var bloomPass = new THREE.BloomPass(8, 25 / 2, 4 / 2, 1024);
   this.glowEffectComposer = new THREE.EffectComposer(demo.renderer);
   this.glowEffectComposer.addPass(this.renderPass);
   this.glowEffectComposer.addPass(bloomPass);
   this.finalEffectComposer = new THREE.EffectComposer(demo.renderer);
   this.addPass = new THREE.ShaderPass(SHADERS.add);
   this.finalEffectComposer.addPass(this.renderPass);
+  this.ssaoPass = new THREE.ShaderPass(THREE.SSAOShader);
+  this.ssaoPass.needsSwap = true;
+  this.finalEffectComposer.addPass(this.ssaoPass);
+
+  this.depthMaterial = new THREE.MeshDepthMaterial();
+  this.depthMaterial.depthPacking = THREE.RGBADepthPacking;
+  this.depthMaterial.blending = THREE.NoBlending;
+  this.depthRenderTarget = new THREE.WebGLRenderTarget(16 * GU, 9 * GU, {
+    minFilter: THREE.LinearFilter,
+    magFilter: THREE.LinearFilter
+  });
+
+  this.ssaoPass.uniforms.tDepth.value = this.depthRenderTarget.texture;
+  this.ssaoPass.uniforms.size.value.set(16 * GU, 9 * GU);
+  this.ssaoPass.uniforms.cameraNear.value = this.camera.near;
+  this.ssaoPass.uniforms.cameraFar.value = this.camera.far;
+  this.ssaoPass.uniforms.onlyAO.value = false;
+  this.ssaoPass.uniforms.aoClamp.value = 0.3;
+  this.ssaoPass.uniforms.lumInfluence.value = 0.5;
 
   this.currentColorIndex = 0;
   this.colors = [
@@ -59,20 +78,20 @@ function tunnelsplosionLayer(layer, demo) {
     side: THREE.DoubleSide
   });
   this.tunnelRenderMaterial = new THREE.MeshStandardMaterial({
-      map: Loader.loadTexture('res/brick.jpg'),
-      bumpMap: Loader.loadTexture('res/brick.jpg'),
-      bumpMapScale: 10,
-      side: THREE.DoubleSide,
-      metalness: 1,
-      roughness: 0.5
-    });
+    color: 0xb5a642,     
+    metalness: 1,
+    shading: THREE.FlatShading,
+    roughness: 0.2,
+    side: THREE.DoubleSide
+  });
   this.tunnelGlowMaterial = new THREE.MeshBasicMaterial({
-      map: Loader.loadTexture('res/brick.jpg'),
-      side: THREE.DoubleSide
-    });
+    wireframe: true,
+    side: THREE.DoubleSide
+  });
   this.tunnel = new THREE.Mesh(
     new THREE.TubeGeometryEx(this.curve, 200, 55, 64),
     this.tunnelRenderMaterial);
+  /*
   this.tunnelRenderMaterial.map.repeat.set(256, 8);
   this.tunnelRenderMaterial.map.wrapS = this.tunnelRenderMaterial.map.wrapT = THREE.RepeatWrapping;
   this.tunnelRenderMaterial.bumpMap.repeat.set(256, 8);
@@ -80,11 +99,13 @@ function tunnelsplosionLayer(layer, demo) {
   this.tunnelRenderMaterial.bumpScale = 0.1;
   this.tunnelGlowMaterial.map.repeat.set(256, 8);
   this.tunnelGlowMaterial.map.wrapS = this.tunnelGlowMaterial.map.wrapT = THREE.RepeatWrapping;
+  */
   this.scene.add(this.tunnel);
   this.ball = new THREE.Object3D();
-  this.colorBallRenderMaterial = new THREE.MeshBasicMaterial({
-                               color: 0x444444,
-                               shading: THREE.FlatShading
+  this.colorBallRenderMaterial = new THREE.MeshStandardMaterial({
+    roughness: 1,
+    metalness: 0,
+    shading: THREE.FlatShading
   });
   this.colorBall = new THREE.Mesh(new THREE.TetrahedronGeometry(10, 2),
       this.colorBallRenderMaterial);
@@ -93,7 +114,7 @@ function tunnelsplosionLayer(layer, demo) {
     wireframe: true
   });
   this.wireframeBallGlowMaterial = new THREE.MeshBasicMaterial({
-    color: 0,
+    color: 0xffffff,
     wireframe: true
   });
   this.wireframeBall = new THREE.Mesh(new THREE.TetrahedronGeometry(10, 2),
@@ -150,6 +171,8 @@ tunnelsplosionLayer.prototype.end = function() {
 tunnelsplosionLayer.prototype.resize = function() {
   this.glowEffectComposer.setSize(16 * GU, 9 * GU);
   this.finalEffectComposer.setSize(16 * GU, 9 * GU);
+  this.ssaoPass.uniforms.size.value.set(16 * GU, 9 * GU);
+  this.depthRenderTarget.setSize(16 * GU, 9 * GU);
 };
 
 tunnelsplosionLayer.prototype.update = function(frame, relativeFrame) {
@@ -162,9 +185,13 @@ tunnelsplosionLayer.prototype.update = function(frame, relativeFrame) {
     var center = this.tunnel.geometry.centers[j];
     var radius = this.tunnel.geometry.radii[j];
     var index = this.tunnel.geometry.indexes[j];
-    vertex.x = center.x + radius.x * (1 + 0.2 * Math.cos(relativeFrame / 20) * Math.sin(relativeFrame / 20 + 2 * j / 64 * Math.PI * 2));
-    vertex.y = center.y + radius.y * (1 + 0.2 * Math.sin(relativeFrame / 20 + 2 * j / 64 * Math.PI * 2));
-    vertex.z = center.z + radius.z * (1 + 0.2 * Math.sin(relativeFrame / 20 + 2 * j / 64 * Math.PI * 2));
+    var radiusScaler = 1;
+    if(j % 4 < 2) {
+      radiusScaler = 0.92;
+    }
+    vertex.x = center.x + radiusScaler * radius.x * (1 + 0.2 * Math.cos(relativeFrame / 20) * Math.sin(relativeFrame / 20 + 2 * j / 64 * Math.PI * 2));
+    vertex.y = center.y + radiusScaler * radius.y * (1 + 0.2 * Math.sin(relativeFrame / 20 + 2 * j / 64 * Math.PI * 2));
+    vertex.z = center.z + radiusScaler * radius.z * (1 + 0.2 * Math.sin(relativeFrame / 20 + 2 * j / 64 * Math.PI * 2));
   }
   this.tunnel.geometry.verticesNeedUpdate = true;
 
