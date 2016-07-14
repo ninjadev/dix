@@ -11,7 +11,6 @@ function clockLayer(layer) {
   light.position.set( 10, 10, 10 );
   this.scene.add(light);
 
-
   var light2 = new THREE.PointLight( 0xffffff, 1, 100 );
   light2.position.set( -10, -10, -10 );
   this.scene.add(light2);

@@ -20,7 +20,7 @@ function gearRedLayer(layer) {
   pointLight.position.y = 50;
   pointLight.position.z = 130;
   this.scene.add(pointLight);
-
+  
   this.camera.position.x = 0;
   this.camera.position.y = 0;
   this.camera.position.z = 4;
