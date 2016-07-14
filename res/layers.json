@@ -1,5 +1,13 @@
 [
   {
+    "type": "hexapusLayer",
+    "displayName": "hexapus",
+    "startFrame": 3103,
+    "endFrame": 4097,
+    "color": "red",
+    "config": {}
+  },
+  {
     "type": "spinwiresLayer",
     "displayName": "spinwires",
     "startFrame": 4877,
