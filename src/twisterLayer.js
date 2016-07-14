@@ -12,6 +12,8 @@ function twisterLayer(layer, demo) {
   this.canvas.height = 2048;
   this.canvasCtx = this.canvas.getContext('2d');
   var canvasTexture = new THREE.Texture(this.canvas);
+
+  this.handHeldCameraModifier = new HandHeldCameraModifier(0.00001);
   
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
   this.renderPass.clear = true;
@@ -124,6 +126,7 @@ twisterLayer.prototype.update = function(frame, relativeFrame) {
   this.camera.position.x = 100 * Math.sin(rotationValue);
   this.camera.position.z = 100 * Math.cos(rotationValue);
   this.camera.lookAt(this.cube.position);
+  this.handHeldCameraModifier.update(this.camera);
 
   var rotation = new THREE.Matrix3();
   var twisterTime = relativeFrame / 10;

@@ -5,6 +5,8 @@ function spinwiresLayer(layer, demo) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
+  this.handHeldCameraModifier = new HandHeldCameraModifier(0.00001);
+
   this.audioAnalysis = new audioAnalysisSanitizer('kick.wav', 'spectral_energy', 2);
 
   this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 1, 10000);
@@ -295,6 +297,7 @@ spinwiresLayer.prototype.update = function(frame, relativeFrame) {
     this.camera.position.z = smoothstep(200, 100, cameraStep);
     this.camera.lookAt(new THREE.Vector3(0, 0, 100));
   }
+  this.handHeldCameraModifier.update(this.camera);
   /*
   this.camera.position.x = 450 * Math.sin(relativeFrame / 2000);
   this.camera.position.z = 450 * Math.cos(relativeFrame / 2000);
