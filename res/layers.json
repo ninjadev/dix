@@ -1,5 +1,13 @@
 [
   {
+    "type": "cubegridLayer",
+    "displayName": "cubegrid",
+    "startFrame": 3101,
+    "endFrame": 3987,
+    "color": "red",
+    "config": {}
+  },
+  {
     "type": "spinwiresLayer",
     "displayName": "spinwires",
     "startFrame": 4877,

@@ -6,13 +6,20 @@ function endLayer(layer) {
   this.scene = new THREE.Scene();
 
   this.camera = new THREE.OrthographicCamera( 16 / - 2, 16 / 2, 9 / 2, 9 / - 2, 0, 10 );
+  this.handHeldCameraModifier = new HandHeldCameraModifier(0.0001);
   this.canvas = document.createElement('canvas');
   this.canvas.width = 16 * GU;
   this.canvas.height = 9 * GU;
   this.canvasCtx = this.canvas.getContext('2d');
+  this.bg = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 1),
+                           new THREE.MeshBasicMaterial({color: 0}));
+  this.scene.add(this.bg);
+  this.flashAmount = 0;
+  this.bg.position.z = -5;
   this.cube = new THREE.Mesh(new THREE.BoxGeometry(16, 9, 1),
                              new THREE.MeshBasicMaterial({
                                color: 0xffffff,
+                               transparent: true,
                                map: new THREE.Texture(this.canvas)
                              }));
   this.cube.material.map.minFilter = THREE.LinearFilter;
@@ -56,14 +63,28 @@ endLayer.prototype.resize = function() {
 endLayer.prototype.update = function(frame, relativeFrame) {
   this.relativeFrame = relativeFrame;
   this.frame = frame;
+  this.handHeldCameraModifier.update(this.camera);
+  if(BEAN < 2034) {
+    this.flashAmount *= 0.8;
+  } else {
+    this.flashAmount *= 0.99;
+  }
+  if(BEAT && BEAN == 2016 ||
+     BEAT && BEAN == 2025 ||
+     BEAT && BEAN == 2034) {
+    this.flashAmount = 1;
+  }
+  this.bg.material.color.setRGB(this.flashAmount, this.flashAmount, this.flashAmount);
 };
 
 endLayer.prototype.render = function(renderer, interpolation) {
-  this.canvasCtx.fillStyle = 'white';
-  this.canvasCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   this.canvasCtx.textAlign = 'center';
   this.canvasCtx.textBaseline = 'middle';
-  this.canvasCtx.fillStyle = 'black';
+  this.canvasCtx.fillStyle = 'white';
+  if(this.flashAmount > 0.5 || BEAN >= 2034) {
+    this.canvasCtx.fillStyle = 'black';
+  }
 
   if(BEAN >= 2015) {
     this.canvasCtx.font = (2.5 * GU) + 'px steamy';
