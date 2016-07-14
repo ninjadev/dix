@@ -21,7 +21,7 @@ function cubegridLayer(layer, demo) {
   });
   this.blackoutMaterial = new THREE.MeshBasicMaterial({color: 0});
   this.grid = [];
-  this.gridSize = 12;
+  this.gridSize = 8;
   for(var x = 0; x < this.gridSize; x++) {
     this.grid[x] = [];
     for(var y = 0; y < this.gridSize; y++) {
@@ -32,8 +32,7 @@ function cubegridLayer(layer, demo) {
         cube.position.y = y - this.gridSize / 2 - 0.5;
         cube.position.z = z - this.gridSize / 2 - 0.5;
         cube.position.multiplyScalar(3);
-        cube.renderMaterial = new THREE.MeshStandardMaterial({
-        });
+        cube.material = new THREE.MeshStandardMaterial({});
         this.grid[x][y][z] = cube;
         this.scene.add(cube);
       }
@@ -105,32 +104,64 @@ cubegridLayer.prototype.resize = function() {
 };
 
 cubegridLayer.prototype.update = function(frame, relativeFrame) {
-  var time = relativeFrame / 2 + this.kickAnalysis.getValue(frame) - 2 * this.snareAnalysis.getValue(frame);
+  var time = relativeFrame / 2;
+  var cameraTime = time + this.kickAnalysis.getValue(frame) - 2 * this.snareAnalysis.getValue(frame);
 
   this.bloomPass.copyUniforms.opacity.value = this.kickAnalysis.getValue(frame);
 
-  this.camera.position.x = Math.sin(time / 40) * 80;
-  this.camera.position.y = 30;
-  this.camera.position.z = Math.cos(time / 40) * 80;
+  this.camera.position.x = Math.sin(cameraTime / 40) * 60;
+  this.camera.position.y = 20;
+  this.camera.position.z = Math.cos(cameraTime / 40) * 60;
   this.cameraLight.position.copy(this.camera.position);
   this.camera.lookAt(new THREE.Vector3(0, -5, 0));
   this.handHeldCameraModifier.update(this.camera);
 
-  for(var x = 0; x < this.gridSize; x++) {
-    for(var y = 0; y < this.gridSize; y++) {
-      for(var z = 0; z < this.gridSize; z++) {
-        var cube = this.grid[x][y][z];
-        var scale = Math.sqrt(0.5 +
-          0.5 * (Math.sin(x / 7 + Math.PI * 2 * time / 40) +
-          Math.cos(y / 4 + Math.PI * 2 * time / 37) +
-          Math.sin(0.1 * Math.cos(x / 3) / 4 + Math.PI * 2 * time / 50) +
-          Math.sin(0.4 * z / 4 + Math.PI * 2 * time / 54)));
-        scale += 0.1 * this.kickAnalysis.getValue(frame);
-        var r = lerp(0xf4, 0xff, scale) / 0xff;
-        var g = lerp(0x57, 0xc9, scale) / 0xff;
-        var b = lerp(0xad, 0x6b, scale) / 0xff;
-        cube.renderMaterial.color.setRGB(r, g, b);
-        cube.scale.set(scale, scale, scale);
+  if(BEAN < 768) {
+    for(var x = 0; x < this.gridSize; x++) {
+      for(var y = 0; y < this.gridSize; y++) {
+        for(var z = 0; z < this.gridSize; z++) {
+          var cube = this.grid[x][y][z];
+          var scale = Math.sqrt(0.5 +
+            0.5 * (Math.sin(x / 7 + Math.PI * 2 * time / 40) +
+            Math.cos(y / 4 + Math.PI * 2 * time / 37) +
+            Math.sin(0.1 * Math.cos(x / 3) / 4 + Math.PI * 2 * time / 50) +
+            Math.sin(0.4 * z / 4 + Math.PI * 2 * time / 54)));
+          scale += 0.1 * this.kickAnalysis.getValue(frame);
+          var r = lerp(0xf4, 0xff, scale) / 0xff;
+          var g = lerp(0x57, 0xc9, scale) / 0xff;
+          var b = lerp(0xad, 0x6b, scale) / 0xff;
+          cube.material.color.setRGB(r, g, b);
+          cube.scale.set(scale, scale, scale);
+        }
+      }
+    }
+  } else {
+    for(var x = 0; x < this.gridSize; x++) {
+      for(var y = 0; y < this.gridSize; y++) {
+        for(var z = 0; z < this.gridSize; z++) {
+          var cube = this.grid[x][y][z];
+          var position = 10 * Math.sin(time / 10);
+          if(BEAN  >= 816) {
+            position = ((time) % (this.gridSize * 2)) - this.gridSize;
+          }
+          var dx = x - this.gridSize / 2 + position;
+          var dy = y - this.gridSize / 2;
+          var dz = z - this.gridSize / 2;
+          var scale = 1;
+          var size = 30 + 30 * Math.sin(frame / 10);
+          var check = dx * dx + dy * dy + dz * dz;
+          if(BEAN >= 816) {
+            scale = smoothstep(1, 0, size / check);
+          } else {
+            scale = smoothstep(0, 1, size / check);
+          }
+          //scale += 0.01 * this.kickAnalysis.getValue(frame);
+          var r = lerp(0xf4, 0xff, scale) / 0xff;
+          var g = lerp(0x57, 0xc9, scale) / 0xff;
+          var b = lerp(0xad, 0x6b, scale) / 0xff;
+          cube.material.color.setRGB(r, g, b);
+          cube.scale.set(scale, scale, scale);
+        }
       }
     }
   }
@@ -150,24 +181,8 @@ cubegridLayer.prototype.render = function(renderer, interpolation) {
 
 cubegridLayer.prototype.rigMaterialsForGlowPass = function() {
   this.scene.remove(this.skyBox);
-  if(BEAN < 768) {
-    for(var x = 0; x < this.gridSize; x++) {
-      for(var y = 0; y < this.gridSize; y++) {
-        for(var z = 0; z < this.gridSize; z++) {
-          this.grid[x][y][z].material = this.blackoutMaterial;
-        }
-      }
-    }
-  }
 }
 
 cubegridLayer.prototype.rigMaterialsForRenderPass = function() {
   this.scene.add(this.skyBox);
-  for(var x = 0; x < this.gridSize; x++) {
-    for(var y = 0; y < this.gridSize; y++) {
-      for(var z = 0; z < this.gridSize; z++) {
-        this.grid[x][y][z].material = this.grid[x][y][x].renderMaterial;
-      }
-    }
-  }
 }
