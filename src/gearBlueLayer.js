@@ -1,7 +1,7 @@
 /**
  * @constructor
  */
-function gearLayer(layer) {
+function gearBlueLayer(layer) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
@@ -38,7 +38,7 @@ function gearLayer(layer) {
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
 
-gearLayer.prototype.init_gear = function() {
+gearBlueLayer.prototype.init_gear = function() {
   var prefix = 'res/clock/';
   var gear_material = new THREE.MeshStandardMaterial({
     color: 0xB5A642,
@@ -59,33 +59,35 @@ gearLayer.prototype.init_gear = function() {
     });
   };
   this.gear = new THREE.Object3D();
-  loadObject(prefix + 'gear3.obj', gear_material, this.gear);
+  loadObject(prefix + 'gear1.obj', gear_material, this.gear);
   this.scene.add(this.gear);
 }
 
-gearLayer.prototype.getEffectComposerPass = function() {
+gearBlueLayer.prototype.getEffectComposerPass = function() {
   return this.renderPass;
 };
 
-gearLayer.prototype.start = function() {
+gearBlueLayer.prototype.start = function() {
 };
 
-gearLayer.prototype.end = function() {
+gearBlueLayer.prototype.end = function() {
 };
 
-gearLayer.prototype.resize = function() {
+gearBlueLayer.prototype.resize = function() {
 };
 
-gearLayer.prototype.update = function(frame, relativeFrame) {
+gearBlueLayer.prototype.update = function(frame, relativeFrame) {
   this.plane.material.uniforms.time.value = frame;
+  this.plane.material.uniforms.variant.value = 1;
 
-  this.gear.rotation.z = relativeFrame * 0.04;
+  this.gear.rotation.z = Math.pow(relativeFrame * 0.02, 2);
 
-  this.gear.rotation.x = Math.PI * 2 * 0.75 + relativeFrame * 0.005;
+  this.gear.rotation.x = Math.PI * 2 * 0.75 + Math.sqrt(relativeFrame * 0.005);
 
-  this.gear.position.x = -1 + 2 * relativeFrame / 270;
-  this.gear.position.y = -0.5 + Math.pow(1.0 * relativeFrame / 270, 2);
+  this.gear.position.x = 1.4 - 2.1 * relativeFrame / 270;
+  this.gear.position.y = 0.63 - Math.pow(0.88 * relativeFrame / 270, 3);
+  this.gear.position.z = relativeFrame * 0.006;
 };
 
-gearLayer.prototype.render = function(renderer, interpolation) {
+gearBlueLayer.prototype.render = function(renderer, interpolation) {
 };
