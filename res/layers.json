@@ -101,8 +101,8 @@
   {
     "type": "distortionLayer",
     "displayName": "distortion",
-    "startFrame": 7531,
-    "endFrame": 7586,
+    "startFrame": 7476,
+    "endFrame": 7587,
     "color": "pink",
     "config": {}
   },
