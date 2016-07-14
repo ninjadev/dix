@@ -113,5 +113,13 @@
     "endFrame": 9305,
     "color": "pink",
     "config": {}
+  },
+  {
+    "type": "colorcorrectionLayer",
+    "displayName": "colorcorrection",
+    "startFrame": 0,
+    "endFrame": 9305,
+    "color": "pink",
+    "config": {}
   }
 ]
