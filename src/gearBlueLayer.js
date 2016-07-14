@@ -27,9 +27,10 @@ function gearBlueLayer(layer) {
 
   this.init_gear();
 
-  this.plane = new THREE.Mesh(new THREE.PlaneGeometry(21, 12),
+  this.plane = new THREE.Mesh(new THREE.PlaneGeometry(25, 22),
                              new THREE.ShaderMaterial(SHADERS.animelines));
   this.plane.rotation.x = 0;
+  this.plane.rotation.z = -Math.PI / 4;
 
   this.plane.position.z = -10;
 
@@ -78,7 +79,9 @@ gearBlueLayer.prototype.resize = function() {
 
 gearBlueLayer.prototype.update = function(frame, relativeFrame) {
   this.plane.material.uniforms.time.value = frame;
-  this.plane.material.uniforms.variant.value = 1;
+
+  this.plane.material.uniforms.colorA.value = new THREE.Color(19 / 255, 18 / 255, 94 / 255);
+  this.plane.material.uniforms.colorB.value = new THREE.Color(208 / 255, 225 / 255, 255 / 255);
 
   this.gear.rotation.z = Math.pow(relativeFrame * 0.02, 2);
 

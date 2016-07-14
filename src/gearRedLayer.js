@@ -78,7 +78,9 @@ gearRedLayer.prototype.resize = function() {
 
 gearRedLayer.prototype.update = function(frame, relativeFrame) {
   this.plane.material.uniforms.time.value = frame;
-  this.plane.material.uniforms.variant.value = 0;
+
+  this.plane.material.uniforms.colorA.value = new THREE.Color(113 / 255, 17 / 255, 18 / 255);
+  this.plane.material.uniforms.colorB.value = new THREE.Color(248 / 255, 225 / 255, 132 / 255);
 
   this.gear.rotation.z = -Math.pow(relativeFrame * 0.02, 2);
 
