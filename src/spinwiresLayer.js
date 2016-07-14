@@ -5,18 +5,73 @@ function spinwiresLayer(layer, demo) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
+  this.handHeldCameraModifier = new HandHeldCameraModifier(0.00001);
+
   this.audioAnalysis = new audioAnalysisSanitizer('kick.wav', 'spectral_energy', 2);
 
   this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 1, 10000);
-  this.refractionCamera = new THREE.CubeCamera(0.0001, 10000, 256);
-  this.reflectionCamera = new THREE.CubeCamera(0.0001, 10000, 256);
-  this.scene.add(this.refractionCamera);
-  this.scene.add(this.reflectionCamera);
-
 
   this.barLightHolderRenderMaterial = new THREE.MeshStandardMaterial({
       map: Loader.loadTexture('res/floor.jpg')
   });
+
+  var partialCubeResources = [
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'}
+  ];
+  var loadedCount = 0;
+  var cubemap = new THREE.CubeTexture(partialCubeResources.map(function(item) {return item.image;}));
+  for(var i = 0; i < partialCubeResources.length; i++) {
+    Loader.load(partialCubeResources[i].src, partialCubeResources[i].image, function() {
+      loadedCount++;
+      if(loadedCount == 6) {
+        cubemap.needsUpdate = true;
+      }
+    });
+  }
+  var partialCubeResources2 = [
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'},
+      {image: new Image(), src: 'res/brick.jpg'}
+  ];
+  var loadedCount2 = 0;
+  var cubemap2 = new THREE.CubeTexture(partialCubeResources.map(function(item) {return item.image;}));
+  for(var i = 0; i < partialCubeResources2.length; i++) {
+    Loader.load(partialCubeResources2[i].src, partialCubeResources2[i].image, function() {
+      loadedCount2++;
+      if(loadedCount2 == 6) {
+        cubemap2.needsUpdate = true;
+      }
+    });
+  }
+  this.refractionCubemap = cubemap;
+  this.refractionCubemap.mapping = THREE.CubeRefractionWrapping;
+  this.reflectionCubemap = cubemap2;
+
+  var skyGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
+
+  var cubeShader = THREE.ShaderLib.cube;
+  var cubeUniforms = THREE.UniformsUtils.clone(cubeShader.uniforms);
+  cubeUniforms.tCube.value = cubemap;
+  var skyMaterial = new THREE.ShaderMaterial({
+    fragmentShader: cubeShader.fragmentShader,
+    vertexShader: cubeShader.vertexShader,
+    uniforms: cubeUniforms,
+    side: THREE.BackSide
+  });
+  var skyBox = new THREE.Mesh(skyGeometry, new THREE.MeshStandardMaterial({
+    map: Loader.loadTexture('res/brick.jpg'),
+    side: THREE.DoubleSide
+  }));
+  this.scene.add(skyBox);
+  this.skyBox = skyBox;
 
   this.barLightHolder = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 29), this.barLightHolderRenderMaterial);
   this.scene.add(this.barLightHolder);
@@ -44,23 +99,10 @@ function spinwiresLayer(layer, demo) {
       this.reflectionMaterial);
   this.scene.add(this.rod);
 
-  var skyGeometry = new THREE.BoxGeometry(1000, 700, 1000);
-  var skyBox = new THREE.Mesh(skyGeometry, new THREE.MeshStandardMaterial({
-    color: 0x404040,
-    map: Loader.loadTexture('res/brick.jpg'),
-    metalness: 0,
-    roughness: 1,
-    side: THREE.DoubleSide
-  }));
-  skyBox.material.map.wrapS = skyBox.material.map.wrapT = THREE.RepeatWrapping;
-  skyBox.material.map.repeat.set(2, 1);
-  this.scene.add(skyBox);
-  this.skyBox = skyBox;
-  this.skyBox.position.y = 250;
   this.ceilingLight = new THREE.PointLight({
     color: 0xddffff  
   });
-  this.ceilingLight.intensity = 1;
+  this.ceilingLight.intensity = 0.2;
   this.ceilingLight.position.x = 0;
   this.ceilingLight.position.y = 100;
   this.ceilingLight.position.z = 0;
@@ -87,8 +129,6 @@ function spinwiresLayer(layer, demo) {
   this.cubeGeometry.vertices.push(new THREE.Vector3(0, 5, -5));
   this.cubeGeometry.vertices.push(new THREE.Vector3(0, -5, -5));
   this.geometries = [];
-
-  this.debugCubeCounter = 0;
 
   this.wireframeMaterial = new THREE.MeshBasicMaterial({wireframe: true});
 
@@ -119,7 +159,7 @@ function spinwiresLayer(layer, demo) {
   this.tubeGeometries = [];
   this.lights = [];
   this.lightCenters = [];
-  var lightCenterGeometry = new THREE.SphereGeometry(0.9, 32, 32);
+  var lightCenterGeometry = new THREE.SphereGeometry(0.85, 32, 32);
   this.mainObject = new THREE.Object3D();
   for(var i = 0; i < this.cube.geometry.vertices.length; i++) {
     var points = [];
@@ -134,19 +174,21 @@ function spinwiresLayer(layer, demo) {
     points.push(points[0]);
     var curve = new THREE.CatmullRomCurve3(points);
     this.curves.push(curve);
-    var tubeGeometry = new THREE.TubeGeometryEx(curve, 100, 1, 12);
+    var tubeGeometry = new THREE.TubeGeometryEx(curve, 64, 1, 4);
     var shaderMaterial = new THREE.ShaderMaterial(SHADERS.spinwires);
     shaderMaterial.transparent = true;
     this.shaderMaterial = shaderMaterial;
-    this.refractionCamera.renderTarget.mapping = THREE.CubeRefractionMapping;
     var refractionMaterial = new THREE.MeshBasicMaterial({
-      envMap: this.refractionCamera.renderTarget,
-      reflectivity: 0.98
+      wireframe: true,
+      color: 0xc87533,
+      envMap: this.refractionCubemap,
+      shading: THREE.FlatShading,
+      transparent: true,
+      opacity: 0.6
     });
     this.refractionMaterial = refractionMaterial;
     var reflectionMaterial = new THREE.MeshStandardMaterial({
-      envMap: this.reflectionCamera.renderTarget,
-      envMapIntensity: 1,
+      envMap: this.reflectionCubemap,
       color: 0xb5a642,     
       metalness: 1,
       roughnessMap: Loader.loadTexture('res/brick.jpg')
@@ -154,15 +196,19 @@ function spinwiresLayer(layer, demo) {
     reflectionMaterial.roughnessMap.wrapS = reflectionMaterial.roughnessMap.wrapT = THREE.RepeatWrapping;
     reflectionMaterial.roughnessMap.repeat.set(1, 50);
     this.reflectionMaterial = reflectionMaterial;
-    var tube = new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(tubeGeometry), shaderMaterial);
+    var tube = new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(tubeGeometry), this.refractionMaterial);
+    tubeGeometry.computeFaceNormals();
+    tubeGeometry.computeVertexNormals();
     this.tubeGeometries.push(tubeGeometry);
     this.tubes.push(tube);
     this.mainObject.add(tube);
     var light = new THREE.PointLight();
-    light.intensity = 0.0003;
+    light.intensity = 0.001;
     this.mainObject.add(light);
     this.lights.push(light);
-    var lightCenter = new THREE.Mesh(lightCenterGeometry, new THREE.MeshBasicMaterial());
+    var lightCenter = new THREE.Mesh(lightCenterGeometry, new THREE.MeshBasicMaterial({
+      color: 0xcc7f4c
+    }));
     this.mainObject.add(lightCenter);
     this.lightCenters.push(lightCenter);
   }
@@ -251,6 +297,7 @@ spinwiresLayer.prototype.update = function(frame, relativeFrame) {
     this.camera.position.z = smoothstep(200, 100, cameraStep);
     this.camera.lookAt(new THREE.Vector3(0, 0, 100));
   }
+  this.handHeldCameraModifier.update(this.camera);
   /*
   this.camera.position.x = 450 * Math.sin(relativeFrame / 2000);
   this.camera.position.z = 450 * Math.cos(relativeFrame / 2000);
@@ -266,15 +313,6 @@ spinwiresLayer.prototype.update = function(frame, relativeFrame) {
 };
 
 spinwiresLayer.prototype.render = function(renderer, interpolation) {
-  this.rigMaterialsForRenderPass();
-  this.scene.remove(this.mainObject);
-  this.scene.remove(this.disc);
-  this.scene.remove(this.rod);
-  this.reflectionCamera.updateCubeMap(renderer, this.scene);
-  this.scene.add(this.disc);
-  this.scene.add(this.rod);
-  this.refractionCamera.updateCubeMap(renderer, this.scene);
-  this.scene.add(this.mainObject);
   this.rigMaterialsForGlowPass();
   this.glowEffectComposer.render();
   this.rigMaterialsForRenderPass();
@@ -315,6 +353,5 @@ spinwiresLayer.prototype.rigMaterialsForRenderPass = function() {
   this.rod.material = this.reflectionMaterial;
   this.scene.add(this.skyBox);
   this.floor.material = this.floorMaterial;
-  this.rod.material = this.reflectionMaterial;
   this.scene.add(this.mainObject);
 }
