@@ -100,6 +100,8 @@ cubegridLayer.prototype.end = function() {
 cubegridLayer.prototype.resize = function() {
   this.depthRenderTarget.setSize(16 * GU, 9 * GU);
   this.ssaoPass.uniforms.size.value.set(16 * GU, 9 * GU);
+  this.glowEffectComposer.setSize(16 * GU, 9 * GU);
+  this.finalEffectComposer.setSize(16 * GU, 9 * GU);
 };
 
 cubegridLayer.prototype.update = function(frame, relativeFrame) {
