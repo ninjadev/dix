@@ -9,11 +9,6 @@ float rand(vec2 co) {
 
 void main() {
     float alpha = vUv.y;
-    float random = rand(vec2(vUv.x - mod(vUv.x, .1), 0.)) +
-                        rand(vec2(vUv.x + 0.01 - mod(vUv.x, .1), 0.)) +
-                        rand(vec2(vUv.x - 0.01 - mod(vUv.x, .1), 0.)) +
-                        rand(vec2(vUv.x + 0.02 - mod(vUv.x, .1), 0.)) +
-                        rand(vec2(vUv.x - 0.02 - mod(vUv.x, .1), 0.));
-    random /= 5.;
-    gl_FragColor = vec4(1., 1., 1., vUv.y * vUv.y * random * 0.05);
+    float random = rand(vUv * time);
+    gl_FragColor = vec4(1., 1., 1., vUv.y * vUv.y * 0.1 + random * 0.03);
 }
