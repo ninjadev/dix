@@ -194,7 +194,7 @@ function spinwiresLayer(layer, demo) {
     reflectionMaterial.roughnessMap.wrapS = reflectionMaterial.roughnessMap.wrapT = THREE.RepeatWrapping;
     reflectionMaterial.roughnessMap.repeat.set(1, 50);
     this.reflectionMaterial = reflectionMaterial;
-    var tube = new THREE.Mesh(tubeGeometry, this.refractionMaterial);
+    var tube = new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(tubeGeometry), this.refractionMaterial);
     tubeGeometry.computeFaceNormals();
     tubeGeometry.computeVertexNormals();
     this.tubeGeometries.push(tubeGeometry);
