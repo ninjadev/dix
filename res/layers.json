@@ -24,6 +24,14 @@
     "config": {}
   },
   {
+    "type": "glitchLayer",
+    "displayName": "glitch",
+    "startFrame": 1298,
+    "endFrame": 1355,
+    "color": "red",
+    "config": {}
+  },
+  {
     "type": "endLayer",
     "displayName": "end",
     "startFrame": 9303,
