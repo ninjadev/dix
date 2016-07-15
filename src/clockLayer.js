@@ -330,11 +330,13 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
   if(frame >= 1332 && frame < 1561) {
     var animation_progress = (frame - 1332)/(1561-1332);
 
-    this.camera.position.x = 12;
-    this.camera.position.y = 2;
-    this.camera.position.z = 12;
+    this.camera.position.x = 8 - smoothstep(0, 10, animation_progress*1.3);
+    this.camera.position.y = 1.5;
+    this.camera.position.z = 8 - smoothstep(0, 3, animation_progress*1.3);;
   
-    this.camera.lookAt(new THREE.Vector3(0,-2.8,0));
+    this.camera.lookAt(new THREE.Vector3(0,-1 + smoothstep(0, 1.3, animation_progress*0.8),0));
+
+    this.clock_body_front.position.y = smoothstep(6, 0, animation_progress);
 
   }
 
