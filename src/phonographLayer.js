@@ -29,36 +29,20 @@ function phonographLayer(layer, demo) {
   this.camera.position.set(0.21, 0.83, -0.21);
 
   this.particleDirection = [-0.99, 0.6, 0.56];
-  this.spawnPosition = [
+  this.particleSpawnPosition = [
     0.62 + 0.25 * this.particleDirection[0] - 0.151,
     0.82 + 0.25 * this.particleDirection[1],
     -2.35 + 0.25 * this.particleDirection[2] + 0.115
   ];
-  this.particles = [];
-  this.numParticles = 100;
-  var geometry = new THREE.CubeGeometry(0.02, 0.02, 0.02);
-  this.materials = [];
-
-  for (var i = 0; i < this.numParticles; i++) {
-    var material = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true});
-    this.materials.push(material);
-    var particle = new THREE.Mesh(geometry, material);
-    particle.position.set(this.spawnPosition[0], this.spawnPosition[1], this.spawnPosition[2]);
-    particle.userData.startedAt = null;
-    particle.userData.direction = [
-      this.particleDirection[0] + 0.5 * Math.sin(i * 97),
-      this.particleDirection[1] + 0.5 * Math.sin(i * 67 + 1),
-      this.particleDirection[2] + 0.5 * Math.sin(i * 167 + 2)
-    ];
-    this.scene.add(particle);
-    this.particles.push(particle);
-  }
-
-  this.currentParticleIndex = 0;
+  this.cumulativeParticleRotation = 0;
 
   this.guitarAnalysis = new audioAnalysisSanitizer('guitar.wav', 'spectral_energy', 1);
   this.snareAnalysis = new audioAnalysisSanitizer('snare.wav', 'spectral_energy', 1);
   this.kickAnalysis = new audioAnalysisSanitizer('kick.wav', 'spectral_energy', 1);
+
+  this.smoothGuitarAnalysis = new audioAnalysisSanitizer('guitar.wav', 'spectral_energy', 0.1);
+  this.smoothSnareAnalysis = new audioAnalysisSanitizer('snare.wav', 'spectral_energy', 0.1);
+  this.smoothKickAnalysis = new audioAnalysisSanitizer('kick.wav', 'spectral_energy', 0.1);
 
   this.initPhonographModel();
 
@@ -171,7 +155,7 @@ phonographLayer.prototype.initPhonographModel = function() {
       var object = objLoader.parse(text);
       object.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
-          if(materials[child.name]) {
+          if (materials[child.name]) {
             child.renderMaterial = materials[child.name];
           } else {
             child.renderMaterial = material;
@@ -189,7 +173,6 @@ phonographLayer.prototype.initPhonographModel = function() {
       );
       pivot.add(object);
 
-      that.phonographModel.add(pivot);
       callback(pivot);
     });
   };
@@ -199,6 +182,7 @@ phonographLayer.prototype.initPhonographModel = function() {
     this.blackoutMaterial,
     function(object) {
       that.phonoGraphObject = object;
+      that.phonographModel.add(object);
     }
   );
   loadObject(
@@ -213,7 +197,8 @@ phonographLayer.prototype.initPhonographModel = function() {
         object.position.x - 0.151,
         object.position.y,
         object.position.z + 0.115
-      )
+      );
+      that.phonographModel.add(object);
     }
   );
   loadObject(
@@ -224,9 +209,43 @@ phonographLayer.prototype.initPhonographModel = function() {
     }),
     function(object) {
       that.handleObject = object;
+      that.phonographModel.add(object);
+    }
+  );
+  loadObject(
+    prefix + 'note.obj',
+    {x: 0, y: 0, z: 0},
+    new THREE.MeshStandardMaterial({
+      color: 0xffffff
+    }),
+    function(object) {
+      that.initParticles(object);
     }
   );
   this.scene.add(this.phonographModel);
+};
+
+phonographLayer.prototype.initParticles = function(mesh) {
+  this.particles = [];
+  this.numParticles = 100;
+  this.materials = [];
+  for (var i = 0; i < this.numParticles; i++) {
+    var material = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true});
+    this.materials.push(material);
+    var particle = mesh.clone();
+    particle.material = material;
+    particle.scale.set(0.01, 0.01, 0.01);
+    particle.position.set(this.particleSpawnPosition[0], this.particleSpawnPosition[1], this.particleSpawnPosition[2]);
+    particle.userData.startedAt = null;
+    particle.userData.direction = [
+      0.5 * Math.sin(i * 97),
+      0.5 * Math.sin(i * 67 + 1),
+      0.5 * Math.sin(i * 167 + 2)
+    ];
+    this.scene.add(particle);
+    this.particles.push(particle);
+  }
+  this.currentParticleIndex = 0;
 };
 
 phonographLayer.prototype.getEffectComposerPass = function() {
@@ -250,7 +269,7 @@ phonographLayer.prototype.updateSpinwires = function(frame, relativeFrame) {
   this.shaderMaterial.uniforms.lightOpening.value = lightOpening;
   this.barLight.scale.z = lightOpening;
   this.barLightGodRay.scale.z = lightOpening;
-  if(lightOpening == 0) {
+  if (lightOpening == 0) {
     this.barLight.position.y = 34.1;
     this.barLightGodRay.scale.y = 0;
   } else {
@@ -266,23 +285,26 @@ phonographLayer.prototype.updateSpinwires = function(frame, relativeFrame) {
   this.mainObject.position.y = 0.61 + this.audioAnalysis.getValue(frame) * 0.01;
   this.mainObject.position.z = -2.10;
 
-  for(var i = 0; i < this.lights.length; i++) {
-    var light = this.lights[i]; 
-    var lightCenter = this.lightCenters[i]; 
+  for (var i = 0; i < this.lights.length; i++) {
+    var light = this.lights[i];
+    var lightCenter = this.lightCenters[i];
     light.position.copy(this.curves[i].getPoint((Math.PI * 32 + 2.75 - 0.05 * relativeFrame / Math.PI / 2) % 1));
     lightCenter.position.copy(light.position);
   }
 };
-phonographLayer.prototype.update = function(frame, relativeFrame) {
-  this.updateSpinwires(frame, relativeFrame - 887);
+
+phonographLayer.prototype.updateParticles = function(frame, relativeFrame) {
+  if (!this.particles) {
+    return;
+  }
   var soundIntensity = this.guitarAnalysis.getValue(frame) * (BEAN < 1056 ? 1 : 0) +
     this.snareAnalysis.getValue(frame) +
-    this.kickAnalysis.getValue(frame);
+    1.5 * this.kickAnalysis.getValue(frame);
   var soundIntensityDiff = soundIntensity - this.previousSoundIntensity;
-  this.phonographModel.position.x = Math.max(0, 0.005 * this.snareAnalysis.getValue(frame));
-  this.phonographModel.position.y = Math.max(0, 0.01 * this.kickAnalysis.getValue(frame));
 
-  var numNewParticles = 0 | Math.max(0, (BEAN < 1056 ? 2 : 5) * soundIntensityDiff + 0.5);
+  var numNewParticles = 0 | Math.max(0, (BEAN < 1056 ? 1 : 2.5) * soundIntensityDiff + 0.5);
+
+  var smoothSoundIntensity = this.smoothSnareAnalysis.getValue(frame) + this.smoothKickAnalysis.getValue(frame);
 
   for (var i = 0; i < this.numParticles; i++) {
     var particle = this.particles[i];
@@ -301,15 +323,26 @@ phonographLayer.prototype.update = function(frame, relativeFrame) {
       var material = this.materials[i];
       material.opacity = 1 - progress;
       particle.position.set(
-        this.spawnPosition[0] + progress * particle.userData.direction[0],
-        this.spawnPosition[1] + progress * particle.userData.direction[1],
-        this.spawnPosition[2] + progress * particle.userData.direction[2]
+        this.particleSpawnPosition[0] + progress * (this.particleDirection[0] + (0.6 + 0.06 * Math.max(smoothSoundIntensity, 0)) * particle.userData.direction[0]),
+        this.particleSpawnPosition[1] + progress * (this.particleDirection[1] + (0.6 + 0.06 * Math.max(smoothSoundIntensity, 0)) * particle.userData.direction[1]),
+        this.particleSpawnPosition[2] + progress * (this.particleDirection[2] + (0.6 + 0.06 * Math.max(smoothSoundIntensity, 0)) * particle.userData.direction[2])
       );
+      var particleScale = 0.1 * (0.8 + (1 - progress) * 0.3 * smoothSoundIntensity);
+
+      particle.scale.set(particleScale, particleScale, particleScale)
     }
   }
   this.currentParticleIndex = (this.currentParticleIndex + numNewParticles) % this.numParticles;
   this.previousSoundIntensity = soundIntensity;
+};
 
+phonographLayer.prototype.update = function(frame, relativeFrame) {
+  this.updateSpinwires(frame, relativeFrame - 887);
+
+  this.updateParticles(frame, relativeFrame);
+
+  this.phonographModel.position.x = Math.max(0, 0.0025 * this.snareAnalysis.getValue(frame));
+  this.phonographModel.position.y = Math.max(0, 0.005 * this.kickAnalysis.getValue(frame));
 
   if (this.recordObject) {
     this.recordObject.rotation.set(0, 0.05 * relativeFrame, 0);
@@ -330,28 +363,28 @@ phonographLayer.prototype.render = function(renderer, interpolation) {
 
 
 phonographLayer.glowTraverse = function(object) {
-  for(var i = 0; i < object.children.length; i++) {
+  for (var i = 0; i < object.children.length; i++) {
     phonographLayer.glowTraverse(object.children[i]);
   }
-  if(object instanceof THREE.Mesh) {
+  if (object instanceof THREE.Mesh) {
     object.material = object.glowMaterial;
   }
 };
 
 phonographLayer.renderTraverse = function(object) {
-  for(var i = 0; i < object.children.length; i++) {
+  for (var i = 0; i < object.children.length; i++) {
     phonographLayer.renderTraverse(object.children[i]);
   }
-  if(object instanceof THREE.Mesh) {
+  if (object instanceof THREE.Mesh) {
     object.material = object.renderMaterial;
   }
 };
 
 phonographLayer.prototype.rigMaterialsForGlowPass = function() {
-  for(var i = 0; i < this.tubes.length; i++) {
+  for (var i = 0; i < this.tubes.length; i++) {
     this.tubes[i].material = this.shaderMaterial;
     this.mainObject.remove(this.lights[i]);
-    if(this.lightCentersActive) {
+    if (this.lightCentersActive) {
       this.mainObject.add(this.lightCenters[i]);
     }
   }
@@ -360,10 +393,10 @@ phonographLayer.prototype.rigMaterialsForGlowPass = function() {
   this.scene.add(this.barLightGodRay);
   this.scene.add(this.mainObject);
   phonographLayer.glowTraverse(this.phonographModel, 'glowMaterial');
-}
+};
 
 phonographLayer.prototype.rigMaterialsForRenderPass = function() {
-  for(var i = 0; i < this.tubes.length; i++) {
+  for (var i = 0; i < this.tubes.length; i++) {
     this.tubes[i].material = this.refractionMaterial;
     this.mainObject.add(this.lights[i]);
     this.mainObject.remove(this.lightCenters[i]);
@@ -373,11 +406,11 @@ phonographLayer.prototype.rigMaterialsForRenderPass = function() {
   this.scene.add(this.skyBox);
   this.scene.add(this.mainObject);
   phonographLayer.renderTraverse(this.phonographModel);
-}
+};
 
 phonographLayer.prototype.initSpinwires = function() {
   this.barLightHolderRenderMaterial = new THREE.MeshStandardMaterial({
-      map: Loader.loadTexture('res/floor.jpg')
+    map: Loader.loadTexture('res/floor.jpg')
   });
 
   var skyGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
@@ -410,7 +443,7 @@ phonographLayer.prototype.initSpinwires = function() {
   this.barLightGodRay.position.y = 10;
 
   this.ceilingLight = new THREE.PointLight({
-    color: 0xddffff  
+    color: 0xddffff
   });
   this.ceilingLight.intensity = 0.2;
   this.ceilingLight.position.x = 0;
@@ -442,7 +475,7 @@ phonographLayer.prototype.initSpinwires = function() {
   projectionCamera.position.z = 200;
   projectionCamera.lookAt(new THREE.Vector3(0, 0, 0));
 
-  for(var i = 0; i < 32; i ++) {
+  for (var i = 0; i < 32; i++) {
     this.cube.rotation.x = Math.PI * 2 * i / 32 * 2;
     this.cube.rotation.z = Math.PI * 2 * i / 32;
     this.cube.updateMatrix();
@@ -455,7 +488,7 @@ phonographLayer.prototype.initSpinwires = function() {
     geometry.applyMatrix(this.cube.matrix);
     geometry.applyMatrix(modelViewMatrix);
     geometry.applyMatrix(projectionCamera.projectionMatrix);
-    for(var j = 0; j < geometry.vertices.length; j++) {
+    for (var j = 0; j < geometry.vertices.length; j++) {
       geometry.vertices[j].z = 0;
     }
     geometry.verticesNeedUpdate = true;
@@ -470,9 +503,9 @@ phonographLayer.prototype.initSpinwires = function() {
   this.mainObject = new THREE.Object3D();
   var scale = 0.0012;
   this.mainObject.scale.set(scale, scale, scale);
-  for(var i = 0; i < this.cube.geometry.vertices.length; i++) {
+  for (var i = 0; i < this.cube.geometry.vertices.length; i++) {
     var points = [];
-    for(var j = 0; j < this.geometries.length; j++) {
+    for (var j = 0; j < this.geometries.length; j++) {
       var point = this.geometries[j].vertices[i].clone();
       var rotation = new THREE.Matrix4();
       point.x += 100;
