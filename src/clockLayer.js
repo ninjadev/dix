@@ -56,21 +56,6 @@ clockLayer.prototype.init_clock_model = function() {
   this.gear8 = new THREE.Object3D();
   this.gear9 = new THREE.Object3D();
 
-  // Move these out of vision for now. They will be back :)
-  this.clock_body_back .position.y = -1000;
-  this.pendulum.position.y = -1000;
-  this.second_hand.position.y = -1000;
-  this.minute_hand.position.y = -1000;
-  this.hour_hand.position.y = -1000;
-  this.gear1.position.y = -1000;
-  this.gear2.position.y = -1000;
-  this.gear3.position.y = -1000;
-  this.gear4.position.y = -1000;
-  this.gear5.position.y = -1000;
-  this.gear6.position.y = -1000;
-  this.gear7.position.y = -1000;
-  this.gear8.position.y = -1000;
-  this.gear9.position.y = -1000;
 
   var loadObject = function (objPath, material, three_object) {
     var objLoader = new THREE.OBJLoader();
@@ -318,9 +303,28 @@ clockLayer.prototype.resize = function() {
 };
 
 clockLayer.prototype.update = function(frame, relativeFrame) {
+
   var start_clock_time = 2750 - 1332;
   var start_assembly_time = 2500 - 1332;
   var end_assembly_time = 2750 - 1332;
+
+  if(relativeFrame < start_clock_time) {
+  // Move these out of vision for now. They will be back :)
+    this.clock_body_back .position.y = -1000;
+    this.pendulum.position.y = -1000;
+    this.second_hand.position.y = -1000;
+    this.minute_hand.position.y = -1000;
+    this.hour_hand.position.y = -1000;
+    this.gear1.position.y = -1000;
+    this.gear2.position.y = -1000;
+    this.gear3.position.y = -1000;
+    this.gear4.position.y = -1000;
+    this.gear5.position.y = -1000;
+    this.gear6.position.y = -1000;
+    this.gear7.position.y = -1000;
+    this.gear8.position.y = -1000; 
+    this.gear9.position.y = -1000;
+  }
 
   // Things happening before redGear
   if(frame >= 1332 && frame < 1561) {
@@ -363,10 +367,10 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
   if(frame >= 2215 && frame < 2500) {
     var animation_progress = (frame - 2215)/(2500-2215);
     
-    this.camera.position.x = -12 + animation_progress * 12;
+    this.camera.position.x = -12 + animation_progress * 24;
     this.camera.position.y = 2;
     this.camera.position.z = 12;
-    this.camera.lookAt(new THREE.Vector3(0,-2.8,0));
+    this.camera.lookAt(new THREE.Vector3(0,-2.8 + 2 * Math.sin(animation_progress * Math.PI),0));
 
     this.gear9.position.set(  smoothstep(this.gear9_init_position_x, this.gear9_clock_position_x, animation_progress),
                               smoothstep(this.gear9_init_position_y, this.gear9_clock_position_y, animation_progress),
