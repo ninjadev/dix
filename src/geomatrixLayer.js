@@ -6,12 +6,16 @@ function geomatrixLayer(layer, demo) {
   this.scene = new THREE.Scene();
 
   this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 1, 10000);
-  this.camera.position.z = 100;
+  this.camera.position.z = 200;
 
   this.random = Random(0x90);
 
   var light = new THREE.PointLight( 0xffffff, 1, 100 );
   light.position.set( -50, -50, -50 );
+  this.scene.add(light);
+
+  var light = new THREE.PointLight( 0xffffff, 1, 100 );
+  light.position.set( -50, -50, 50 );
   this.scene.add(light);
 
   var pointLight = new THREE.PointLight(0xFFFFFF);
@@ -23,7 +27,7 @@ function geomatrixLayer(layer, demo) {
   this.elements = [];
   for(var i = 0; i < 12; i++) {
     var elem = new THREE.Mesh(
-      new THREE.SphereGeometry(10, 25, 25),
+      new THREE.SphereGeometry(7, 25, 25),
       new THREE.ShaderMaterial(SHADERS.colorswappy)
     );
     elem.rotation.x = 90;
@@ -33,7 +37,23 @@ function geomatrixLayer(layer, demo) {
     this.elements.push(elem);
   }
 
-  this.plane = new THREE.Mesh(new THREE.PlaneGeometry(250, 220),
+  this.numbers = [];
+  for(var i = 12; i > 0; i++) {
+    var num = new THREE.Mesh(new THREE.PlaneGeometry(40, 40),
+                              new THREE.MeshBasicMaterial({
+                                transparent: true,
+                                map: new THREE.Texture(this.generateNumber(''+(i+1)))
+                              })
+      );
+    num.position.z = 20;
+    num.position.y = Math.sin(i/2)*40;
+    num.position.x = Math.cos(i/2)*40;
+
+    this.numbers.push(num);
+    this.scene.add(num);
+  }
+
+  this.plane = new THREE.Mesh(new THREE.PlaneGeometry(500, 440),
                               new THREE.ShaderMaterial(SHADERS.lolshader));
   this.plane.rotation.x = 0;
   this.plane.rotation.z = -Math.PI / 4;
@@ -64,9 +84,8 @@ geomatrixLayer.prototype.update = function(frame, relativeFrame) {
     var elem = this.elements[i];
     elem.material.uniforms.time.value = frame;
 
-    var odd = i%2==0;
     var scale = Math.sin(relativeFrame/100);
-    elem.scale.set(scale, scale, scale);
+    //elem.scale.set(scale, scale, scale);
 
     elem.position.x = Math.sin(relativeFrame/100)*20*i;
     elem.position.y = Math.cos(relativeFrame/100)*i*20*Math.sin(relativeFrame/1000);
@@ -76,4 +95,23 @@ geomatrixLayer.prototype.update = function(frame, relativeFrame) {
 };
 
 geomatrixLayer.prototype.render = function(renderer, interpolation) {
+  for(var i = 0; i < this.numbers.length; i++) {
+    var num = this.numbers[i];
+    num.material.map.needsUpdate = true;
+  }
+};
+
+geomatrixLayer.prototype.generateNumber = function(num) {
+  var c = document.createElement('canvas');
+  var size = 100;
+  c.width = size;
+  c.height = size;
+
+  var ctx = c.getContext('2d');
+
+  ctx.fillStyle = 'white';
+  ctx.font = '40px Arial';
+  ctx.fillText(num, 38, 60);
+
+  return c;
 };
