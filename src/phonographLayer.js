@@ -29,11 +29,12 @@ function phonographLayer(layer, demo) {
   this.camera.position.set(0.21, 0.83, -0.21);
 
   this.particleDirection = [-0.99, 0.6, 0.56];
-  this.spawnPosition = [
+  this.particleSpawnPosition = [
     0.62 + 0.25 * this.particleDirection[0] - 0.151,
     0.82 + 0.25 * this.particleDirection[1],
     -2.35 + 0.25 * this.particleDirection[2] + 0.115
   ];
+  this.cumulativeParticleRotation = 0;
 
   this.guitarAnalysis = new audioAnalysisSanitizer('guitar.wav', 'spectral_energy', 1);
   this.snareAnalysis = new audioAnalysisSanitizer('snare.wav', 'spectral_energy', 1);
@@ -234,12 +235,12 @@ phonographLayer.prototype.initParticles = function(mesh) {
     var particle = mesh.clone();
     particle.material = material;
     particle.scale.set(0.01, 0.01, 0.01);
-    particle.position.set(this.spawnPosition[0], this.spawnPosition[1], this.spawnPosition[2]);
+    particle.position.set(this.particleSpawnPosition[0], this.particleSpawnPosition[1], this.particleSpawnPosition[2]);
     particle.userData.startedAt = null;
     particle.userData.direction = [
-      this.particleDirection[0] + 0.5 * Math.sin(i * 97),
-      this.particleDirection[1] + 0.5 * Math.sin(i * 67 + 1),
-      this.particleDirection[2] + 0.5 * Math.sin(i * 167 + 2)
+      0.5 * Math.sin(i * 97),
+      0.5 * Math.sin(i * 67 + 1),
+      0.5 * Math.sin(i * 167 + 2)
     ];
     this.scene.add(particle);
     this.particles.push(particle);
@@ -303,9 +304,7 @@ phonographLayer.prototype.updateParticles = function(frame, relativeFrame) {
 
   var numNewParticles = 0 | Math.max(0, (BEAN < 1056 ? 1 : 2.5) * soundIntensityDiff + 0.5);
 
-  var smoothSoundIntensity = this.smoothGuitarAnalysis.getValue(frame) * (BEAN < 1056 ? 1 : 0) +
-    this.smoothSnareAnalysis.getValue(frame) +
-    this.smoothKickAnalysis.getValue(frame);
+  var smoothSoundIntensity = this.smoothSnareAnalysis.getValue(frame) + this.smoothKickAnalysis.getValue(frame);
 
   for (var i = 0; i < this.numParticles; i++) {
     var particle = this.particles[i];
@@ -324,11 +323,11 @@ phonographLayer.prototype.updateParticles = function(frame, relativeFrame) {
       var material = this.materials[i];
       material.opacity = 1 - progress;
       particle.position.set(
-        this.spawnPosition[0] + progress * particle.userData.direction[0],
-        this.spawnPosition[1] + progress * particle.userData.direction[1],
-        this.spawnPosition[2] + progress * particle.userData.direction[2]
+        this.particleSpawnPosition[0] + progress * (this.particleDirection[0] + (0.6 + 0.06 * Math.max(smoothSoundIntensity, 0)) * particle.userData.direction[0]),
+        this.particleSpawnPosition[1] + progress * (this.particleDirection[1] + (0.6 + 0.06 * Math.max(smoothSoundIntensity, 0)) * particle.userData.direction[1]),
+        this.particleSpawnPosition[2] + progress * (this.particleDirection[2] + (0.6 + 0.06 * Math.max(smoothSoundIntensity, 0)) * particle.userData.direction[2])
       );
-      var particleScale = 0.1 * (0.7 + (1 - progress) * 0.3 * smoothSoundIntensity);
+      var particleScale = 0.1 * (0.8 + (1 - progress) * 0.3 * smoothSoundIntensity);
 
       particle.scale.set(particleScale, particleScale, particleScale)
     }
