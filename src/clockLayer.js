@@ -5,8 +5,7 @@ function clockLayer(layer) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
-  this.cameraController = new CameraController(layer.type);
-  this.camera = this.cameraController.camera;
+  this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.001, 10000);
 
   var light = new THREE.PointLight( 0xffffff, 1, 100 );
   light.position.set( 10, 10, 10 );
@@ -319,8 +318,6 @@ clockLayer.prototype.resize = function() {
 };
 
 clockLayer.prototype.update = function(frame, relativeFrame) {
-  //this.cameraController.updateCamera(relativeFrame);
-
   var start_clock_time = 2750 - 1332;
   var start_assembly_time = 2500 - 1332;
   var end_assembly_time = 2750 - 1332;
@@ -329,18 +326,29 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
   if(frame >= 1332 && frame < 1561) {
     var animation_progress = (frame - 1332)/(1561-1332);
 
+    this.camera.position.x = 12;
+    this.camera.position.y = 2;
+    this.camera.position.z = 12;
+  
+    this.camera.lookAt(new THREE.Vector3(0,-2.8,0));
 
   }
 
   // Things happening during redGear
   if(frame >= 1561 && frame < 1783) {
-    var animation_progress = (frame - 1561)/(1783-1561);
-
+    this.camera.position.x = 100;
   }
 
   // Things happening between redGear and blueGear
   if(frame >= 1783 && frame < 1994) {
     var animation_progress = (frame - 1783)/(1994-1783);
+
+    this.camera.position.x = 12;
+    this.camera.position.y = 2;
+    this.camera.position.z = 12;
+  
+    this.camera.lookAt(new THREE.Vector3(0,-2.8,0));
+
     this.gear8.position.set(  smoothstep(this.gear8_init_position_x, this.gear8_clock_position_x, animation_progress),
                               smoothstep(this.gear8_init_position_y, this.gear8_clock_position_y, animation_progress),
                               smoothstep(this.gear8_init_position_z, this.gear8_clock_position_z, animation_progress));
@@ -348,13 +356,18 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
 
   // Things happening after blueGear
   if(frame >= 1994 && frame < 2215) {
-    var animation_progress = (frame - 1994)/(2215-1994);
-
+    this.camera.position.x = 100;
   }
 
   // Things happening after blueGear
   if(frame >= 2215 && frame < 2500) {
     var animation_progress = (frame - 2215)/(2500-2215);
+    
+    this.camera.position.x = -12 + animation_progress * 12;
+    this.camera.position.y = 2;
+    this.camera.position.z = 12;
+    this.camera.lookAt(new THREE.Vector3(0,-2.8,0));
+
     this.gear9.position.set(  smoothstep(this.gear9_init_position_x, this.gear9_clock_position_x, animation_progress),
                               smoothstep(this.gear9_init_position_y, this.gear9_clock_position_y, animation_progress),
                               smoothstep(this.gear9_init_position_z, this.gear9_clock_position_z, animation_progress));
@@ -362,6 +375,12 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
 
   if(relativeFrame > start_assembly_time && relativeFrame < end_assembly_time) {
     var animation_progress = (relativeFrame - start_assembly_time)/(end_assembly_time-start_assembly_time) * 1.7;
+
+    this.camera.position.x = -12 + animation_progress * 12;
+    this.camera.position.y = 2;
+    this.camera.position.z = 12;
+  
+    this.camera.lookAt(new THREE.Vector3(0,-2.8,0));
 
     this.clock_body_back.position.set(  smoothstep(this.clock_body_back_init_position_x, this.clock_body_back_clock_position_x, animation_progress - 0.70),
                                         smoothstep(this.clock_body_back_init_position_y, this.clock_body_back_clock_position_y, animation_progress - 0.70),
