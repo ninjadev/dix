@@ -1,0 +1,12 @@
+# Blender MTL File: 'note.blend'
+# Material Count: 1
+
+newmtl M_0075_ForestGreen
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.133333 0.545098 0.133333
+Ks 0.330000 0.330000 0.330000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.220000
+illum 2
