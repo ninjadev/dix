@@ -1,1 +1,21 @@
-{}
+{
+  "clockLayer": {
+    "position": [
+      {
+        "startFrame": 0,
+        "endFrame": 1229,
+        "points": [
+          [12,2,12]
+        ]
+      }],
+    "lookAt": [
+      {
+        "startFrame": 0,
+        "endFrame": 1229,
+        "points":[
+          [-25.49,-13,-25.49]
+        ]
+      }
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 /**
  * @constructor
  */
-function phonographLayer(layer) {
+function phonographLayer(layer, demo) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
@@ -79,14 +79,103 @@ function phonographLayer(layer) {
 phonographLayer.prototype.initPhonographModel = function() {
   var that = this;
   var prefix = 'res/phonograph/';
+  var lightGrayMaterial = new THREE.MeshStandardMaterial({
+    color: 0x727272,
+    side: THREE.DoubleSide
+  });
+  var aluminiumMaterial = new THREE.MeshStandardMaterial({
+    //color: 0xaaa14d,
+    map: Loader.loadTexture(prefix + 'hismastervoice/Metal_Aluminum_Anodized.jpg'),
+    metalness: 0.8,
+    roughness: 0.2,
+    side: THREE.DoubleSide
+  });
+  var brushedMetalMaterial = new THREE.MeshStandardMaterial({
+    //color: 0x545454,
+    map: Loader.loadTexture(prefix + 'hismastervoice/Metal_Brushed.jpg'),
+    metalness: 0.8,
+    roughness: 0.3,
+    side: THREE.DoubleSide
+  });
+  var woodMaterial = new THREE.MeshStandardMaterial({
+    //color: 0x3d2616,
+    map: Loader.loadTexture(prefix + 'hismastervoice/Wood_Cherry_Original.jpg'),
+    roughness: 0.4,
+    metalness: 0.2,
+    side: THREE.DoubleSide
+  });
+  var blackMaterial = new THREE.MeshStandardMaterial({
+    color: 0,
+    side: THREE.DoubleSide
+  });
+  var text01Material = new THREE.MeshStandardMaterial({
+    //color: 0x729c23,
+    map: Loader.loadTexture(prefix + 'hismastervoice/text_01.jpg'),
+    metalness: 0,
+    roughness: 1,
+    side: THREE.DoubleSide
+  });
+  var textFastMaterial = new THREE.MeshStandardMaterial({
+    //color: 0x729c23,
+    map: Loader.loadTexture(prefix + 'hismastervoice/text_fast.jpg'),
+    side: THREE.DoubleSide
+  });
+
+  brushedMetalMaterial.map.wrapS = brushedMetalMaterial.map.wrapT = THREE.RepeatWrapping;
+  woodMaterial.map.wrapS = woodMaterial.map.wrapT = THREE.RepeatWrapping;
+  text01Material.map.wrapS = text01Material.map.wrapT = THREE.RepeatWrapping;
+  textFastMaterial.map.wrapS = textFastMaterial.map.wrapT = THREE.RepeatWrapping;
+
+  var materials = {
+    'Mesh22_Group16_Group14_Group8_Model': textFastMaterial,
+    'Mesh14_Componente_3_2_Group12_Group8_Model': woodMaterial,
+    'Mesh25_Componente_1_1_Group21_Group18_Group17_Group8_Model': text01Material,
+    'Mesh54_Group28_Agrupar_9_1_Group24_Model': aluminiumMaterial,
+    'Mesh23_Group19_Group18_Group17_Group8_Model': aluminiumMaterial,
+    'Mesh29_Componente_1_5_Group21_Group18_Group17_Group8_Model': text01Material,
+    'Mesh38_Group25_Group24_Model': aluminiumMaterial,
+    'Mesh28_Componente_1_4_Group21_Group18_Group17_Group8_Model': text01Material,
+    'Mesh24_Group20_Group18_Group17_Group8_Model': aluminiumMaterial,
+    'Mesh53_Group31_Group28_Agrupar_9_1_Group24_Model': lightGrayMaterial,
+    'Mesh19_Group12_Group8_Model': brushedMetalMaterial,
+    'Mesh26_Componente_1_2_Group21_Group18_Group17_Group8_Model': text01Material,
+    'Mesh33_Componente_1_9_Group21_Group18_Group17_Group8_Model': text01Material,
+    'Mesh15_Componente_3_3_Group12_Group8_Model': woodMaterial,
+    'Mesh16_Componente_3_4_Group12_Group8_Model': woodMaterial,
+    'Mesh34_Componente_1_10_Group21_Group18_Group17_Group8_Model': text01Material,
+    'Mesh18_Group12_Group8_Model': brushedMetalMaterial,
+    'Mesh36_Componente_1_12_Group21_Group18_Group17_Group8_Model': text01Material,
+    'Mesh12_Group13_Group12_Group8_Model': aluminiumMaterial,
+    'Mesh9_Group9_Group8_Model': aluminiumMaterial,
+    'Mesh11_Group11_Group8_Model': aluminiumMaterial,
+    'Mesh10_Group10_Group8_Model': blackMaterial,
+    'Mesh27_Componente_1_3_Group21_Group18_Group17_Group8_Model': text01Material,
+    'Mesh51_Group30_Group29_Group28_Agrupar_9_1_Group24_Model': lightGrayMaterial,
+    'Mesh37_Group23_Group22_Group17_Group8_Model': aluminiumMaterial,
+    'Mesh32_Componente_1_8_Group21_Group18_Group17_Group8_Model': text01Material,
+    'Mesh52_Group29_Group28_Agrupar_9_1_Group24_Model': aluminiumMaterial,
+    'Mesh17_Group12_Group8_Model': woodMaterial,
+    'Mesh30_Componente_1_6_Group21_Group18_Group17_Group8_Model': text01Material,
+    'Mesh35_Componente_1_11_Group21_Group18_Group17_Group8_Model': text01Material,
+    'Mesh13_Componente_3_1_Group12_Group8_Model': woodMaterial,
+    'Mesh50_Group27_Agrupar_9_1_Group24_Model': aluminiumMaterial,
+    'Mesh31_Componente_1_7_Group21_Group18_Group17_Group8_Model': text01Material,
+    'Mesh21_Group15_Group14_Group8_Model': aluminiumMaterial,
+    'Mesh20_Group12_Group8_Model': brushedMetalMaterial
+  };
   this.phonographModel = new THREE.Object3D();
+  var that = this;
   var loadObject = function(objPath, offset, material, callback) {
     var objLoader = new THREE.OBJLoader();
     Loader.loadAjax(objPath, function(text) {
       var object = objLoader.parse(text);
       object.traverse(function(child) {
         if (child instanceof THREE.Mesh) {
-          child.renderMaterial = material;
+          if(materials[child.name]) {
+            child.renderMaterial = materials[child.name];
+          } else {
+            child.renderMaterial = material;
+          }
           child.glowMaterial = that.blackoutMaterial;
         }
       });
@@ -107,10 +196,7 @@ phonographLayer.prototype.initPhonographModel = function() {
   loadObject(
     prefix + 'hismastervoice.obj',
     {x: 0, y: 0, z: 0},
-    new THREE.MeshLambertMaterial({
-      color: 0xB5A642,
-      side: THREE.DoubleSide
-    }),
+    this.blackoutMaterial,
     function(object) {
       that.phonoGraphObject = object;
     }
@@ -173,8 +259,7 @@ phonographLayer.prototype.updateSpinwires = function(frame, relativeFrame) {
   }
   this.barLight.position.z = 100 - 27 / 2 + lightOpening * 27 / 2;
   this.barLightGodRay.position.z = 100 - 27 / 2 + lightOpening * 27 / 2;
-  var speed = smoothstep(0.2, 1, (relativeFrame) / 1000);
-  this.mainObject.rotation.y = speed * relativeFrame / 100;
+  this.mainObject.rotation.set(0, 0.05 * relativeFrame, 0);
   this.lightCentersActive = relativeFrame > 210;
 
   this.mainObject.position.x = 0.44;
@@ -184,20 +269,20 @@ phonographLayer.prototype.updateSpinwires = function(frame, relativeFrame) {
   for(var i = 0; i < this.lights.length; i++) {
     var light = this.lights[i]; 
     var lightCenter = this.lightCenters[i]; 
-    light.position.copy(this.curves[i].getPoint((2.75 - speed * relativeFrame / 100 / Math.PI / 2) % 1));
+    light.position.copy(this.curves[i].getPoint((Math.PI * 32 + 2.75 - 0.05 * relativeFrame / Math.PI / 2) % 1));
     lightCenter.position.copy(light.position);
   }
 };
 phonographLayer.prototype.update = function(frame, relativeFrame) {
   this.updateSpinwires(frame, relativeFrame - 887);
-  var soundIntensity = this.guitarAnalysis.getValue(frame) +
+  var soundIntensity = this.guitarAnalysis.getValue(frame) * (BEAN < 1056 ? 1 : 0) +
     this.snareAnalysis.getValue(frame) +
     this.kickAnalysis.getValue(frame);
   var soundIntensityDiff = soundIntensity - this.previousSoundIntensity;
   this.phonographModel.position.x = Math.max(0, 0.005 * this.snareAnalysis.getValue(frame));
   this.phonographModel.position.y = Math.max(0, 0.01 * this.kickAnalysis.getValue(frame));
 
-  var numNewParticles = 0 | Math.max(0, 2 * soundIntensityDiff + 0.5);
+  var numNewParticles = 0 | Math.max(0, (BEAN < 1056 ? 2 : 5) * soundIntensityDiff + 0.5);
 
   for (var i = 0; i < this.numParticles; i++) {
     var particle = this.particles[i];
@@ -405,7 +490,6 @@ phonographLayer.prototype.initSpinwires = function() {
     var refractionMaterial = new THREE.MeshBasicMaterial({
       wireframe: true,
       color: 0xc87533,
-      envMap: this.refractionCubemap,
       shading: THREE.FlatShading,
       transparent: true,
       opacity: 0.6

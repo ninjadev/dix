@@ -1,5 +1,13 @@
 [
   {
+    "type": "geomatrixLayer",
+    "displayName": "geomatrix",
+    "startFrame": 6645,
+    "endFrame": 7531,
+    "color": "red",
+    "config": {}
+  },
+  {
     "type": "cubegridLayer",
     "displayName": "cubegrid",
     "startFrame": 3101,
