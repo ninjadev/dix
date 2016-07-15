@@ -33,6 +33,14 @@ function geomatrixLayer(layer, demo) {
     this.elements.push(elem);
   }
 
+  this.plane = new THREE.Mesh(new THREE.PlaneGeometry(250, 220),
+                              new THREE.ShaderMaterial(SHADERS.lolshader));
+  this.plane.rotation.x = 0;
+  this.plane.rotation.z = -Math.PI / 4;
+  this.plane.position.z = -10;
+  this.scene.add(this.plane);
+  this.snareAnalysis = new audioAnalysisSanitizer('hihats.wav', 'spectral_energy', 0.05)
+
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
 
@@ -50,6 +58,8 @@ geomatrixLayer.prototype.resize = function() {
 };
 
 geomatrixLayer.prototype.update = function(frame, relativeFrame) {
+  this.plane.material.uniforms.time.value = relativeFrame + 100*this.snareAnalysis.getValue(frame);
+
   for(var i = 0; i < this.elements.length; i++) {
     var elem = this.elements[i];
     elem.material.uniforms.time.value = frame;
