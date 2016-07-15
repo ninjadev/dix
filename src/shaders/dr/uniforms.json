@@ -1,8 +1,8 @@
 {
     "tDiffuse": { "type": "t", "value": null },
-    "tCrankwork": { "type": "t", "value": null },
-    "tSteamfist": { "type": "t", "value": null },
-    "crankworkAmount": { "type": "f", "value": null },
-    "steamfistAmount": { "type": "f", "value": null },
+    "tOverlay": { "type": "t", "value": null },
+    "tText": { "type": "t", "value": null },
+    "overlayAmount": { "type": "f", "value": null },
+    "uBackground": { "value": null },
     "time": { "type": "f", "value": null }
 }
