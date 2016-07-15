@@ -24,30 +24,25 @@ function geomatrixLayer(layer, demo) {
   pointLight.position.z = 130;
   this.scene.add(pointLight);
 
-  this.elements = [];
-  for(var i = 0; i < 12; i++) {
-    var elem = new THREE.Mesh(
-      new THREE.SphereGeometry(7, 25, 25),
-      new THREE.ShaderMaterial(SHADERS.colorswappy)
-    );
-    elem.rotation.x = 90;
-    elem.position.x = Math.sin(i)*39 + (i%2==0? 10*this.random() : 0);
-    elem.position.y = Math.cos(i)*39 + (i%2==0? 10*this.random() : 0);
-    this.scene.add(elem);
-    this.elements.push(elem);
-  }
+  this.cone = new THREE.Mesh(new THREE.ConeGeometry(4, 60, 10),
+                             new THREE.ShaderMaterial(SHADERS.colorswappy)
+                            );
+  this.cone.position.x = 0;
+  this.cone.position.y = 20;
+
+  this.scene.add(this.cone);
 
   this.numbers = [];
-  for(var i = 12; i > 0; i++) {
+  for(var i = 0; i < 12; i++) {
     var num = new THREE.Mesh(new THREE.PlaneGeometry(40, 40),
-                              new THREE.MeshBasicMaterial({
-                                transparent: true,
-                                map: new THREE.Texture(this.generateNumber(''+(i+1)))
-                              })
+                             new THREE.MeshBasicMaterial({
+                               transparent: true,
+                               map: new THREE.Texture(this.generateNumber(''+(i+1)))
+                             })
       );
     num.position.z = 20;
-    num.position.y = Math.sin(i/2)*40;
-    num.position.x = Math.cos(i/2)*40;
+    num.position.y = Math.cos(i/2)*60;
+    num.position.x = Math.sin(i/2)*60;
 
     this.numbers.push(num);
     this.scene.add(num);
@@ -80,18 +75,12 @@ geomatrixLayer.prototype.resize = function() {
 geomatrixLayer.prototype.update = function(frame, relativeFrame) {
   this.plane.material.uniforms.time.value = relativeFrame + 100*this.snareAnalysis.getValue(frame);
 
-  for(var i = 0; i < this.elements.length; i++) {
-    var elem = this.elements[i];
-    elem.material.uniforms.time.value = frame;
+  this.cone.material.uniforms.time.value = frame;
 
-    var scale = Math.sin(relativeFrame/100);
-    //elem.scale.set(scale, scale, scale);
+  var scale = Math.sin(relativeFrame/100);
+  //this.cone.scale.set(scale, scale, scale);
 
-    elem.position.x = Math.sin(relativeFrame/100)*20*i;
-    elem.position.y = Math.cos(relativeFrame/100)*i*20*Math.sin(relativeFrame/1000);
-
-    elem.rotation.x = Math.sin(relativeFrame/1000)*2*this.random()/10000;
-  }
+  this.cone.rotation.y = Math.sin(relativeFrame/1000)*200;
 };
 
 geomatrixLayer.prototype.render = function(renderer, interpolation) {
