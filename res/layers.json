@@ -42,16 +42,16 @@
   {
     "type": "gearRedLayer",
     "displayName": "gearRed",
-    "startFrame": 1529,
-    "endFrame": 1800,
+    "startFrame": 1561,
+    "endFrame": 1782,
     "color": "red",
     "config": {}
   },
   {
     "type": "gearBlueLayer",
     "displayName": "gearBlue",
-    "startFrame": 2201,
-    "endFrame": 2470,
+    "startFrame": 1994,
+    "endFrame": 2215,
     "color": "blue",
     "config": {}
   },
