@@ -196,24 +196,22 @@ tunnelsplosionLayer.prototype.update = function(frame, relativeFrame) {
   this.tunnel.geometry.verticesNeedUpdate = true;
 
 
-  if(frame < 6645) {
-    if(BEAN % 48 == 9) {
-      this.lightDistance = -500;
-    }
-    if(relativeFrame == 0 || BEAT && BEAN % 48 == 36) {
-      this.ball.scale.set(3, 3, 3);
-      this.pointLight.intensity = 1;
-      this.cameraOffset.set(
-          Math.random() * 40,
-          Math.random() * 20,
-          Math.random() * 40);
-      this.cameraDistance = 10 + Math.pow(Math.random(), 2) * 80;
-      this.cameraZRotation = 0.7 + Math.random() - 0.5;
-      this.cameraZRotation = Math.random() * Math.PI * 2;
-      this.currentColorIndex = (this.currentColorIndex + 1) % this.colors.length;
-      this.lightDistance = 0;
-      this.distanceOffset = 15000 * Math.random();
-    }
+  if(BEAN % 48 == 9) {
+    this.lightDistance = -500;
+  }
+  if(BEAT && BEAN == 1248 || (BEAT && BEAN % 48 == 36)) {
+    this.ball.scale.set(3, 3, 3);
+    this.pointLight.intensity = 1;
+    this.cameraOffset.set(
+        Math.random() * 40,
+        Math.random() * 20,
+        Math.random() * 40);
+    this.cameraDistance = 10 + Math.pow(Math.random(), 2) * 80;
+    this.cameraZRotation = 0.7 + Math.random() - 0.5;
+    this.cameraZRotation = Math.random() * Math.PI * 2;
+    this.currentColorIndex = (this.currentColorIndex + 1) % this.colors.length;
+    this.lightDistance = 0;
+    this.distanceOffset = 15000 * Math.random();
   }
 
   this.ball.rotation.x = Math.sin(frame / 27);
@@ -286,6 +284,7 @@ tunnelsplosionLayer.prototype.update = function(frame, relativeFrame) {
 
   this.pointLight.intensity *= 0.99;
   this.pointLightWhite.intensity *= 0.99;
+  /*
   if(BEAT && BEAN % 48 == 0) {
     this.explode();
   }
@@ -295,6 +294,7 @@ tunnelsplosionLayer.prototype.update = function(frame, relativeFrame) {
   if(BEAT && BEAN % 48 == 18) {
     this.explode();
   }
+  */
   this.ball.scale.x = lerp(this.ball.scale.x, 1, 0.05);
   this.ball.scale.y = lerp(this.ball.scale.y, 1, 0.05);
   this.ball.scale.z = lerp(this.ball.scale.z, 1, 0.05);
