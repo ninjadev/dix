@@ -125,7 +125,7 @@ phonographLayer.prototype.initPhonographModel = function() {
   woodMaterial.map.wrapS = woodMaterial.map.wrapT = THREE.RepeatWrapping;
   text01Material.map.wrapS = text01Material.map.wrapT = THREE.RepeatWrapping;
   textFastMaterial.map.wrapS = textFastMaterial.map.wrapT = THREE.RepeatWrapping;
-    
+
   var materials = {
     'Mesh22_Group16_Group14_Group8_Model': textFastMaterial,
     'Mesh14_Componente_3_2_Group12_Group8_Model': woodMaterial,
@@ -164,6 +164,7 @@ phonographLayer.prototype.initPhonographModel = function() {
     'Mesh20_Group12_Group8_Model': brushedMetalMaterial
   };
   this.phonographModel = new THREE.Object3D();
+  var that = this;
   var loadObject = function(objPath, offset, material, callback) {
     var objLoader = new THREE.OBJLoader();
     Loader.loadAjax(objPath, function(text) {
@@ -268,7 +269,7 @@ phonographLayer.prototype.updateSpinwires = function(frame, relativeFrame) {
   for(var i = 0; i < this.lights.length; i++) {
     var light = this.lights[i]; 
     var lightCenter = this.lightCenters[i]; 
-    light.position.copy(this.curves[i].getPoint((2.75 - 0.05 * relativeFrame / Math.PI / 2) % 1));
+    light.position.copy(this.curves[i].getPoint((Math.PI * 32 + 2.75 - 0.05 * relativeFrame / Math.PI / 2) % 1));
     lightCenter.position.copy(light.position);
   }
 };
