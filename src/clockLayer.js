@@ -57,6 +57,22 @@ clockLayer.prototype.init_clock_model = function() {
   this.gear8 = new THREE.Object3D();
   this.gear9 = new THREE.Object3D();
 
+  // Move these out of vision for now. They will be back :)
+  this.clock_body_back .position.y = -1000;
+  this.pendulum.position.y = -1000;
+  this.second_hand.position.y = -1000;
+  this.minute_hand.position.y = -1000;
+  this.hour_hand.position.y = -1000;
+  this.gear1.position.y = -1000;
+  this.gear2.position.y = -1000;
+  this.gear3.position.y = -1000;
+  this.gear4.position.y = -1000;
+  this.gear5.position.y = -1000;
+  this.gear6.position.y = -1000;
+  this.gear7.position.y = -1000;
+  this.gear8.position.y = -1000;
+  this.gear9.position.y = -1000;
+
   var loadObject = function (objPath, material, three_object) {
     var objLoader = new THREE.OBJLoader();
     Loader.loadAjax(objPath, function(text) {
@@ -303,11 +319,46 @@ clockLayer.prototype.resize = function() {
 };
 
 clockLayer.prototype.update = function(frame, relativeFrame) {
-  this.cameraController.updateCamera(relativeFrame);
+  //this.cameraController.updateCamera(relativeFrame);
 
-  var start_clock_time = 630;
-  var start_assembly_time = 0;
-  var end_assembly_time = 600;
+  var start_clock_time = 2750 - 1332;
+  var start_assembly_time = 2500 - 1332;
+  var end_assembly_time = 2750 - 1332;
+
+  // Things happening before redGear
+  if(frame >= 1332 && frame < 1561) {
+    var animation_progress = (frame - 1332)/(1561-1332);
+
+
+  }
+
+  // Things happening during redGear
+  if(frame >= 1561 && frame < 1783) {
+    var animation_progress = (frame - 1561)/(1783-1561);
+
+  }
+
+  // Things happening between redGear and blueGear
+  if(frame >= 1783 && frame < 1994) {
+    var animation_progress = (frame - 1783)/(1994-1783);
+    this.gear8.position.set(  smoothstep(this.gear8_init_position_x, this.gear8_clock_position_x, animation_progress),
+                              smoothstep(this.gear8_init_position_y, this.gear8_clock_position_y, animation_progress),
+                              smoothstep(this.gear8_init_position_z, this.gear8_clock_position_z, animation_progress));
+  }
+
+  // Things happening after blueGear
+  if(frame >= 1994 && frame < 2215) {
+    var animation_progress = (frame - 1994)/(2215-1994);
+
+  }
+
+  // Things happening after blueGear
+  if(frame >= 2215 && frame < 2500) {
+    var animation_progress = (frame - 2215)/(2500-2215);
+    this.gear9.position.set(  smoothstep(this.gear9_init_position_x, this.gear9_clock_position_x, animation_progress),
+                              smoothstep(this.gear9_init_position_y, this.gear9_clock_position_y, animation_progress),
+                              smoothstep(this.gear9_init_position_z, this.gear9_clock_position_z, animation_progress));
+  }
 
   if(relativeFrame > start_assembly_time && relativeFrame < end_assembly_time) {
     var animation_progress = (relativeFrame - start_assembly_time)/(end_assembly_time-start_assembly_time) * 1.7;
@@ -351,12 +402,6 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
     this.gear7.position.set(  smoothstep(this.gear7_init_position_x, this.gear7_clock_position_x, animation_progress - 0.10),
                               smoothstep(this.gear7_init_position_y, this.gear7_clock_position_y, animation_progress - 0.10),
                               smoothstep(this.gear7_init_position_z, this.gear7_clock_position_z, animation_progress - 0.10));
-    this.gear8.position.set(  smoothstep(this.gear8_init_position_x, this.gear8_clock_position_x, animation_progress - 0.05),
-                              smoothstep(this.gear8_init_position_y, this.gear8_clock_position_y, animation_progress - 0.05),
-                              smoothstep(this.gear8_init_position_z, this.gear8_clock_position_z, animation_progress - 0.05));
-    this.gear9.position.set(  smoothstep(this.gear9_init_position_x, this.gear9_clock_position_x, animation_progress),
-                              smoothstep(this.gear9_init_position_y, this.gear9_clock_position_y, animation_progress),
-                              smoothstep(this.gear9_init_position_z, this.gear9_clock_position_z, animation_progress));
   }
 
   if(relativeFrame > start_clock_time) {
