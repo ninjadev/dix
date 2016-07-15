@@ -5,7 +5,8 @@ function clockLayer(layer) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
-  this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.001, 10000);
+  this.cameraController = new CameraController(layer.type);
+  this.camera = this.cameraController.camera;
 
   var light = new THREE.PointLight( 0xffffff, 1, 100 );
   light.position.set( 10, 10, 10 );
@@ -21,12 +22,6 @@ function clockLayer(layer) {
   pointLight.position.y = 50;
   pointLight.position.z = 130;
   this.scene.add(pointLight);
-
-  this.camera.position.x = 12;
-  this.camera.position.y = 2;
-  this.camera.position.z = 12;
-
-  this.camera.lookAt(new THREE.Vector3(0,-2.8,0));
 
   this.set_positions();
 
@@ -309,6 +304,8 @@ clockLayer.prototype.resize = function() {
 };
 
 clockLayer.prototype.update = function(frame, relativeFrame) {
+  this.cameraController.updateCamera(relativeFrame);
+
   var start_clock_time = 630;
   var start_assembly_time = 0;
   var end_assembly_time = 600;
