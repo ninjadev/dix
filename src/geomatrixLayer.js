@@ -24,13 +24,7 @@ function geomatrixLayer(layer, demo) {
   pointLight.position.z = 130;
   this.scene.add(pointLight);
 
-  this.cone = new THREE.Mesh(new THREE.ConeGeometry(4, 60, 10),
-                             new THREE.ShaderMaterial(SHADERS.colorswappy)
-                            );
-  this.cone.position.x = 0;
-  this.cone.position.y = 0;
-
-  this.scene.add(this.cone);
+  this.createFloppyArms();
 
   this.numbers = [];
   for(var i = 0; i < 12; i++) {
@@ -59,6 +53,20 @@ function geomatrixLayer(layer, demo) {
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
 
+geomatrixLayer.prototype.createFloppyArms = function() {
+  this.n_cubes = 6;
+  this.shortarm = new THREE.Object3D();
+  for(i = 0; i < this.n_cubes; i++){
+    var cube = new THREE.Mesh(
+        new THREE.CubeGeometry( 5, 5, 5 ), 
+        new THREE.MeshNormalMaterial() );
+
+    this.shortarm.add(cube)
+  }
+
+  this.scene.add(this.shortarm);
+}
+
 geomatrixLayer.prototype.getEffectComposerPass = function() {
   return this.renderPass;
 };
@@ -72,20 +80,39 @@ geomatrixLayer.prototype.end = function() {
 geomatrixLayer.prototype.resize = function() {
 };
 
+
+geomatrixLayer.prototype.updateFloppy = function(frame, relativeFrame) {
+  for(i = 0; i < this.shortarm.children.length; i++){
+    var box = this.shortarm.children[i];
+    box.position.set( 0, i, 0);
+    //length of arms:
+    box.position.multiplyScalar(10);
+
+    var stiff = 3;
+    var rotdist = 3.2;
+    var rotspeed = 29;
+    var kickscale = .13;
+
+
+    //rotspeed -= this.kickAnalysis.getValue(frame) * .5;
+
+    var val =  rotdist * Math.cos((relativeFrame - i*stiff)/rotspeed); // + kickscale * this.kickAnalysis.getValue(frame - i*stiff);
+
+
+    //Rotation formulas
+    var xmagic = val;
+    var ymagic = val;
+    var zmagic = val;
+    box.position.applyAxisAngle(new THREE.Vector3(0,0,1), zmagic);
+
+    //this.arms[a][i].rotation.x = Math.sin(relativeFrame / 10);
+    //this.arms[a][i].rotation.y = Math.cos(relativeFrame / 10);
+  }
+}
+
 geomatrixLayer.prototype.update = function(frame, relativeFrame) {
+  this.updateFloppy(frame, relativeFrame);
   this.plane.material.uniforms.time.value = relativeFrame + 100*this.snareAnalysis.getValue(frame);
-
-  this.cone.material.uniforms.time.value = frame;
-
-  var scale = Math.sin(relativeFrame/100);
-  this.cone.scale.set(scale, scale, scale);
-
-  this.cone.rotation.y = Math.sin(relativeFrame/1000)*200;
-
-  this.cone.lookAt(new THREE.Vector3(Math.cos(smoothstep(0, 12, relativeFrame/1000)/2)*60,
-                                     Math.sin(smoothstep(0, 12, relativeFrame/1000)/2)*60,
-                                     1)
-                  );
 };
 
 geomatrixLayer.prototype.render = function(renderer, interpolation) {
