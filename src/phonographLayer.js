@@ -450,7 +450,7 @@ phonographLayer.prototype.initSpinwires = function() {
   var skyGeometry = new THREE.BoxGeometry(10, 10, 10);
 
   var skyBox = new THREE.Mesh(skyGeometry, new THREE.MeshStandardMaterial({
-    map: Loader.loadTexture('res/brick.jpg'),
+    map: Loader.loadTexture('res/paper_old.jpg'),
     side: THREE.DoubleSide
   }));
   skyBox.position.set(0, 5, 0);
