@@ -377,7 +377,7 @@ phonographLayer.prototype.update = function(frame, relativeFrame) {
   this.updateParticles(frame, relativeFrame);
 
   if (this.recordObject) {
-    this.recordObject.rotation.set(0, 0.05 * relativeFrame, 0);
+    this.recordObject.rotation.set(0, 0.01 * relativeFrame, 0);
   }
   if (this.handleObject) {
     this.handleObject.rotation.set(-0.08 * relativeFrame, 0, 0);
