@@ -80,14 +80,6 @@
     "config": {}
   },
   {
-    "type": "drLayer",
-    "displayName": "dr",
-    "startFrame": 1331,
-    "endFrame": 9716,
-    "color": "pink",
-    "config": {}
-  },
-  {
     "type": "BloomLayer",
     "displayName": "bloom",
     "startFrame": 0,
