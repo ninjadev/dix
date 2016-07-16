@@ -2,10 +2,15 @@
  * @constructor
  */
 function phonographLayer(layer, demo) {
+  this.startFrame = layer.startFrame;
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
   this.camera = new THREE.PerspectiveCamera(45, 16 / 9, .0001, 100000);
+  this.cameraController = new CameraController(layer.type);
+  this.cameraController.camera = this.camera;
+
+  this.zoomAccumulator = 0;
 
   this.handHeldCameraModifier = new HandHeldCameraModifier(0.00001);
 
@@ -15,14 +20,8 @@ function phonographLayer(layer, demo) {
 
   this.audioAnalysis = new audioAnalysisSanitizer('kick.wav', 'spectral_energy', 2);
 
-  var light = new THREE.PointLight(0xffffff, 1, 100);
-  light.position.set(10, 10, 10);
-  this.scene.add(light);
-
-  var pointLight = new THREE.PointLight(0xFFFFFF);
-  pointLight.position.x = 10;
-  pointLight.position.y = 50;
-  pointLight.position.z = 130;
+  var pointLight = new THREE.PointLight(0x505050);
+  pointLight.position.set(0, 5, 0);
   this.scene.add(pointLight);
 
   // Whole phonograph with particles
@@ -35,6 +34,13 @@ function phonographLayer(layer, demo) {
   this.camera.position.set(0.36,0.66,-1.95);
   this.camera.lookAt(new THREE.Vector3(5000,2142.25,-2201.36));
 
+  this.spotLight = new THREE.DirectionalLight(0xffffff, 0.5);
+  this.scene.add(this.spotLight);
+
+  var amb = new THREE.AmbientLight(0xb0b0b0);
+  this.scene.add(amb);
+
+  // Whole phonograph with particles
   this.particleDirection = [-0.99, 0.6, 0.56];
   this.particleSpawnPosition = [
     0.62 + 0.25 * this.particleDirection[0] - 0.151,
@@ -53,7 +59,6 @@ function phonographLayer(layer, demo) {
 
   this.initPhonographModel();
 
-  this.renderPass = new THREE.RenderPass(this.scene, this.camera);
   this.previousSoundIntensity = 0;
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
@@ -102,8 +107,8 @@ phonographLayer.prototype.initPhonographModel = function() {
   var text01Material = new THREE.MeshStandardMaterial({
     //color: 0x729c23,
     map: Loader.loadTexture(prefix + 'hismastervoice/text_01.jpg'),
-    metalness: 0.2,
-    roughness: 0.9,
+    metalness: 0.5,
+    roughness: 0.5,
     side: THREE.DoubleSide
   });
   var textFastMaterial = new THREE.MeshStandardMaterial({
@@ -202,7 +207,7 @@ phonographLayer.prototype.initPhonographModel = function() {
       that.recordObject = object;
       that.recordObject.position.set(
         object.position.x - 0.151,
-        object.position.y,
+        object.position.y - 0.005,
         object.position.z + 0.115
       );
       that.phonographModel.add(object);
@@ -219,16 +224,7 @@ phonographLayer.prototype.initPhonographModel = function() {
       that.phonographModel.add(object);
     }
   );
-  loadObject(
-    prefix + 'note.obj',
-    {x: 0, y: 0, z: 0},
-    new THREE.MeshStandardMaterial({
-      color: 0xffffff
-    }),
-    function(object) {
-      that.initParticles(object);
-    }
-  );
+  this.initParticles(new THREE.Mesh(new THREE.BoxGeometry(0.2,0.2,0.2), new THREE.MeshBasicMaterial({color: 0xffffff})));
   this.scene.add(this.phonographModel);
 };
 
@@ -260,6 +256,7 @@ phonographLayer.prototype.getEffectComposerPass = function() {
 };
 
 phonographLayer.prototype.start = function() {
+  this.zoomAccumulator = 0;
 };
 
 phonographLayer.prototype.end = function() {
@@ -296,7 +293,7 @@ phonographLayer.prototype.updateSpinwires = function(frame, relativeFrame) {
   this.lightCentersActive = relativeFrame > 210;
 
   this.mainObject.position.x = 0;
-  this.mainObject.position.y = 0 + this.audioAnalysis.getValue(frame) * 0.01;
+  this.mainObject.position.y = 0;
   this.mainObject.position.z = 0;
 
   this.spinwireContainer.position.x = 0.441;
@@ -316,6 +313,7 @@ phonographLayer.prototype.updateParticles = function(frame, relativeFrame) {
   if (!this.particles) {
     return;
   }
+
   var soundIntensity = this.guitarAnalysis.getValue(frame) * (BEAN < 1056 ? 1 : 0) +
     this.snareAnalysis.getValue(frame) +
     1.5 * this.kickAnalysis.getValue(frame);
@@ -360,16 +358,30 @@ phonographLayer.prototype.updateParticles = function(frame, relativeFrame) {
 phonographLayer.prototype.update = function(frame, relativeFrame) {
   this.updateSpinwires(frame, relativeFrame - 887);
 
-  this.updateParticles(frame, relativeFrame);
+  var opacityTimer = (relativeFrame - 750) / 240;
+  this.refractionMaterial.opacity = smoothstep(0, 0.6, opacityTimer);
 
-  this.phonographModel.position.x = Math.max(0, 0.0025 * this.snareAnalysis.getValue(frame));
-  this.phonographModel.position.y = Math.max(0, 0.005 * this.kickAnalysis.getValue(frame));
+  this.cameraController.updateCamera(relativeFrame);
+  var relativeBEAN = BEAN - BEAN_FOR_FRAME(this.startFrame);
+  if (relativeBEAN > 168 && relativeBEAN < 192) {
+    if (BEAT && BEAN % 6 == 0) {
+      this.zoomAccumulator += 5;
+    } else if (relativeFrame >= 888) {
+      this.zoomAccumulator = 0;
+    }
+    this.camera.fov = 45 - this.zoomAccumulator;
+    this.camera.updateProjectionMatrix();
+  }
+
+  this.spotLight.rotation.copy(this.camera.rotation);
+
+  this.updateParticles(frame, relativeFrame);
 
   if (this.recordObject) {
     this.recordObject.rotation.set(0, 0.05 * relativeFrame, 0);
   }
   if (this.handleObject) {
-    this.handleObject.rotation.set(-0.08 * relativeFrame, 0, 0)
+    this.handleObject.rotation.set(-0.08 * relativeFrame, 0, 0);
   }
 };
 
@@ -435,12 +447,13 @@ phonographLayer.prototype.initSpinwires = function() {
     map: Loader.loadTexture('res/floor.jpg')
   });
 
-  var skyGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
+  var skyGeometry = new THREE.BoxGeometry(10, 10, 10);
 
   var skyBox = new THREE.Mesh(skyGeometry, new THREE.MeshStandardMaterial({
     map: Loader.loadTexture('res/brick.jpg'),
     side: THREE.DoubleSide
   }));
+  skyBox.position.set(0, 5, 0);
   this.scene.add(skyBox);
   this.skyBox = skyBox;
 
@@ -546,10 +559,10 @@ phonographLayer.prototype.initSpinwires = function() {
     this.shaderMaterial = shaderMaterial;
     var refractionMaterial = new THREE.MeshBasicMaterial({
       wireframe: true,
-      color: 0xc87533,
+      color: 0x598ea5,
       shading: THREE.FlatShading,
       transparent: true,
-      opacity: 0.6
+      opacity: 0.0
     });
     this.refractionMaterial = refractionMaterial;
     var tube = new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(tubeGeometry), this.refractionMaterial);
