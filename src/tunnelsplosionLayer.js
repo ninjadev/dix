@@ -5,6 +5,8 @@ function tunnelsplosionLayer(layer, demo) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
+  this.random = new Random(4985434);
+
   this.lightDistance = 0;
   this.distanceOffset = 0;
 
@@ -203,15 +205,15 @@ tunnelsplosionLayer.prototype.update = function(frame, relativeFrame) {
     this.ball.scale.set(3, 3, 3);
     this.pointLight.intensity = 1;
     this.cameraOffset.set(
-        Math.random() * 40,
-        Math.random() * 20,
-        Math.random() * 40);
-    this.cameraDistance = 10 + Math.pow(Math.random(), 2) * 80;
-    this.cameraZRotation = 0.7 + Math.random() - 0.5;
-    this.cameraZRotation = Math.random() * Math.PI * 2;
+        this.random() * 40,
+        this.random() * 20,
+        this.random() * 40);
+    this.cameraDistance = 10 + Math.pow(this.random(), 2) * 80;
+    this.cameraZRotation = 0.7 + this.random() - 0.5;
+    this.cameraZRotation = this.random() * Math.PI * 2;
     this.currentColorIndex = (this.currentColorIndex + 1) % this.colors.length;
     this.lightDistance = 0;
-    this.distanceOffset = 15000 * Math.random();
+    this.distanceOffset = 15000 * this.random();
   }
 
   this.ball.rotation.x = Math.sin(frame / 27);
@@ -324,12 +326,12 @@ tunnelsplosionLayer.prototype.render = function(renderer, interpolation) {
 tunnelsplosionLayer.prototype.spawnParticle = function(emitter) {
   var particle = this.particles[this.particles.liveCount++];
   particle.life = 1;
-  particle.position.x = emitter.position.x + (Math.random() - 0.5) * 2;
-  particle.position.y = emitter.position.y + (Math.random() - 0.5) * 2;
-  particle.position.z = emitter.position.z + (Math.random() - 0.5) * 2;
-  particle.rotation.x = Math.random() * Math.PI * 2;
-  particle.rotation.y = Math.random() * Math.PI * 2;
-  particle.rotation.z = Math.random() * Math.PI * 2;
+  particle.position.x = emitter.position.x + (this.random() - 0.5) * 2;
+  particle.position.y = emitter.position.y + (this.random() - 0.5) * 2;
+  particle.position.z = emitter.position.z + (this.random() - 0.5) * 2;
+  particle.rotation.x = this.random() * Math.PI * 2;
+  particle.rotation.y = this.random() * Math.PI * 2;
+  particle.rotation.z = this.random() * Math.PI * 2;
   this.particleContainer.add(particle);
 }
 
