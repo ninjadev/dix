@@ -52,6 +52,13 @@ drLayer.prototype.update = function(frame, relativeFrame) {
     } else if(frame < 2600) {
       overlayAmount = smoothstep(1, 0, (frame - 2400) / 100);
     }
+    else if(frame < 3300) {
+      this.line1 = 'They allow us to time these amazing effects.';
+      this.line2 = 'And some even ...*something funny*';
+      overlayAmount = smoothstep(0, 1, (frame - 3100) / 100);
+    } else if(frame < 3600) {
+      overlayAmount = smoothstep(1, 0, (frame - 3400) / 100);
+    }
     else if(frame < 5800) {
       this.line1 = 'Uh oh, incoming tunnel!';
       this.line2 = '';
