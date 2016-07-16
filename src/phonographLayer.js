@@ -12,7 +12,7 @@ function phonographLayer(layer, demo) {
 
   this.zoomAccumulator = 0;
 
-  this.handHeldCameraModifier = new HandHeldCameraModifier(0.00001, 283424);
+  this.handHeldCameraModifier = new HandHeldCameraModifier(0.000001, 0x1234);
 
   this.blackoutMaterial = new THREE.MeshBasicMaterial({color: 0});
 
@@ -361,10 +361,7 @@ phonographLayer.prototype.update = function(frame, relativeFrame) {
   this.refractionMaterial.opacity = smoothstep(0, 0.6, opacityTimer);
 
   this.cameraController.updateCamera(relativeFrame);
-  /*
-  this.camera.position.set(0.43,0.67,-1.99);
-  this.camera.lookAt(new THREE.Vector3(0.43,0.62,-2));
-  */
+
   var relativeBEAN = BEAN - BEAN_FOR_FRAME(this.startFrame);
   if (relativeBEAN > 168 && relativeBEAN < 192) {
     if (BEAT && BEAN % 6 == 0) {
@@ -375,6 +372,8 @@ phonographLayer.prototype.update = function(frame, relativeFrame) {
     this.camera.fov = 45 - this.zoomAccumulator;
     this.camera.updateProjectionMatrix();
   }
+
+  this.handHeldCameraModifier.update(this.camera);
 
   this.spotLight.rotation.copy(this.camera.rotation);
 
