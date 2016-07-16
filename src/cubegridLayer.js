@@ -102,7 +102,8 @@ function cubegridLayer(layer, demo) {
     }
   }
 
-  this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 1, 10000);
+  this.cameraController = new CameraController(layer.type);
+  this.camera = this.cameraController.camera;
   this.cameraLight = new THREE.PointLight();
   this.scene.add(this.cameraLight);
 
@@ -164,12 +165,8 @@ cubegridLayer.prototype.update = function(frame, relativeFrame) {
 
   this.bloomPass.copyUniforms.opacity.value = this.kickAnalysis.getValue(frame);
 
-  this.camera.position.x = Math.sin(time / 80) * 60;
-  this.camera.position.y = 20;
-  this.camera.position.z = Math.cos(time / 80) * 60;
+  this.cameraController.updateCamera(relativeFrame);
   this.cameraLight.position.copy(this.camera.position);
-  this.camera.lookAt(new THREE.Vector3(0, -5, 0));
-  this.handHeldCameraModifier.update(this.camera);
 
   this.cg.update(frame, relativeFrame);
 

@@ -17,5 +17,116 @@
         ]
       }
     ]
+  },
+  "cubegridLayer": {
+      "position": [
+          {
+              "startFrame": 0,
+              "endFrame": 56,
+              "points": [
+                  [-10, 200, 0],
+                  [-10, 250, 0]
+              ]
+          },
+          {
+              "startFrame": 57,
+              "endFrame": 167,
+              "points": [
+                  [200, 0, 0],
+                  [250, 0, -20]
+              ]
+          },
+          {
+              "startFrame": 168,
+              "endFrame": 278,
+              "points": [
+                  [400, 0, 0],
+                  [400, 0, 5]
+              ]
+          },
+          {
+              "startFrame": 666,
+              "endFrame": 900,
+              "points": [
+                  [-10, 200, 0],
+                  [-10, 250, 0]
+              ]
+          }
+      ],
+      "roll": [
+          {
+              "startFrame": 0,
+              "endFrame": 56,
+              "points": [0.0]
+          },
+          {
+              "startFrame": 57,
+              "endFrame": 167,
+              "points": [1.0, 0.8]
+          },
+          {
+              "startFrame": 168,
+              "endFrame": 267,
+              "points": [0.0]
+          },
+          {
+              "startFrame": 257,
+              "endFrame": 297,
+              "points": [0, -2.10]
+          },
+          {
+              "startFrame": 500,
+              "endFrame": 550,
+              "points": [-2.10, -0.53]
+          },
+          {
+              "startFrame": 666,
+              "endFrame": 900,
+              "points": [0.2, -0.2]
+          }
+      ],
+      "fov": [
+          {
+              "startFrame": 185,
+              "endFrame": 205,
+              "points": [45, 10]
+          },
+          {
+              "startFrame": 370,
+              "endFrame": 404,
+              "points": [10, 5]
+          },
+          {
+              "startFrame": 666,
+              "endFrame": 900,
+              "points": [60, 90]
+          }
+      ],
+      "lookAt": [
+          {
+              "startFrame": 0,
+              "endFrame": 184,
+              "points": [
+                  [0, -30, 0],
+                  [0, 0, 0]
+              ]
+          },
+          {
+              "startFrame": 168,
+              "endFrame": 278,
+              "points": [
+                  [0, 0, 0],
+                  [0, 0, 5]
+              ]
+          },
+          {
+              "startFrame": 370,
+              "endFrame": 404,
+              "points": [
+                  [0, 0, 5],
+                  [0, 0, 0]
+              ]
+          }
+      ]
   }
 }
