@@ -6,6 +6,8 @@ function twisterLayer(layer, demo) {
   this.scene = new THREE.Scene();
   this.scrollerOffset = 0;
 
+  this.random = new Random(1549345);
+
   this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 1, 10000);
   this.canvas = document.createElement('canvas');
   this.canvas.width = 1024;
@@ -13,7 +15,7 @@ function twisterLayer(layer, demo) {
   this.canvasCtx = this.canvas.getContext('2d');
   var canvasTexture = new THREE.Texture(this.canvas);
 
-  this.handHeldCameraModifier = new HandHeldCameraModifier(0.00001);
+  this.handHeldCameraModifier = new HandHeldCameraModifier(0.00001, 934823);
   
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
   this.renderPass.clear = true;
@@ -103,11 +105,11 @@ function twisterLayer(layer, demo) {
   this.geometry = new THREE.SphereGeometry(0.3, 8, 6);
   for(var i = 0; i < this.numberOfParticles; i++) {
     particle = new THREE.Mesh(this.geometry,this.material);
-    particle.position.x = Math.random() * (120) - 60;
+    particle.position.x = this.random() * (120) - 60;
     particle.position.x += Math.sign(particle.position.x) * 5;
-    particle.position.y = Math.random() * (120) - 60;
+    particle.position.y = this.random() * (120) - 60;
     particle.position.y += Math.sign(particle.position.y) * 5;
-    particle.position.z = Math.random() * (120) - 60;
+    particle.position.z = this.random() * (120) - 60;
     particle.position.z += Math.sign(particle.position.z) * 5;
     particle.scale = 1;
     particle.visible = false;

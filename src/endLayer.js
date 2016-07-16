@@ -6,7 +6,7 @@ function endLayer(layer) {
   this.scene = new THREE.Scene();
 
   this.camera = new THREE.OrthographicCamera( 16 / - 2, 16 / 2, 9 / 2, 9 / - 2, 0, 10 );
-  this.handHeldCameraModifier = new HandHeldCameraModifier(0.0001);
+  this.handHeldCameraModifier = new HandHeldCameraModifier(0.0001, 0x234);
   this.canvas = document.createElement('canvas');
   this.canvas.width = 16 * GU;
   this.canvas.height = 9 * GU;

@@ -3,6 +3,7 @@
  */
 function cubegridLayer(layer, demo) {
   var that = this;
+  this.cubeGridRandom = new Random(39485);
 
   var CubeGrid = class CubeGrid {
     constructor(nX, nZ, cubeWidth, separation, cubeHeight = 15) {
@@ -18,7 +19,7 @@ function cubegridLayer(layer, demo) {
       this.separation = separation;
 
       let rr = function rr(max, min) {
-        return Math.random() * (max - min) + min;
+        return that.cubeGridRandom() * (max - min) + min;
       }
 
       for (var x=-this.nX; x <= this.nX; x++) {
@@ -33,7 +34,7 @@ function cubegridLayer(layer, demo) {
             continue;
           }
 
-          var color = colors[Math.floor(Math.random()*3)];
+          var color = colors[Math.floor(that.cubeGridRandom() * 3)];
           var cube = new THREE.Mesh(
               new THREE.BoxGeometry(
                 cubeWidth * Math.pow(rr(0.1, 1.0), 0.5),
@@ -43,9 +44,9 @@ function cubegridLayer(layer, demo) {
                 color: color}));
 
           cube.position.set(
-              x * (this.cubeWidth + this.separation) + Math.random() * this.separation,
+              x * (this.cubeWidth + this.separation) + that.cubeGridRandom() * this.separation,
               0,
-              z * (this.cubeWidth + this.separation) + Math.random() * this.separation);
+              z * (this.cubeWidth + this.separation) + that.cubeGridRandom() * this.separation);
           this.cubes.add(cube);
         }
       }
@@ -115,7 +116,7 @@ function cubegridLayer(layer, demo) {
   this.cameraLight.intensity = 0.1;
   this.scene.add(this.cameraLight);
 
-  this.handHeldCameraModifier = new HandHeldCameraModifier(0.00001);
+  this.handHeldCameraModifier = new HandHeldCameraModifier(0.00001, 9234852);
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
   this.renderPass.clear = true;

@@ -12,7 +12,7 @@ function phonographLayer(layer, demo) {
 
   this.zoomAccumulator = 0;
 
-  this.handHeldCameraModifier = new HandHeldCameraModifier(0.00001);
+  this.handHeldCameraModifier = new HandHeldCameraModifier(0.00001, 283424);
 
   this.blackoutMaterial = new THREE.MeshBasicMaterial({color: 0});
 
