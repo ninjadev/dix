@@ -471,18 +471,20 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
                               smoothstep(this.gear7_init_position_y, this.gear7_clock_position_y, animation_progress - 0.10),
                               smoothstep(this.gear7_init_position_z, this.gear7_clock_position_z, animation_progress - 0.10));
 
-    if(frame > 2643) {
-      this.camera.position.x = smoothstep(-7, 0.6, (frame - 2643)/(2796-2643));
-      this.camera.position.y = -1 + 1.80  * Math.sin(Math.PI * (frame - 2643)/(2796+150-2643));
-      this.camera.position.z = smoothstep(0, -2.3  , (frame - 2643)/(2796-2643));
+    if(frame > 2700 && frame <= 2803) {
+      var a_progress = (frame - 2700)/(2796-2700)*1.5;
+      this.camera.position.x = smoothstep(-7, -0.76, a_progress);
+      this.camera.position.y = smoothstep(-1, 1.12, a_progress);
+      this.camera.position.z = smoothstep(0, -1.56 , a_progress);
     }
   }
 
   if(frame > 2730 && frame < 2796) {
-    this.camera.lookAt(new THREE.Vector3(50, 7.85, smoothstep(-16.39, -49, (frame - 2730)/(2796-2730))));
+    a_progress = (frame - 2730) / (2796-2730);
+    this.camera.lookAt(new THREE.Vector3(smoothstep(50, 20, a_progress), smoothstep(8.14, -5, a_progress), -16.11));
   }
 
-  if(frame > 2803 && frame < 3101) {
+  if(frame > 2900 && frame < 3101) {
     this.gear8.position.set(  this.gear8_clock_position_x,
                               this.gear8_clock_position_y,
                               this.gear8_clock_position_z);
@@ -493,12 +495,13 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
                               this.hour_hand_clock_position_y,
                               this.hour_hand_clock_position_z);
 
-    var animation_progress = (frame - 2803)/(3101-2803);
+    var animation_progress = (frame - 2900)/(3101-2900);
+    var offset = Math.sin(animation_progress*Math.PI);
 
-    this.camera.position.x = smoothstep(-1.98, -0.57, animation_progress);
-    this.camera.position.y = smoothstep(1.36, 1.7, animation_progress);
-    this.camera.position.z = smoothstep(-0.93, 13.64, animation_progress);
-    this.camera.lookAt(new THREE.Vector3(0, 0.61, -2.23));
+    this.camera.position.x = smoothstep(this.camera.position.x, -11, animation_progress)-offset/2;
+    this.camera.position.y = smoothstep(this.camera.position.y, -9, animation_progress);
+    this.camera.position.z = smoothstep(this.camera.position.z, 15, animation_progress);
+    this.camera.lookAt(new THREE.Vector3(smoothstep(20,-1.1,animation_progress*3), smoothstep(-5,-4, animation_progress), smoothstep(-16.11, -2.23, animation_progress*2)));
   }
 
 if(frame >  2500 && relativeFrame <= start_clock_time) {
