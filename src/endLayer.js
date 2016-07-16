@@ -11,11 +11,11 @@ function endLayer(layer) {
   this.canvas.width = 16 * GU;
   this.canvas.height = 9 * GU;
   this.canvasCtx = this.canvas.getContext('2d');
-  this.bg = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 1),
-                           new THREE.MeshBasicMaterial({color: 0}));
+  this.bg = new THREE.Mesh(new THREE.BoxGeometry(2000, 2000, 1),
+                           new THREE.MeshBasicMaterial({color: 0xff0000}));
   this.scene.add(this.bg);
   this.flashAmount = 0;
-  this.bg.position.z = -5;
+  this.bg.position.z = -3;
   this.cube = new THREE.Mesh(new THREE.BoxGeometry(16, 9, 1),
                              new THREE.MeshBasicMaterial({
                                color: 0xffffff,
