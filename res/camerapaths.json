@@ -167,6 +167,13 @@
       },
       {
         "startFrame": 1301,
+        "endFrame": 1550,
+        "type": "circle",
+        "center": [0.45, 0.62, -2.12],
+        "radius": 0.9
+      },
+      {
+        "startFrame": 1551,
         "endFrame": 1700,
         "points": [
           [0.54,0.77,-1.99]
@@ -209,9 +216,17 @@
       },
       {
         "startFrame": 1301,
-        "endFrame": 1700,
+        "endFrame": 1550,
+        "type": "circle",
+        "center": [0.45, 0.6, -2.12],
+        "radius": 0.1,
+        "offset": 0.05
+      },
+      {
+        "startFrame": 1551,
+        "endFrame": 1773,
         "points": [
-          [0.41,0.63,-1.97],
+          [0.43,0.63,-1.99],
           [0.45,0.62,-2]
         ]
       }
@@ -228,8 +243,8 @@
         "point": 0.1
       },
       {
-        "startFrame": 1301,
-        "endFrame": 1400,
+        "startFrame": 1551,
+        "endFrame": 1773,
         "point": -0.84
       }
     ],
@@ -240,9 +255,10 @@
         "point": 45
       },
       {
-        "startFrame": 1301,
+        "startFrame": 1551,
         "endFrame": 1600,
-        "points": [45, 30]
+        "points": [45, 30],
+        "easing": "easeOut"
       },
       {
         "startFrame": 1601,
