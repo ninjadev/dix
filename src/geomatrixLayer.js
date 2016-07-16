@@ -28,7 +28,7 @@ function geomatrixLayer(layer, demo) {
                              new THREE.ShaderMaterial(SHADERS.colorswappy)
                             );
   this.cone.position.x = 0;
-  this.cone.position.y = 20;
+  this.cone.position.y = 0;
 
   this.scene.add(this.cone);
 
@@ -81,6 +81,11 @@ geomatrixLayer.prototype.update = function(frame, relativeFrame) {
   //this.cone.scale.set(scale, scale, scale);
 
   this.cone.rotation.y = Math.sin(relativeFrame/1000)*200;
+
+  this.cone.lookAt(new THREE.Vector3(Math.cos(smoothstep(0, 12, relativeFrame/1000)/2)*60,
+                                     Math.sin(smoothstep(0, 12, relativeFrame/1000)/2)*60,
+                                     1)
+                  );
 };
 
 geomatrixLayer.prototype.render = function(renderer, interpolation) {
