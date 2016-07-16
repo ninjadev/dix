@@ -37,10 +37,10 @@ drLayer.prototype.update = function(frame, relativeFrame) {
     this.shaderPass.uniforms.tText.value = this.canvasTexture;
     this.canvasTexture.needsUpdate = true;
     var overlayAmount = 0;
-    if(frame < 7000) {
-      this.line1 = 'Solskogen!';
-      this.line2 = 'MAKE SOME NOIZ!!!!';
-      overlayAmount = smoothstep(0, 1, (frame - 6900) / 50);
+    if(frame < 7350) {
+      this.line1 = 'Some clocks are more efficient than others!';
+      this.line2 = 'This one has 58 minutes in 1 hour.';
+      overlayAmount = smoothstep(0, 1, (frame - 7150) / 50);
     }
     else if(frame < 7500) {
       overlayAmount = smoothstep(1, 0, (frame - 7400) / 100);
