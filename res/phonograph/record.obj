@@ -1,7 +1,7 @@
 # Blender v2.77 (sub 0) OBJ File: 'phonograph2.blend'
 # www.blender.org
 mtllib record.mtl
-o Mesh10_Group10_Group8_Model
+o record_mesh
 v 0.447619 0.562792 -2.275528
 v 0.445330 0.562792 -2.236708
 v 0.442508 0.562792 -2.236708
