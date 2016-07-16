@@ -446,13 +446,13 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
                                     smoothstep(this.minute_hand_init_position_z, this.minute_hand_clock_position_z, animation_progress - 0.55));
 
     this.pendulum.position.set( smoothstep(this.pendulum_init_position_x, this.pendulum_clock_position_x, animation_progress - 0.40),
-                                smoothstep(this.pendulum_init_position_y, this.pendulum_clock_position_y, animation_progress - 0.40),
+                                smoothstep(this.pendulum_init_position_y, this.pendulum_clock_position_y, animation_progress - 0.70),
                                 smoothstep(this.pendulum_init_position_z, this.pendulum_clock_position_z, animation_progress - 0.40));
 
     this.gear1.position.set(  smoothstep(this.gear1_init_position_x, this.gear1_clock_position_x, animation_progress - 0.40),
                               smoothstep(this.gear1_init_position_y, this.gear1_clock_position_y, animation_progress - 0.40),
                               smoothstep(this.gear1_init_position_z, this.gear1_clock_position_z, animation_progress - 0.40));
-    this.gear2.position.set(  smoothstep(this.gear3r2_init_position_x, this.gear2_clock_position_x, animation_progress - 0.35),
+    this.gear2.position.set(  smoothstep(this.gear2_init_position_x, this.gear2_clock_position_x, animation_progress - 0.35),
                               smoothstep(this.gear2_init_position_y, this.gear2_clock_position_y, animation_progress - 0.35),
                               smoothstep(this.gear2_init_position_z, this.gear2_clock_position_z, animation_progress - 0.35));
     this.gear3.position.set(  smoothstep(this.gear3_init_position_x, this.gear3_clock_position_x, animation_progress - 0.30),
@@ -476,6 +476,10 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
       this.camera.position.y = -1 + 1.80  * Math.sin(Math.PI * (frame - 2643)/(2796+150-2643));
       this.camera.position.z = smoothstep(0, -2.3  , (frame - 2643)/(2796-2643));
     }
+  }
+
+  if(frame > 2730 && frame < 2796) {
+    this.camera.lookAt(new THREE.Vector3(50, 7.85, smoothstep(-16.39, -49, (frame - 2730)/(2796-2730))));
   }
 
   if(frame > 2803 && frame < 3101) {
