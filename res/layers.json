@@ -24,14 +24,6 @@
     "config": {}
   },
   {
-    "type": "glitchLayer",
-    "displayName": "glitch",
-    "startFrame": 1298,
-    "endFrame": 1355,
-    "color": "red",
-    "config": {}
-  },
-  {
     "type": "endLayer",
     "displayName": "end",
     "startFrame": 9303,
@@ -107,6 +99,14 @@
     }
   },
   {
+    "type": "glitchLayer",
+    "displayName": "glitch",
+    "startFrame": 3046,
+    "endFrame": 3102,
+    "color": "red",
+    "config": {}
+  },
+  {
     "type": "distortionLayer",
     "displayName": "distortion",
     "startFrame": 7476,
@@ -128,7 +128,9 @@
     "startFrame": 0,
     "endFrame": 443,
     "color": "pink",
-    "config": {"duration": 442}
+    "config": {
+      "duration": 442
+    }
   },
   {
     "type": "colorcorrectionLayer",
