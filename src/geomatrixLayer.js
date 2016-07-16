@@ -27,16 +27,16 @@ function geomatrixLayer(layer, demo) {
   this.createFloppyArms();
 
   this.numbers = [];
-  for(var i = 0; i < 12; i++) {
+  for(var i = 1; i < 13; i++) {
     var num = new THREE.Mesh(new THREE.PlaneGeometry(40, 40),
                              new THREE.MeshBasicMaterial({
                                transparent: true,
-                               map: new THREE.Texture(this.generateNumber(''+(i+1)))
+                               map: new THREE.Texture(this.generateNumber(i))
                              })
       );
     num.position.z = 20;
-    num.position.y = Math.cos(i/2)*60;
-    num.position.x = Math.sin(i/2)*60;
+    num.position.y = Math.cos(i/12 * (Math.PI * 2))*60;
+    num.position.x = Math.sin(i/12 * (Math.PI * 2))*60;
 
     this.numbers.push(num);
     this.scene.add(num);
@@ -97,8 +97,6 @@ geomatrixLayer.prototype.resize = function() {
 
 geomatrixLayer.prototype.updateFloppy = function(frame, relativeFrame) {
 
-  //relativeFrame += this.snareAnalysis.getValue(frame);
-
   var speed = .15;
   var snarescale = 0;
 
@@ -148,16 +146,35 @@ geomatrixLayer.prototype.render = function(renderer, interpolation) {
 };
 
 geomatrixLayer.prototype.generateNumber = function(num) {
+  var romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+  var scaledFont = 60;
+
   var c = document.createElement('canvas');
-  var size = 100;
+  var size = 256;
   c.width = size;
   c.height = size;
 
   var ctx = c.getContext('2d');
 
-  ctx.fillStyle = 'white';
-  ctx.font = '40px Arial';
-  ctx.fillText(num, 38, 60);
+  // Background
+  ctx.beginPath();
+  ctx.arc(size/2, size/2, scaledFont * 1.1, 0, Math.PI * 2);
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+  ctx.fill();
+  ctx.stroke();
+
+  // Text
+  ctx.fillStyle = 'rgba(255, 255, 255, 1.0)';
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center';
+  ctx.font = scaledFont + 'px "Times New Roman", Serif';
+  ctx.globalCompositeOperation = 'destination-out';
+
+  ctx.fillText(romanNumerals[num - 1], size/2, size/2);
+  ctx.fillRect(72, (size - scaledFont * 0.70) / 2, 110, 3);
+  ctx.fillRect(72, (size + scaledFont * 0.6) / 2, 110, 3);
 
   return c;
 };
