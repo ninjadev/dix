@@ -19,14 +19,7 @@ vignetteLayer.prototype.end = function() {
 };
 
 vignetteLayer.prototype.update = function(frame, relativeFrame) {
-    if(BEAN < 80) {
-      this.shaderPass.uniforms.amount.value = (
-          (smoothstep(10000, 0, relativeFrame / 442) * Math.sin(relativeFrame/2300) +
-          Math.sin(relativeFrame/12)*200)
-      );
-    } else {
-      this.shaderPass.uniforms.amount.value = 1;
-    }
+  this.shaderPass.uniforms.amount.value = 1;
 };
 
 vignetteLayer.prototype.resize = function() {

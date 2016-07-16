@@ -123,6 +123,14 @@
     "config": {}
   },
   {
+    "type": "fadeLayer",
+    "displayName": "introfade",
+    "startFrame": 0,
+    "endFrame": 443,
+    "color": "pink",
+    "config": {"duration": 442}
+  },
+  {
     "type": "colorcorrectionLayer",
     "displayName": "colorcorrection",
     "startFrame": 0,
