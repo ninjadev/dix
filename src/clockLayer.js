@@ -416,6 +416,16 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
   }
 
   if(relativeFrame > start_assembly_time && relativeFrame < end_assembly_time) {
+    this.gear8.position.set(  this.gear8_clock_position_x,
+                              this.gear8_clock_position_y,
+                              this.gear8_clock_position_z);
+    this.gear9.position.set(  this.gear9_clock_position_x,
+                              this.gear9_clock_position_y,
+                              this.gear9_clock_position_z);
+    this.hour_hand.position.set(  this.hour_hand_clock_position_x,
+                              this.hour_hand_clock_position_y,
+                              this.hour_hand_clock_position_z);
+    
     var animation_progress = (relativeFrame - start_assembly_time)/(end_assembly_time-start_assembly_time) * 1.7;
 
     this.camera.position.x = smoothstep(-12, -7, animation_progress * 1.0);
@@ -469,6 +479,22 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
   }
 
   if(frame > 2803 && frame < 3101) {
+    this.gear8.position.set(  this.gear8_clock_position_x,
+                              this.gear8_clock_position_y,
+                              this.gear8_clock_position_z);
+    this.gear9.position.set(  this.gear9_clock_position_x,
+                              this.gear9_clock_position_y,
+                              this.gear9_clock_position_z);
+    this.hour_hand.position.set(  this.hour_hand_clock_position_x,
+                              this.hour_hand_clock_position_y,
+                              this.hour_hand_clock_position_z);
+
+    var animation_progress = (frame - 2803)/(3101-2803);
+
+    this.camera.position.x = smoothstep(-1.98, -0.57, animation_progress);
+    this.camera.position.y = smoothstep(1.36, 1.7, animation_progress);
+    this.camera.position.z = smoothstep(-0.93, 13.64, animation_progress);
+    this.camera.lookAt(new THREE.Vector3(0, 0.61, -2.23));
   }
 
   if(relativeFrame > start_clock_time) {
