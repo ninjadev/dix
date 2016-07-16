@@ -4,65 +4,63 @@
 function cubegridLayer(layer, demo) {
   var that = this;
 
-  var CubeGrid = class CubeGrid {
-    constructor(nX, nZ, cubeWidth, separation, cubeHeight = 15) {
-      let colors = [new THREE.Color("rgb(58, 85, 94)"),
-                    new THREE.Color("rgb(77, 105, 115)"),
-                    new THREE.Color("rgb(40, 62, 69)")];
-      this.mesh = new THREE.Object3D();
-      this.cubes = new THREE.Object3D();
-      this.nX = nX;
-      this.nZ = nZ;
-      this.cubeHeight = cubeHeight;
-      this.cubeWidth = cubeWidth;
-      this.separation = separation;
+  var CubeGrid = function CubeGrid(nX, nZ, cubeWidth, separation, cubeHeight) {
+    var colors = [new THREE.Color("rgb(58, 85, 94)"),
+                  new THREE.Color("rgb(77, 105, 115)"),
+                  new THREE.Color("rgb(40, 62, 69)")];
+    this.mesh = new THREE.Object3D();
+    this.cubes = new THREE.Object3D();
+    this.nX = nX;
+    this.nZ = nZ;
+    this.cubeHeight = cubeHeight;
+    this.cubeWidth = cubeWidth;
+    this.separation = separation;
 
-      let rr = function rr(max, min) {
-        return Math.random() * (max - min) + min;
-      }
-
-      for (var x=-this.nX; x <= this.nX; x++) {
-        for (var z=-this.nZ; z <= this.nZ; z++) {
-          let dx = Math.abs(x / (this.nX * 2));
-          let dz = Math.abs(z / (this.nZ * 2));
-
-          let a = 0.25 * Math.sqrt(3.0);
-          let inside = (dz <= a) && (a*dx + 0.25*dz <= 0.5*a);
-
-          if (!inside) {
-            continue;
-          }
-
-          var color = colors[Math.floor(Math.random()*3)];
-          var cube = new THREE.Mesh(
-              new THREE.BoxGeometry(
-                cubeWidth * Math.pow(rr(0.1, 1.0), 0.5),
-                this.cubeHeight,
-                cubeWidth * Math.pow(rr(0.1, 1.0), 0.5)),
-              new THREE.MeshPhongMaterial({
-                color: color}));
-
-          cube.position.set(
-              x * (this.cubeWidth + this.separation) + Math.random() * this.separation,
-              0,
-              z * (this.cubeWidth + this.separation) + Math.random() * this.separation);
-          this.cubes.add(cube);
-        }
-      }
-
-      this.mesh.add(this.cubes);
+    var rr = function rr(max, min) {
+      return Math.random() * (max - min) + min;
     }
 
-    update(frame, relativeFrame) {
-      for (let index in this.cubes.children) {
-        let cube = this.cubes.children[index];
-        let x = index % (2 * this.nX + 1);
-        let z = index / (2 * this.nZ + 1);
-        let offset = x + z + Math.sin(index) * 2;
-        cube.scale.y = 1 + Math.abs(Math.sin((relativeFrame + offset) / 60));
-        cube.scale.x = 1.0 + Math.cos((relativeFrame + offset) / 25) / 4;
-        cube.scale.z = 1.0 + Math.sin((relativeFrame + offset) / 50) / 4;
+    for (var x=-this.nX; x <= this.nX; x++) {
+      for (var z=-this.nZ; z <= this.nZ; z++) {
+        var dx = Math.abs(x / (this.nX * 2));
+        var dz = Math.abs(z / (this.nZ * 2));
+
+        var a = 0.25 * Math.sqrt(3.0);
+        var inside = (dz <= a) && (a*dx + 0.25*dz <= 0.5*a);
+
+        if (!inside) {
+          continue;
+        }
+
+        var color = colors[Math.floor(Math.random()*3)];
+        var cube = new THREE.Mesh(
+            new THREE.BoxGeometry(
+              cubeWidth * Math.pow(rr(0.1, 1.0), 0.5),
+              this.cubeHeight,
+              cubeWidth * Math.pow(rr(0.1, 1.0), 0.5)),
+            new THREE.MeshPhongMaterial({
+              color: color}));
+
+        cube.position.set(
+            x * (this.cubeWidth + this.separation) + Math.random() * this.separation,
+            0,
+            z * (this.cubeWidth + this.separation) + Math.random() * this.separation);
+        this.cubes.add(cube);
       }
+    }
+
+    this.mesh.add(this.cubes);
+  };
+
+  CubeGrid.prototype.update = function update(frame, relativeFrame) {
+    for (var index in this.cubes.children) {
+      var cube = this.cubes.children[index];
+      var x = index % (2 * this.nX + 1);
+      var z = index / (2 * this.nZ + 1);
+      var offset = x + z + Math.sin(index) * 2;
+      cube.scale.y = 1 + Math.abs(Math.sin((relativeFrame + offset) / 60));
+      cube.scale.x = 1.0 + Math.cos((relativeFrame + offset) / 25) / 4;
+      cube.scale.z = 1.0 + Math.sin((relativeFrame + offset) / 50) / 4;
     }
   }
 
@@ -146,7 +144,7 @@ function cubegridLayer(layer, demo) {
   this.ssaoPass.uniforms.aoClamp.value = 0.3;
   this.ssaoPass.uniforms.lumInfluence.value = 0.5;
 
-  this.cg = new CubeGrid(18, 18, 15, 1);
+  this.cg = new CubeGrid(18, 18, 15, 1, 15);
   this.cg.mesh.position.y = -70;
   this.scene.add(this.cg.mesh);
 }
