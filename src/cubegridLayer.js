@@ -2,9 +2,72 @@
  * @constructor
  */
 function cubegridLayer(layer, demo) {
+  var that = this;
+
+  var CubeGrid = class CubeGrid {
+    constructor(nX, nZ, cubeWidth, separation, cubeHeight = 15) {
+      let colors = [new THREE.Color("rgb(58, 85, 94)"),
+                    new THREE.Color("rgb(77, 105, 115)"),
+                    new THREE.Color("rgb(40, 62, 69)")];
+      this.mesh = new THREE.Object3D();
+      this.cubes = new THREE.Object3D();
+      this.nX = nX;
+      this.nZ = nZ;
+      this.cubeHeight = cubeHeight;
+      this.cubeWidth = cubeWidth;
+      this.separation = separation;
+
+      let rr = function rr(max, min) {
+        return Math.random() * (max - min) + min;
+      }
+
+      for (var x=-this.nX; x <= this.nX; x++) {
+        for (var z=-this.nZ; z <= this.nZ; z++) {
+          let dx = Math.abs(x / (this.nX * 2));
+          let dz = Math.abs(z / (this.nZ * 2));
+
+          let a = 0.25 * Math.sqrt(3.0);
+          let inside = (dz <= a) && (a*dx + 0.25*dz <= 0.5*a);
+
+          if (!inside) {
+            continue;
+          }
+
+          var color = colors[Math.floor(Math.random()*3)];
+          var cube = new THREE.Mesh(
+              new THREE.BoxGeometry(
+                cubeWidth * Math.pow(rr(0.1, 1.0), 0.5),
+                this.cubeHeight,
+                cubeWidth * Math.pow(rr(0.1, 1.0), 0.5)),
+              new THREE.MeshPhongMaterial({
+                color: color}));
+
+          cube.position.set(
+              x * (this.cubeWidth + this.separation) + Math.random() * this.separation,
+              0,
+              z * (this.cubeWidth + this.separation) + Math.random() * this.separation);
+          this.cubes.add(cube);
+        }
+      }
+
+      this.mesh.add(this.cubes);
+    }
+
+    update(frame, relativeFrame) {
+      for (let index in this.cubes.children) {
+        let cube = this.cubes.children[index];
+        let x = index % (2 * this.nX + 1);
+        let z = index / (2 * this.nZ + 1);
+        let offset = x + z + Math.sin(index) * 2;
+        cube.scale.y = 1 + Math.abs(Math.sin((relativeFrame + offset) / 60));
+        cube.scale.x = 1.0 + Math.cos((relativeFrame + offset) / 25) / 4;
+        cube.scale.z = 1.0 + Math.sin((relativeFrame + offset) / 50) / 4;
+      }
+    }
+  }
+
   this.config = layer.config;
   this.scene = new THREE.Scene();
-
   this.snareAnalysis = new audioAnalysisSanitizer('snare.wav', 'spectral_energy', 5);
   this.kickAnalysis = new audioAnalysisSanitizer('kick.wav', 'spectral_energy', 0.5);
 
@@ -74,16 +137,9 @@ function cubegridLayer(layer, demo) {
   this.ssaoPass.uniforms.aoClamp.value = 0.3;
   this.ssaoPass.uniforms.lumInfluence.value = 0.5;
 
-  var skyBox = new THREE.Mesh(
-    new THREE.BoxGeometry(300, 300, 300),
-    new THREE.MeshStandardMaterial({
-      color: 0x606060,
-      metalness: 0,
-      roughness: 1,
-      side: THREE.DoubleSide  
-    }));
-  this.scene.add(skyBox);
-  this.skyBox = skyBox;
+  this.cg = new CubeGrid(18, 18, 15, 1);
+  this.cg.mesh.position.y = -70;
+  this.scene.add(this.cg.mesh);
 }
 
 cubegridLayer.prototype.getEffectComposerPass = function() {
@@ -105,16 +161,17 @@ cubegridLayer.prototype.resize = function() {
 
 cubegridLayer.prototype.update = function(frame, relativeFrame) {
   var time = relativeFrame / 2;
-  var cameraTime = time + this.kickAnalysis.getValue(frame) - 2 * this.snareAnalysis.getValue(frame);
 
   this.bloomPass.copyUniforms.opacity.value = this.kickAnalysis.getValue(frame);
 
-  this.camera.position.x = Math.sin(cameraTime / 40) * 60;
+  this.camera.position.x = Math.sin(time / 80) * 60;
   this.camera.position.y = 20;
-  this.camera.position.z = Math.cos(cameraTime / 40) * 60;
+  this.camera.position.z = Math.cos(time / 80) * 60;
   this.cameraLight.position.copy(this.camera.position);
   this.camera.lookAt(new THREE.Vector3(0, -5, 0));
   this.handHeldCameraModifier.update(this.camera);
+
+  this.cg.update(frame, relativeFrame);
 
   if(BEAN < 768) {
     for(var x = 0; x < this.gridSize; x++) {
@@ -127,6 +184,7 @@ cubegridLayer.prototype.update = function(frame, relativeFrame) {
             Math.sin(0.1 * Math.cos(x / 3) / 4 + Math.PI * 2 * time / 50) +
             Math.sin(0.4 * z / 4 + Math.PI * 2 * time / 54)));
           scale += 0.1 * this.kickAnalysis.getValue(frame);
+          scale = Math.max(scale, 0.01);
           var r = lerp(0xf4, 0xff, scale) / 0xff;
           var g = lerp(0x57, 0xc9, scale) / 0xff;
           var b = lerp(0xad, 0x6b, scale) / 0xff;
@@ -155,7 +213,8 @@ cubegridLayer.prototype.update = function(frame, relativeFrame) {
           } else {
             scale = smoothstep(0, 1, size / check);
           }
-          //scale += 0.01 * this.kickAnalysis.getValue(frame);
+          scale = Math.max(scale, 0.01);
+
           var r = lerp(0xf4, 0xff, scale) / 0xff;
           var g = lerp(0x57, 0xc9, scale) / 0xff;
           var b = lerp(0xad, 0x6b, scale) / 0xff;
@@ -180,9 +239,9 @@ cubegridLayer.prototype.render = function(renderer, interpolation) {
 };
 
 cubegridLayer.prototype.rigMaterialsForGlowPass = function() {
-  this.scene.remove(this.skyBox);
+  this.scene.remove(this.cg.mesh);
 }
 
 cubegridLayer.prototype.rigMaterialsForRenderPass = function() {
-  this.scene.add(this.skyBox);
+  this.scene.add(this.cg.mesh)
 }
