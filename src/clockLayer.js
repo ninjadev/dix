@@ -69,8 +69,20 @@ clockLayer.prototype.init_clock_model = function() {
       three_object.add(object);
     });
   };
-  loadObject(prefix + 'clock_body_front.obj', clock_material, this.clock_body_front);
-  loadObject(prefix + 'clock_body_back.obj', clock_material, this.clock_body_back);
+  loadObject(prefix + 'clock_body_front.obj',
+      new THREE.MeshStandardMaterial({
+    color: 0x444454,
+    side: THREE.DoubleSide,
+    roughness: 1
+  })
+      , this.clock_body_front);
+  loadObject(prefix + 'clock_body_back.obj',
+      new THREE.MeshStandardMaterial({
+    color: 0x444454,
+    side: THREE.DoubleSide,
+    roughness: 1
+  })
+      , this.clock_body_back);
   loadObject(prefix + 'pendulum.obj', clock_material, this.pendulum);
   loadObject(prefix + 'second_hand.obj', clock_material, this.second_hand);
   loadObject(prefix + 'minute_hand.obj', clock_material, this.minute_hand);
@@ -138,9 +150,12 @@ clockLayer.prototype.init_room = function() {
   this.concreteFloor = new THREE.Mesh(
       new THREE.PlaneGeometry(100, 100),
       new THREE.MeshStandardMaterial({
+        color: 0xaaaaaa,
         map: Loader.loadTexture('res/concrete.jpg'),
         normalMap: Loader.loadTexture('res/concrete-normal.jpg'),
-        normalScale: new THREE.Vector2(0.1, 0.1)
+        normalScale: new THREE.Vector2(0.1, 0.1),
+          roughness: 1,
+            metalness: 0
       }));
   this.concreteFloor.material.map.wrapS = this.concreteFloor.material.map.wrapT = THREE.RepeatWrapping;
   this.concreteFloor.material.map.repeat.set(4, 4);
@@ -163,12 +178,14 @@ clockLayer.prototype.init_room = function() {
   this.scene.add(this.ambientLight);
 
   this.floorMaterial = new THREE.MeshStandardMaterial({
-    map: Loader.loadTexture('res/floor.jpg')
+    map: Loader.loadTexture('res/floor.jpg'),
+    roughness: 0.9,
+    metalness: 0.1
   });
   this.floorMaterial.map.repeat.set(0.5, 0.5);
   this.floor = new THREE.Mesh(new THREE.BoxGeometry(20, 7.5, 20), this.floorMaterial);
   this.floor.position.y = -15;
-  this.scene.add(this.floor);
+  //this.scene.add(this.floor);
 }
 
 clockLayer.prototype.set_positions = function() {

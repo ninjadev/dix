@@ -8,8 +8,9 @@ function gearBlueLayer(layer) {
   this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.001, 100);
 
   var light = new THREE.PointLight( 0xffffff, 1, 100 );
-  light.position.set( 10, 10, 10 );
+  light.position.set( 0, 10, 10 );
   this.scene.add(light);
+  this.scene.add(new THREE.AmbientLight(0xffffff));
 
   var light2 = new THREE.PointLight( 0xffffff, 1, 100 );
   light2.position.set( -10, -10, -10 );
