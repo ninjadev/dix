@@ -48,12 +48,26 @@ function geomatrixLayer(layer, demo) {
   this.plane.rotation.z = -Math.PI / 4;
   this.plane.position.z = -10;
   this.scene.add(this.plane);
-  this.snareAnalysis = new audioAnalysisSanitizer('hihats.wav', 'spectral_energy', 0.05)
+  this.snareAnalysis = new audioAnalysisSanitizer('hihats.wav', 'spectral_energy', 0.55)
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
 }
 
 geomatrixLayer.prototype.createFloppyArms = function() {
+  //long arm
+  this.n_cubes = 6;
+  this.longarm = new THREE.Object3D();
+  for(i = 0; i < this.n_cubes; i++){
+    var cube = new THREE.Mesh(
+        new THREE.CubeGeometry( 5, 5, 5 ), 
+        new THREE.MeshNormalMaterial() );
+
+    this.longarm.add(cube)
+  }
+
+  this.scene.add(this.longarm);
+
+  //short arm
   this.n_cubes = 6;
   this.shortarm = new THREE.Object3D();
   for(i = 0; i < this.n_cubes; i++){
@@ -82,31 +96,42 @@ geomatrixLayer.prototype.resize = function() {
 
 
 geomatrixLayer.prototype.updateFloppy = function(frame, relativeFrame) {
+
+  //relativeFrame += this.snareAnalysis.getValue(frame);
+
+  var speed = .15;
+  var snarescale = 0;
+
+  var longlen = 10;
+  var shortlen = 5;
+
+  var longflop = 1;
+  var shortflop = 1;
+
+  for(i = 0; i < this.longarm.children.length; i++){
+    var box = this.longarm.children[i];
+    box.position.set( 0, i, 0);
+    //length of arms:
+    box.position.multiplyScalar(longlen);
+    //rotspeed -= this.kickAnalysis.getValue(frame) * .5;
+
+    var val =  -speed* (relativeFrame - i*longflop) + snarescale * this.snareAnalysis.getValue(frame - i*longflop);
+
+    //Rotation formulas
+    box.position.applyAxisAngle(new THREE.Vector3(0,0,1), val);
+  }
+
   for(i = 0; i < this.shortarm.children.length; i++){
     var box = this.shortarm.children[i];
     box.position.set( 0, i, 0);
     //length of arms:
-    box.position.multiplyScalar(10);
-
-    var stiff = 3;
-    var rotdist = 3.2;
-    var rotspeed = 29;
-    var kickscale = .13;
+    box.position.multiplyScalar(shortlen);
 
 
-    //rotspeed -= this.kickAnalysis.getValue(frame) * .5;
 
-    var val =  rotdist * Math.cos((relativeFrame - i*stiff)/rotspeed); // + kickscale * this.kickAnalysis.getValue(frame - i*stiff);
+    var val =  -(speed / 12) * (relativeFrame - i*shortflop) + snarescale * this.snareAnalysis.getValue(frame - i*shortflop);
 
-
-    //Rotation formulas
-    var xmagic = val;
-    var ymagic = val;
-    var zmagic = val;
-    box.position.applyAxisAngle(new THREE.Vector3(0,0,1), zmagic);
-
-    //this.arms[a][i].rotation.x = Math.sin(relativeFrame / 10);
-    //this.arms[a][i].rotation.y = Math.cos(relativeFrame / 10);
+    box.position.applyAxisAngle(new THREE.Vector3(0,0,1), val);
   }
 }
 
