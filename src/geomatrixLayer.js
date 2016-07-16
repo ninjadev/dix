@@ -59,7 +59,7 @@ geomatrixLayer.prototype.createFloppyArms = function() {
   this.longarm = new THREE.Object3D();
   for(i = 0; i < this.n_cubes; i++){
     var cube = new THREE.Mesh(
-        new THREE.SphereGeometry( 3, 5, 5 ), 
+        new THREE.SphereGeometry(3, 9, 9),
         new THREE.MeshBasicMaterial({ color: 'black', opacity: 0.7, transparent: true }));
 
     this.longarm.add(cube)
@@ -72,7 +72,7 @@ geomatrixLayer.prototype.createFloppyArms = function() {
   this.shortarm = new THREE.Object3D();
   for(i = 0; i < this.n_cubes; i++){
     var cube = new THREE.Mesh(
-        new THREE.SphereGeometry( 3, 5, 5 ), 
+        new THREE.SphereGeometry(3, 9, 9),
         new THREE.MeshBasicMaterial({ color: 'black', opacity: 0.7, transparent: true }));
 
     this.shortarm.add(cube)
