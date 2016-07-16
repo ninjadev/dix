@@ -349,15 +349,21 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
   if(frame >= 1783 && frame < 1994) {
     var animation_progress = (frame - 1783)/(1994-1783);
 
-    this.camera.position.x = 12;
-    this.camera.position.y = 2;
-    this.camera.position.z = 12;
+    this.camera.position.x = smoothstep(8, 4, animation_progress * 1.3);
+    this.camera.position.y = 2 + smoothstep(0,-1, animation_progress * 1.3);
+    this.camera.position.z = smoothstep(6, -2, animation_progress * 1.5);
   
-    this.camera.lookAt(new THREE.Vector3(0,-2.8,0));
+    this.camera.lookAt(new THREE.Vector3(0,smoothstep(-1.2,0.2,animation_progress)));
 
-    this.gear8.position.set(  smoothstep(this.gear8_init_position_x, this.gear8_clock_position_x, animation_progress),
-                              smoothstep(this.gear8_init_position_y, this.gear8_clock_position_y, animation_progress),
-                              smoothstep(this.gear8_init_position_z, this.gear8_clock_position_z, animation_progress));
+    this.gear9.position.set(  smoothstep(this.gear9_init_position_x, this.gear9_clock_position_x, animation_progress * 1.6),
+                              smoothstep(this.gear9_init_position_y, this.gear9_clock_position_y, animation_progress * 1.6),
+                              smoothstep(this.gear9_init_position_z, this.gear9_clock_position_z, animation_progress * 1.6));
+    this.hour_hand.position.set(  smoothstep(this.hour_hand_init_position_x, this.hour_hand_clock_position_x, animation_progress * 1.25),
+                              smoothstep(this.hour_hand_init_position_y, this.hour_hand_clock_position_y, animation_progress * 1.25),
+                              smoothstep(this.hour_hand_init_position_z, this.hour_hand_clock_position_z, animation_progress * 1.25));
+
+    this.gear9.rotation.z = relativeFrame * 0.06;
+    this.hour_hand.rotation.z = relativeFrame * 0.06;
   }
 
   // Things happening after blueGear
