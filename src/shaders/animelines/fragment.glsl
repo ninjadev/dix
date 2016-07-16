@@ -17,7 +17,7 @@ float draw_circle(vec2 position, vec2 scale) {
 
 void main() {
 	float motion = time;
-    float intensity;
+    float intensity = 0.0;
 	intensity += draw_circle(vec2(mod(motion*0.1+1.1, 2.1)-1., 0.05), vec2(2.0, 20.0));
 	intensity += draw_circle(vec2(mod(motion*0.1+1.1, 2.4)-1., 0.11), vec2(2.2, 22.0));
 	intensity += draw_circle(vec2(mod(motion*0.1+2.2, 2.5)-1., 0.16), vec2(2.4, 50.0));
