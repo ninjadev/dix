@@ -55,12 +55,12 @@ function geomatrixLayer(layer, demo) {
 
 geomatrixLayer.prototype.createFloppyArms = function() {
   //long arm
-  this.n_cubes = 6;
+  this.n_cubes = 10;
   this.longarm = new THREE.Object3D();
   for(i = 0; i < this.n_cubes; i++){
     var cube = new THREE.Mesh(
-        new THREE.CubeGeometry( 5, 5, 5 ), 
-        new THREE.MeshNormalMaterial() );
+        new THREE.SphereGeometry( 3, 5, 5 ), 
+        new THREE.MeshBasicMaterial({ color: 'black', opacity: 0.7, transparent: true }));
 
     this.longarm.add(cube)
   }
@@ -72,8 +72,8 @@ geomatrixLayer.prototype.createFloppyArms = function() {
   this.shortarm = new THREE.Object3D();
   for(i = 0; i < this.n_cubes; i++){
     var cube = new THREE.Mesh(
-        new THREE.CubeGeometry( 5, 5, 5 ), 
-        new THREE.MeshNormalMaterial() );
+        new THREE.SphereGeometry( 3, 5, 5 ), 
+        new THREE.MeshBasicMaterial({ color: 'black', opacity: 0.7, transparent: true }));
 
     this.shortarm.add(cube)
   }
@@ -106,14 +106,18 @@ geomatrixLayer.prototype.updateFloppy = function(frame, relativeFrame) {
   var longflop = 1;
   var shortflop = 1;
 
+  var slowscaler = smoothstep(
+      0,
+      1,
+      (2000 - relativeFrame) / 2000);
+
+  var relativeFrame = relativeFrame * slowscaler;
+
   for(i = 0; i < this.longarm.children.length; i++){
     var box = this.longarm.children[i];
-    box.position.set( 0, i, 0);
-    //length of arms:
+    box.position.set( 0, i*0.6, 0);
     box.position.multiplyScalar(longlen);
-    //rotspeed -= this.kickAnalysis.getValue(frame) * .5;
-
-    var val =  -speed* (relativeFrame - i*longflop) + snarescale * this.snareAnalysis.getValue(frame - i*longflop);
+    var val =  -speed* (relativeFrame) + snarescale * this.snareAnalysis.getValue(frame - i*longflop);
 
     //Rotation formulas
     box.position.applyAxisAngle(new THREE.Vector3(0,0,1), val);
