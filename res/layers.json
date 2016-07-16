@@ -72,6 +72,14 @@
     "config": {}
   },
   {
+    "type": "noiseLayer",
+    "displayName": "noiseLayer",
+    "startFrame": 3986,
+    "endFrame": 5759,
+    "color": "red",
+    "config": {}
+  },
+  {
     "type": "tunnelsplosionLayer",
     "displayName": "tunnelsplosion",
     "startFrame": 5758,
