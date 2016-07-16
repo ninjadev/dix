@@ -102,8 +102,8 @@ phonographLayer.prototype.initPhonographModel = function() {
   var text01Material = new THREE.MeshStandardMaterial({
     //color: 0x729c23,
     map: Loader.loadTexture(prefix + 'hismastervoice/text_01.jpg'),
-    metalness: 0,
-    roughness: 1,
+    metalness: 0.2,
+    roughness: 0.9,
     side: THREE.DoubleSide
   });
   var textFastMaterial = new THREE.MeshStandardMaterial({
