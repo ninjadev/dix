@@ -5,7 +5,7 @@ function phonographLayer(layer, demo) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
-  this.camera = new THREE.PerspectiveCamera(45, 16 / 9, .1, 100000);
+  this.camera = new THREE.PerspectiveCamera(45, 16 / 9, .0001, 100000);
 
   this.handHeldCameraModifier = new HandHeldCameraModifier(0.00001);
 
@@ -26,7 +26,14 @@ function phonographLayer(layer, demo) {
   this.scene.add(pointLight);
 
   // Whole phonograph with particles
-  this.camera.position.set(0.21, 0.83, -0.21);
+  this.camera.position.set(0.28,0.62,-2);
+  this.camera.lookAt(new THREE.Vector3(5000,0.62,-2.2));
+  this.camera.position.set(0.4,0.61,-1.86);
+  this.camera.lookAt(new THREE.Vector3(922.68,1505.11,-5000));
+  this.camera.position.set(0.43,0.94,-2.08);
+  this.camera.lookAt(new THREE.Vector3(0.45,0.27,-2.15));
+  this.camera.position.set(0.36,0.66,-1.95);
+  this.camera.lookAt(new THREE.Vector3(5000,2142.25,-2201.36));
 
   this.particleDirection = [-0.99, 0.6, 0.56];
   this.particleSpawnPosition = [
@@ -51,7 +58,7 @@ function phonographLayer(layer, demo) {
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
   this.renderPass.clear = true;
-  var bloomPass = new THREE.BloomPass(2, 25, 4, 1024);
+  var bloomPass = new THREE.BloomPass(4, 25, 4, 1024);
   this.glowEffectComposer = new THREE.EffectComposer(demo.renderer);
   this.glowEffectComposer.addPass(this.renderPass);
   this.glowEffectComposer.addPass(bloomPass);
@@ -270,25 +277,37 @@ phonographLayer.prototype.updateSpinwires = function(frame, relativeFrame) {
   this.barLight.scale.z = lightOpening;
   this.barLightGodRay.scale.z = lightOpening;
   if (lightOpening == 0) {
-    this.barLight.position.y = 34.1;
-    this.barLightGodRay.scale.y = 0;
+    this.barLight.position.y = -0.001;
+    this.barLightGodRay.scale.y = 0.000000000001;
   } else {
-    this.barLight.position.y = 33.9;
+    this.barLight.position.y = .0001;
     this.barLightGodRay.scale.y = 1;
   }
-  this.barLight.position.z = 100 - 27 / 2 + lightOpening * 27 / 2;
-  this.barLightGodRay.position.z = 100 - 27 / 2 + lightOpening * 27 / 2;
-  this.mainObject.rotation.set(0, 0.05 * relativeFrame, 0);
+  this.barLight.position.x = 0;
+  this.barLight.position.y = -0.001;
+  this.barLight.position.z = 0 - 0.03 / 2 + lightOpening * 0.03 / 2;
+  this.barLightGodRay.position.x = 0;
+  this.barLightGodRay.position.y = -0.05;
+  this.barLightGodRay.position.z = - 0.03 / 2 + lightOpening * 0.03 / 2;
+  this.barLightHolder.position.x = 0;
+  this.barLightHolder.position.y = 0;
+  this.barLightHolder.position.z = 0;
+  this.mainObject.rotation.set(0, 0.01 * (frame - 4873), 0);
   this.lightCentersActive = relativeFrame > 210;
 
-  this.mainObject.position.x = 0.44;
-  this.mainObject.position.y = 0.61 + this.audioAnalysis.getValue(frame) * 0.01;
-  this.mainObject.position.z = -2.10;
+  this.mainObject.position.x = 0;
+  this.mainObject.position.y = 0 + this.audioAnalysis.getValue(frame) * 0.01;
+  this.mainObject.position.z = 0;
+
+  this.spinwireContainer.position.x = 0.441;
+  this.spinwireContainer.position.y = 0.61;
+  this.spinwireContainer.position.z = -2.118;
+  this.spinwireContainer.rotation.y = Math.PI;
 
   for (var i = 0; i < this.lights.length; i++) {
     var light = this.lights[i];
     var lightCenter = this.lightCenters[i];
-    light.position.copy(this.curves[i].getPoint((Math.PI * 32 + 2.75 - 0.05 * relativeFrame / Math.PI / 2) % 1));
+    light.position.copy(this.curves[i].getPoint((0.25 + 100 - 0.01 * relativeFrame / Math.PI / 2) % 1));
     lightCenter.position.copy(light.position);
   }
 };
@@ -392,8 +411,9 @@ phonographLayer.prototype.rigMaterialsForGlowPass = function() {
   }
   this.barLightHolder.material = this.blackoutMaterial;
   this.scene.remove(this.skyBox);
-  this.scene.add(this.barLightGodRay);
-  this.scene.add(this.mainObject);
+  this.barLightContainer.add(this.barLightGodRay);
+  this.spinwireContainer.add(this.barLightContainer);
+  this.spinwireContainer.add(this.mainObject);
   phonographLayer.glowTraverse(this.phonographModel, 'glowMaterial');
 };
 
@@ -403,10 +423,10 @@ phonographLayer.prototype.rigMaterialsForRenderPass = function() {
     this.mainObject.add(this.lights[i]);
     this.mainObject.remove(this.lightCenters[i]);
   }
-  this.scene.remove(this.barLightGodRay);
+  this.barLightContainer.remove(this.barLightGodRay);
   this.barLightHolder.material = this.barLightHolderRenderMaterial;
   this.scene.add(this.skyBox);
-  this.scene.add(this.mainObject);
+  this.spinwireContainer.add(this.mainObject);
   phonographLayer.renderTraverse(this.phonographModel);
 };
 
@@ -424,25 +444,26 @@ phonographLayer.prototype.initSpinwires = function() {
   this.scene.add(skyBox);
   this.skyBox = skyBox;
 
-  this.barLightHolder = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 29), this.barLightHolderRenderMaterial);
-  this.scene.add(this.barLightHolder);
-  this.barLightHolder.position.z = 100;
-  this.barLightHolder.position.y = 35;
+  this.barLightContainer = new THREE.Object3D();
+  this.spinwireContainer = new THREE.Object3D();
+  this.scene.add(this.spinwireContainer);
+  this.spinwireContainer.add(this.barLightContainer);
+  this.barLightContainer.position.z = -0.12;
+  this.barLightContainer.position.y = 0.06;
+
+  this.barLightHolder = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.004, 0.04), this.barLightHolderRenderMaterial);
+  this.barLightContainer.add(this.barLightHolder);
 
   this.barLight = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 27),
+    new THREE.BoxGeometry(.005, .002, 0.03),
     new THREE.MeshBasicMaterial());
-  this.scene.add(this.barLight);
-  this.barLight.position.z = 100;
-  this.barLight.position.y = 33.9;
+  this.barLightContainer.add(this.barLight);
 
   this.barLightGodRay = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 50, 27),
+    new THREE.BoxGeometry(0.005, 0.1, 0.03),
     new THREE.ShaderMaterial(SHADERS.godray));
   this.barLightGodRay.material.transparent = true;
-  this.scene.add(this.barLightGodRay);
-  this.barLightGodRay.position.z = 100;
-  this.barLightGodRay.position.y = 10;
+  this.barLightContainer.add(this.barLightGodRay);
 
   this.ceilingLight = new THREE.PointLight({
     color: 0xddffff
@@ -503,6 +524,7 @@ phonographLayer.prototype.initSpinwires = function() {
   this.lightCenters = [];
   var lightCenterGeometry = new THREE.SphereGeometry(0.85, 32, 32);
   this.mainObject = new THREE.Object3D();
+  this.spinwireContainer.add(this.mainObject);
   var scale = 0.0012;
   this.mainObject.scale.set(scale, scale, scale);
   for (var i = 0; i < this.cube.geometry.vertices.length; i++) {
@@ -546,6 +568,6 @@ phonographLayer.prototype.initSpinwires = function() {
     this.mainObject.add(lightCenter);
     this.lightCenters.push(lightCenter);
   }
-  this.scene.add(this.mainObject);
+  this.spinwireContainer.add(this.mainObject);
 };
 
