@@ -20,7 +20,7 @@ function gearRedLayer(layer) {
   pointLight.position.y = 50;
   pointLight.position.z = 130;
   this.scene.add(pointLight);
-
+  
   this.camera.position.x = 0;
   this.camera.position.y = 0;
   this.camera.position.z = 4;
@@ -59,7 +59,7 @@ gearRedLayer.prototype.init_gear = function() {
     });
   };
   this.gear = new THREE.Object3D();
-  loadObject(prefix + 'gear3.obj', gear_material, this.gear);
+  loadObject(prefix + 'gear9.obj', gear_material, this.gear);
   this.scene.add(this.gear);
 }
 

@@ -5,13 +5,11 @@ function clockLayer(layer) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
-  this.cameraController = new CameraController(layer.type);
-  this.camera = this.cameraController.camera;
+  this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.001, 10000);
 
   var light = new THREE.PointLight( 0xffffff, 1, 100 );
   light.position.set( 10, 10, 10 );
   this.scene.add(light);
-
 
   var light2 = new THREE.PointLight( 0xffffff, 1, 100 );
   light2.position.set( -10, -10, -10 );
@@ -57,6 +55,7 @@ clockLayer.prototype.init_clock_model = function() {
   this.gear7 = new THREE.Object3D();
   this.gear8 = new THREE.Object3D();
   this.gear9 = new THREE.Object3D();
+
 
   var loadObject = function (objPath, material, three_object) {
     var objLoader = new THREE.OBJLoader();
@@ -304,14 +303,118 @@ clockLayer.prototype.resize = function() {
 };
 
 clockLayer.prototype.update = function(frame, relativeFrame) {
-  this.cameraController.updateCamera(relativeFrame);
 
-  var start_clock_time = 630;
-  var start_assembly_time = 0;
-  var end_assembly_time = 600;
+  var start_clock_time = 2750 - 1332;
+  var start_assembly_time = 2500 - 1332;
+  var end_assembly_time = 2750 - 1332;
+
+  if(relativeFrame < start_clock_time) {
+  // Move these out of vision for now. They will be back :)
+    this.clock_body_back .position.y = -1000;
+    this.pendulum.position.y = -1000;
+    this.second_hand.position.y = -1000;
+    this.minute_hand.position.y = -1000;
+    this.hour_hand.position.y = -1000;
+    this.gear1.position.y = -1000;
+    this.gear2.position.y = -1000;
+    this.gear3.position.y = -1000;
+    this.gear4.position.y = -1000;
+    this.gear5.position.y = -1000;
+    this.gear6.position.y = -1000;
+    this.gear7.position.y = -1000;
+    this.gear8.position.y = -1000; 
+    this.gear9.position.y = -1000;
+  }
+
+  // Things happening before redGear
+  if(frame >= 1332 && frame < 1561) {
+    var animation_progress = (frame - 1332)/(1561-1332);
+
+    this.camera.position.x = 8 - smoothstep(0, 10, animation_progress*1.3);
+    this.camera.position.y = 1.5;
+    this.camera.position.z = 8 - smoothstep(0, 3, animation_progress*1.3);;
+  
+    this.camera.lookAt(new THREE.Vector3(0,-1 + smoothstep(0, 1.3, animation_progress*0.8),0));
+
+    this.clock_body_front.position.y = smoothstep(6, 0, animation_progress);
+
+  }
+
+  // Things happening during redGear
+  if(frame >= 1561 && frame < 1783) {
+    this.camera.position.x = 100;
+  }
+
+  // Things happening between redGear and blueGear
+  if(frame >= 1783 && frame < 1994) {
+    var animation_progress = (frame - 1783)/(1994-1783);
+
+    this.camera.position.x = smoothstep(8, 4, animation_progress * 1.3);
+    this.camera.position.y = 2 + smoothstep(0,-1, animation_progress * 1.3);
+    this.camera.position.z = smoothstep(6, -2, animation_progress * 1.5);
+  
+    this.camera.lookAt(new THREE.Vector3(0,smoothstep(-1.2,0.2,animation_progress)));
+
+    this.gear9.position.set(  smoothstep(this.gear9_init_position_x, this.gear9_clock_position_x, animation_progress * 1.6),
+                              smoothstep(this.gear9_init_position_y, this.gear9_clock_position_y, animation_progress * 1.6),
+                              smoothstep(this.gear9_init_position_z, this.gear9_clock_position_z, animation_progress * 1.6));
+    this.hour_hand.position.set(  smoothstep(this.hour_hand_init_position_x, this.hour_hand_clock_position_x, animation_progress * 1.25),
+                                  smoothstep(this.hour_hand_init_position_y, this.hour_hand_clock_position_y, animation_progress * 1.25),
+                                  smoothstep(this.hour_hand_init_position_z, this.hour_hand_clock_position_z, animation_progress * 1.25));
+
+    this.gear9.rotation.z = relativeFrame * 0.06;
+    this.hour_hand.rotation.z = relativeFrame * 0.06;
+  }
+
+  // Things happening after blueGear
+  if(frame >= 1994 && frame < 2215) {
+    this.camera.position.x = 100;
+  }
+
+  // Things happening after blueGear
+  if(frame >= 2215 && frame < 2500) {
+    var animation_progress = (frame - 2215)/(2500-2215);
+
+    this.gear8.position.set(  this.gear8_clock_position_x,
+                              this.gear8_clock_position_y,
+                              this.gear8_clock_position_z);
+    this.gear9.position.set(  this.gear9_clock_position_x,
+                              this.gear9_clock_position_y,
+                              this.gear9_clock_position_z);
+    this.hour_hand.position.set(  this.hour_hand_clock_position_x,
+                              this.hour_hand_clock_position_y,
+                              this.hour_hand_clock_position_z);
+
+    var angle7 = 0.03 * relativeFrame;
+    var angle8 = -angle7 * 12 / 12;
+    var angle9 = -angle8 * 12 / 24;
+
+    this.gear9.rotation.z = angle9;
+    this.hour_hand.rotation.z = angle9;
+    this.gear8.rotation.z = angle8;
+    
+    this.camera.position.x = smoothstep(-2, 0, animation_progress * 1.3);
+    this.camera.position.y = smoothstep(-2, 2, animation_progress * 1.3);
+    this.camera.position.z = this.gear7.position.z * 1.4 - 1.6;
+    this.camera.lookAt(new THREE.Vector3(0,1.1,0));
+
+    this.camera.rotation.z = -angle7; 
+
+    this.gear7.position.set(  smoothstep(this.gear7_init_position_x, this.gear7_clock_position_x, animation_progress),
+                              smoothstep(this.gear7_init_position_y, this.gear7_clock_position_y, animation_progress),
+                              smoothstep(this.gear7_init_position_z, this.gear7_clock_position_z, animation_progress));
+
+    this.gear7.rotation.z = angle7;
+  }
 
   if(relativeFrame > start_assembly_time && relativeFrame < end_assembly_time) {
     var animation_progress = (relativeFrame - start_assembly_time)/(end_assembly_time-start_assembly_time) * 1.7;
+
+    this.camera.position.x = -12 + animation_progress * 12;
+    this.camera.position.y = 2;
+    this.camera.position.z = 12;
+  
+    this.camera.lookAt(new THREE.Vector3(0,-2.8,0));
 
     this.clock_body_back.position.set(  smoothstep(this.clock_body_back_init_position_x, this.clock_body_back_clock_position_x, animation_progress - 0.70),
                                         smoothstep(this.clock_body_back_init_position_y, this.clock_body_back_clock_position_y, animation_progress - 0.70),
@@ -352,12 +455,6 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
     this.gear7.position.set(  smoothstep(this.gear7_init_position_x, this.gear7_clock_position_x, animation_progress - 0.10),
                               smoothstep(this.gear7_init_position_y, this.gear7_clock_position_y, animation_progress - 0.10),
                               smoothstep(this.gear7_init_position_z, this.gear7_clock_position_z, animation_progress - 0.10));
-    this.gear8.position.set(  smoothstep(this.gear8_init_position_x, this.gear8_clock_position_x, animation_progress - 0.05),
-                              smoothstep(this.gear8_init_position_y, this.gear8_clock_position_y, animation_progress - 0.05),
-                              smoothstep(this.gear8_init_position_z, this.gear8_clock_position_z, animation_progress - 0.05));
-    this.gear9.position.set(  smoothstep(this.gear9_init_position_x, this.gear9_clock_position_x, animation_progress),
-                              smoothstep(this.gear9_init_position_y, this.gear9_clock_position_y, animation_progress),
-                              smoothstep(this.gear9_init_position_z, this.gear9_clock_position_z, animation_progress));
   }
 
   if(relativeFrame > start_clock_time) {

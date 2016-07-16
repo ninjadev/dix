@@ -42,23 +42,23 @@
   {
     "type": "gearRedLayer",
     "displayName": "gearRed",
-    "startFrame": 1329,
-    "endFrame": 1600,
+    "startFrame": 1561,
+    "endFrame": 1782,
     "color": "red",
     "config": {}
   },
   {
     "type": "gearBlueLayer",
     "displayName": "gearBlue",
-    "startFrame": 1601,
-    "endFrame": 1870,
+    "startFrame": 1994,
+    "endFrame": 2215,
     "color": "blue",
     "config": {}
   },
   {
     "type": "clockLayer",
     "displayName": "clock",
-    "startFrame": 1871,
+    "startFrame": 1332,
     "endFrame": 3100,
     "color": "blue",
     "config": {}
