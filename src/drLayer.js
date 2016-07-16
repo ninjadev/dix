@@ -37,13 +37,14 @@ drLayer.prototype.update = function(frame, relativeFrame) {
     this.shaderPass.uniforms.tText.value = this.canvasTexture;
     this.canvasTexture.needsUpdate = true;
     var overlayAmount = 0;
-    if(frame < 7350) {
+    var start_time = 6950
+    if(frame < start_time + 200) {
       this.line1 = 'Some clocks are more efficient than others!';
       this.line2 = 'This one has 58 minutes in 1 hour.';
-      overlayAmount = smoothstep(0, 1, (frame - 7150) / 50);
+      overlayAmount = smoothstep(0, 1, (frame - start_time) / 50);
     }
-    else if(frame < 7500) {
-      overlayAmount = smoothstep(1, 0, (frame - 7400) / 100);
+    else if(frame < start_time + 550) {
+      overlayAmount = smoothstep(1, 0, (frame - (start_time + 450)) / 100);
     }
     this.shaderPass.uniforms.overlayAmount.value = overlayAmount;
 };
