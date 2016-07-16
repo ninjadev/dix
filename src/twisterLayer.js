@@ -99,7 +99,7 @@ function twisterLayer(layer, demo) {
 
   this.numberOfParticles = 3500;
   this.particles = []
-  this.material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  this.material = new THREE.MeshBasicMaterial({ color: 0x101010 });
   this.geometry = new THREE.SphereGeometry(0.3, 8, 6);
   for(var i = 0; i < this.numberOfParticles; i++) {
     particle = new THREE.Mesh(this.geometry,this.material);
@@ -172,20 +172,26 @@ twisterLayer.prototype.update = function(frame, relativeFrame) {
   for(var i; i < this.numberOfParticles; i++){
     var particle = this.particles[i];
     particle.visible = backup_frame >= 886 ? true : false;
-    particle.scale.x = snareScale;
-    particle.scale.y = snareScale;
-    particle.scale.z = snareScale;
+    particle.scale.x = snareScale * 2;
+    particle.scale.y = snareScale * 2;
+    particle.scale.z = snareScale * 2;
   }
 };
 
 twisterLayer.prototype.rigMaterialsForGlowPass = function() {
   this.cube.material = this.glowMaterial;
   this.scene.remove(this.skyBox);
+  for(var i = 0; i < this.particles.length; i++) {
+    this.scene.add(this.particles[i]);
+  }
 }
 
 twisterLayer.prototype.rigMaterialsForRenderPass = function() {
   this.cube.material = this.renderMaterial;
   this.scene.add(this.skyBox);
+  for(var i = 0; i < this.particles.length; i++) {
+    this.scene.remove(this.particles[i]);
+  }
 }
 
 twisterLayer.prototype.render = function(renderer, interpolation) {
@@ -194,7 +200,7 @@ twisterLayer.prototype.render = function(renderer, interpolation) {
   this.canvasCtx.translate(this.canvas.width / 2, this.canvas.height / 2);
   this.canvasCtx.rotate(Math.PI / 2);
   this.canvasCtx.translate(-this.canvas.width / 2, -this.canvas.height / 2);
-  this.canvasCtx.font = '100px Consolas monospace';
+  this.canvasCtx.font = '100px Consolas, monospace';
   this.canvasCtx.fillStyle = 'rgb(221, 176, 109)';
   var message = '    desire // farbrausch // cocoon // sandsmark // mrdoob // darklite // excess // indigo // relapse // still // nerdartz // primitive // placid // kvasigen // gargaj // ephidrena // rgba // outracks // panda cube // relapse // fnuque // truck // rohtie // T-101 // everyone at solskogen!';
   this.canvasCtx.fillText(message, this.scrollerOffset, 1024 - 250);
