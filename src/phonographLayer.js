@@ -47,7 +47,6 @@ function phonographLayer(layer, demo) {
     0.82 + 0.25 * this.particleDirection[1],
     -2.35 + 0.25 * this.particleDirection[2] + 0.115
   ];
-  this.cumulativeParticleRotation = 0;
 
   this.guitarAnalysis = new audioAnalysisSanitizer('guitar.wav', 'spectral_energy', 1);
   this.snareAnalysis = new audioAnalysisSanitizer('snare.wav', 'spectral_energy', 1);
@@ -237,7 +236,7 @@ phonographLayer.prototype.initParticles = function(mesh) {
     this.materials.push(material);
     var particle = mesh.clone();
     particle.material = material;
-    particle.scale.set(0.01, 0.01, 0.01);
+    particle.scale.set(0.02, 0.02, 0.02);
     particle.position.set(this.particleSpawnPosition[0], this.particleSpawnPosition[1], this.particleSpawnPosition[2]);
     particle.userData.startedAt = null;
     particle.userData.direction = [
@@ -450,10 +449,10 @@ phonographLayer.prototype.initSpinwires = function() {
   var skyGeometry = new THREE.BoxGeometry(10, 10, 10);
 
   var skyBox = new THREE.Mesh(skyGeometry, new THREE.MeshStandardMaterial({
-    map: Loader.loadTexture('res/brick.jpg'),
+    map: Loader.loadTexture('res/paper_old.jpg'),
     side: THREE.DoubleSide
   }));
-  skyBox.position.set(0, 5, 0);
+  skyBox.position.set(0, 5.2, 0);
   this.scene.add(skyBox);
   this.skyBox = skyBox;
 
