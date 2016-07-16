@@ -5,10 +5,12 @@ function gearRedLayer(layer) {
   this.config = layer.config;
   this.scene = new THREE.Scene();
 
+  this.scene.add(new THREE.AmbientLight(0xffffff));
+
   this.camera = new THREE.PerspectiveCamera(45, 16 / 9, 0.001, 100);
 
   var light = new THREE.PointLight( 0xffffff, 1, 100 );
-  light.position.set( 10, 10, 10 );
+  light.position.set( 0, 10, 10 );
   this.scene.add(light);
 
   var light2 = new THREE.PointLight( 0xffffff, 1, 100 );
@@ -77,14 +79,15 @@ gearRedLayer.prototype.resize = function() {
 };
 
 gearRedLayer.prototype.update = function(frame, relativeFrame) {
+  var clippedRelativeFrame = relativeFrame + 50;
   this.plane.material.uniforms.time.value = frame;
 
   this.plane.material.uniforms.colorA.value = new THREE.Color(113 / 255, 17 / 255, 18 / 255);
   this.plane.material.uniforms.colorB.value = new THREE.Color(248 / 255, 225 / 255, 132 / 255);
 
-  this.gear.rotation.z = -Math.pow(relativeFrame * 0.02, 2);
+  this.gear.rotation.z = -Math.pow(clippedRelativeFrame * 0.02, 2);
 
-  this.gear.rotation.x = Math.PI * 2 * 0.75 + relativeFrame * 0.005;
+  this.gear.rotation.x = Math.PI * 2 * 0.75 + clippedRelativeFrame * 0.005;
 
   this.gear.position.x = -1.2 + 2.4 * relativeFrame / 270;
   this.gear.position.y = -0.7 + Math.pow(1.0 * relativeFrame / 270, 1.7);
