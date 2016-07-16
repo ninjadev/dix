@@ -94,8 +94,7 @@
     "endFrame": 9305,
     "color": "pink",
     "config": {
-      "amount": 1.1,
-      "noStabs": true
+      "amount": 1.1
     }
   },
   {
