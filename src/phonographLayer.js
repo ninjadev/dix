@@ -309,7 +309,7 @@ phonographLayer.prototype.updateSpinwires = function(frame, relativeFrame) {
 };
 
 phonographLayer.prototype.updateParticles = function(frame, relativeFrame) {
-  if (!this.particles) {
+  if (!this.particles || BEAN > 1056) {
     return;
   }
 
