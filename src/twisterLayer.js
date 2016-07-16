@@ -27,6 +27,20 @@ function twisterLayer(layer, demo) {
   this.addPass = new THREE.ShaderPass(SHADERS.add);
   this.finalEffectComposer.addPass(this.renderPass);
 
+  if (!document.getElementById('ubuntu-font')) {
+    var s = document.createElement('style');
+    s.setAttribute('id', 'ubuntu-font');
+    Loader.loadAjax('res/ubuntumono.base64', function(response) {
+      s.innerHTML = [
+        "@font-face {",
+        "font-family: 'ubuntu';",
+      "src: url(data:application/x-font-opentype;charset=utf-8;base64," + response + ") format('opentype');",
+          "}"
+      ].join('\n');
+    })
+    document.body.appendChild(s);
+  }
+
   var light = new THREE.PointLight( 0xffffff, 1, 100 );
   light.position.set( -50, -50, -50 );
   this.scene.add(light);
@@ -202,7 +216,7 @@ twisterLayer.prototype.render = function(renderer, interpolation) {
   this.canvasCtx.translate(this.canvas.width / 2, this.canvas.height / 2);
   this.canvasCtx.rotate(Math.PI / 2);
   this.canvasCtx.translate(-this.canvas.width / 2, -this.canvas.height / 2);
-  this.canvasCtx.font = '100px Consolas, monospace';
+  this.canvasCtx.font = '110px ubuntu';
   this.canvasCtx.fillStyle = 'rgb(221, 176, 109)';
   var message = '    desire // farbrausch // cocoon // sandsmark // mrdoob // darklite // excess // indigo // relapse // still // nerdartz // primitive // placid // kvasigen // gargaj // ephidrena // rgba // outracks // panda cube // relapse // fnuque // truck // rohtie // T-101 // everyone at solskogen!';
   this.canvasCtx.fillText(message, this.scrollerOffset, 1024 - 250);
