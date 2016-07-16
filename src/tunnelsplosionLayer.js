@@ -78,7 +78,7 @@ function tunnelsplosionLayer(layer, demo) {
     side: THREE.DoubleSide
   });
   this.tunnelRenderMaterial = new THREE.MeshStandardMaterial({
-    color: 0xb5a642,     
+    color: 0xb5a642,
     metalness: 1,
     shading: THREE.FlatShading,
     roughness: 0.2,

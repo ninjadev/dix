@@ -128,5 +128,128 @@
               ]
           }
       ]
+  },
+  "phonographLayer": {
+    "position": [
+      {
+        "startFrame": 0,
+        "endFrame": 225,
+        "points": [
+          [0.45,0.8,-2.21],
+          [-2.3,2.87,-0.73],
+          [-2.47,2.93,1.3]
+        ],
+        "easing": "easeOut"
+      },
+      {
+        "startFrame": 226,
+        "endFrame": 480,
+        "points": [
+          [1.1,0.38,-1.87]
+        ]
+      },
+      {
+        "startFrame": 481,
+        "endFrame": 887,
+        "points": [
+          [0.36,0.62,-2.12],
+          [-3.49,1.94,0.58]
+        ],
+        "easing": "smoothstep"
+      },
+      {
+        "startFrame": 888,
+        "endFrame": 1300,
+        "points": [
+          [0.31,0.6,-1.98],
+          [0.33,0.6,-2.01]
+        ]
+      },
+      {
+        "startFrame": 1301,
+        "endFrame": 1700,
+        "points": [
+          [0.54,0.77,-1.99]
+        ]
+      }
+    ],
+    "lookAt": [
+      {
+        "startFrame": 0,
+        "endFrame": 225,
+        "points": [
+          [0.59,0.74,-2.28]
+        ]
+      },
+      {
+        "startFrame": 226,
+        "endFrame": 480,
+        "points": [
+          [0.64,0.39,-2.01],
+          [0.1,0.96,-1.8]
+        ],
+        "easing": "easeOut"
+      },
+      {
+        "startFrame": 481,
+        "endFrame": 887,
+        "points": [
+          [0.41,0.6,-2.22],
+          [0.59,0.74,-2.28]
+        ]
+      },
+      {
+        "startFrame": 888,
+        "endFrame": 1300,
+        "point": [
+          [0.44,0.67,-2],
+          [0.37,0.60,-2.01]
+        ],
+        "easing": "easeOut"
+      },
+      {
+        "startFrame": 1301,
+        "endFrame": 1700,
+        "points": [
+          [0.41,0.63,-1.97],
+          [0.45,0.62,-2]
+        ]
+      }
+    ],
+    "roll": [
+      {
+        "startFrame": 771,
+        "endFrame": 864,
+        "points": [0, 0.4]
+      },
+      {
+        "startFrame": 888,
+        "endFrame": 1300,
+        "point": 0.1
+      },
+      {
+        "startFrame": 1301,
+        "endFrame": 1400,
+        "point": -0.84
+      }
+    ],
+    "fov": [
+      {
+        "startFrame": 0,
+        "endFrame": 1300,
+        "point": 45
+      },
+      {
+        "startFrame": 1301,
+        "endFrame": 1600,
+        "points": [45, 30]
+      },
+      {
+        "startFrame": 1601,
+        "endFrame": 1773,
+        "points": [30, 0.1],
+        "easing": "easeIn"
+      }
+    ]
   }
 }
