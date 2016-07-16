@@ -130,5 +130,12 @@
     "endFrame": 9305,
     "color": "pink",
     "config": {}
+  },
+  {
+    "type": "drLayer",
+    "startFrame": 6745,
+    "endFrame": 7531,
+    "config": {}
   }
+
 ]

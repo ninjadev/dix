@@ -37,32 +37,13 @@ drLayer.prototype.update = function(frame, relativeFrame) {
     this.shaderPass.uniforms.tText.value = this.canvasTexture;
     this.canvasTexture.needsUpdate = true;
     var overlayAmount = 0;
-    if(frame < 1500) {
-      this.line1 = 'Welcome to Clock Appreciation 101, students.';
-      this.line2 = 'My name is Dr. Crankwork Steamfist!';
-      overlayAmount = smoothstep(0, 1, (frame - 1400) / 50);
+    if(frame < 7000) {
+      this.line1 = 'Solskogen!';
+      this.line2 = 'MAKE SOME NOIZ!!!!';
+      overlayAmount = smoothstep(0, 1, (frame - 6900) / 50);
     }
-    else if(frame < 2000) {
-      overlayAmount = smoothstep(1, 0, (frame - 1800) / 100);
-    }
-    else if(frame < 2300) {
-      this.line1 = 'Clocks are important time-keeping devices.';
-      this.line2 = 'Without them, everyone would always be late!';
-      overlayAmount = smoothstep(0, 1, (frame - 2100) / 100);
-    } else if(frame < 2600) {
-      overlayAmount = smoothstep(1, 0, (frame - 2400) / 100);
-    } else if (frame < 3400) {
-      this.line1 = 'With the All Spark gone,';
-      this.line2 = 'we cannot return life to our planet.';
-      overlayAmount = smoothstep(0, 1, (frame - 3300) / 100);
-    } else if (frame < 3800) {
-      overlayAmount = smoothstep(1, 0, (frame - 3690) / 100);
-    } else if(frame < 5800) {
-      this.line1 = 'Uh oh, incoming tunnel!';
-      this.line2 = '';
-      overlayAmount = smoothstep(0, 1, (frame - 5600) / 100);
-    } else if(frame < 6100) {
-      overlayAmount = smoothstep(1, 0, (frame - 5900) / 100);
+    else if(frame < 7500) {
+      overlayAmount = smoothstep(1, 0, (frame - 7400) / 100);
     }
     this.shaderPass.uniforms.overlayAmount.value = overlayAmount;
 };
