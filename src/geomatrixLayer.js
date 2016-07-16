@@ -73,7 +73,7 @@ geomatrixLayer.prototype.resize = function() {
 };
 
 geomatrixLayer.prototype.update = function(frame, relativeFrame) {
-  this.plane.material.uniforms.time.value = relativeFrame + 100*this.snareAnalysis.getValue(frame);
+  this.plane.material.uniforms.time.value = 100 + relativeFrame / 2;
 
   this.cone.material.uniforms.time.value = frame;
 

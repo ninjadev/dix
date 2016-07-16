@@ -75,9 +75,16 @@ function cubegridLayer(layer, demo) {
   this.pointLight.position.y = 200;
   this.scene.add(this.pointLight);
 
+  this.skyBox = new THREE.Mesh(
+      new THREE.BoxGeometry(10000, 10000, 10000), new THREE.MeshStandardMaterial({
+        color: 0x222222,
+  side: THREE.DoubleSide
+  }));
+  this.scene.add(this.skyBox);
+
   this.scene.add(new THREE.AmbientLight(0x404040));
 
-  this.cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+  this.cubeGeometry = new THREE.BoxGeometry(6, 6, 6);
   this.cubeRenderMaterial = new THREE.MeshStandardMaterial({
     metalness: 1,
     roughness: 0
@@ -94,7 +101,7 @@ function cubegridLayer(layer, demo) {
         cube.position.x = x - this.gridSize / 2 - 0.5;
         cube.position.y = y - this.gridSize / 2 - 0.5;
         cube.position.z = z - this.gridSize / 2 - 0.5;
-        cube.position.multiplyScalar(3);
+        cube.position.multiplyScalar(7);
         cube.material = new THREE.MeshStandardMaterial({});
         this.grid[x][y][z] = cube;
         this.scene.add(cube);
@@ -105,6 +112,7 @@ function cubegridLayer(layer, demo) {
   this.cameraController = new CameraController(layer.type);
   this.camera = this.cameraController.camera;
   this.cameraLight = new THREE.PointLight();
+  this.cameraLight.intensity = 0.1;
   this.scene.add(this.cameraLight);
 
   this.handHeldCameraModifier = new HandHeldCameraModifier(0.00001);
@@ -181,7 +189,8 @@ cubegridLayer.prototype.update = function(frame, relativeFrame) {
             Math.sin(0.1 * Math.cos(x / 3) / 4 + Math.PI * 2 * time / 50) +
             Math.sin(0.4 * z / 4 + Math.PI * 2 * time / 54)));
           scale += 0.1 * this.kickAnalysis.getValue(frame);
-          scale = Math.max(scale, 0.01);
+          scale = Math.max(scale, 0.000001);
+          scale *=2 
           var r = lerp(0xf4, 0xff, scale) / 0xff;
           var g = lerp(0x57, 0xc9, scale) / 0xff;
           var b = lerp(0xad, 0x6b, scale) / 0xff;
@@ -237,8 +246,10 @@ cubegridLayer.prototype.render = function(renderer, interpolation) {
 
 cubegridLayer.prototype.rigMaterialsForGlowPass = function() {
   this.scene.remove(this.cg.mesh);
+  this.scene.remove(this.skyBox);
 }
 
 cubegridLayer.prototype.rigMaterialsForRenderPass = function() {
   this.scene.add(this.cg.mesh)
+  this.scene.add(this.skyBox);
 }
