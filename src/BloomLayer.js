@@ -55,7 +55,7 @@ BloomLayer.prototype.update = function(frame) {
     this.stab += 5;
   }
   if(BEAT && BEAN == 1440) {
-    this.stab += 10;
+    this.stab += 1;
   }
   if(BEAT && BEAN == 2016) {
     this.stab += 5;
