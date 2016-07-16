@@ -24,13 +24,7 @@ function geomatrixLayer(layer, demo) {
   pointLight.position.z = 130;
   this.scene.add(pointLight);
 
-  this.cone = new THREE.Mesh(new THREE.ConeGeometry(4, 60, 10),
-                             new THREE.ShaderMaterial(SHADERS.colorswappy)
-                            );
-  this.cone.position.x = 0;
-  this.cone.position.y = 0;
-
-  this.scene.add(this.cone);
+  this.createFloppyArms();
 
   this.numbers = [];
   for(var i = 0; i < 12; i++) {
@@ -54,9 +48,37 @@ function geomatrixLayer(layer, demo) {
   this.plane.rotation.z = -Math.PI / 4;
   this.plane.position.z = -10;
   this.scene.add(this.plane);
-  this.snareAnalysis = new audioAnalysisSanitizer('hihats.wav', 'spectral_energy', 0.05)
+  this.snareAnalysis = new audioAnalysisSanitizer('hihats.wav', 'spectral_energy', 0.55)
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
+}
+
+geomatrixLayer.prototype.createFloppyArms = function() {
+  //long arm
+  this.n_cubes = 6;
+  this.longarm = new THREE.Object3D();
+  for(i = 0; i < this.n_cubes; i++){
+    var cube = new THREE.Mesh(
+        new THREE.CubeGeometry( 5, 5, 5 ), 
+        new THREE.MeshNormalMaterial() );
+
+    this.longarm.add(cube)
+  }
+
+  this.scene.add(this.longarm);
+
+  //short arm
+  this.n_cubes = 6;
+  this.shortarm = new THREE.Object3D();
+  for(i = 0; i < this.n_cubes; i++){
+    var cube = new THREE.Mesh(
+        new THREE.CubeGeometry( 5, 5, 5 ), 
+        new THREE.MeshNormalMaterial() );
+
+    this.shortarm.add(cube)
+  }
+
+  this.scene.add(this.shortarm);
 }
 
 geomatrixLayer.prototype.getEffectComposerPass = function() {
@@ -72,20 +94,50 @@ geomatrixLayer.prototype.end = function() {
 geomatrixLayer.prototype.resize = function() {
 };
 
+
+geomatrixLayer.prototype.updateFloppy = function(frame, relativeFrame) {
+
+  //relativeFrame += this.snareAnalysis.getValue(frame);
+
+  var speed = .15;
+  var snarescale = 0;
+
+  var longlen = 10;
+  var shortlen = 5;
+
+  var longflop = 1;
+  var shortflop = 1;
+
+  for(i = 0; i < this.longarm.children.length; i++){
+    var box = this.longarm.children[i];
+    box.position.set( 0, i, 0);
+    //length of arms:
+    box.position.multiplyScalar(longlen);
+    //rotspeed -= this.kickAnalysis.getValue(frame) * .5;
+
+    var val =  -speed* (relativeFrame - i*longflop) + snarescale * this.snareAnalysis.getValue(frame - i*longflop);
+
+    //Rotation formulas
+    box.position.applyAxisAngle(new THREE.Vector3(0,0,1), val);
+  }
+
+  for(i = 0; i < this.shortarm.children.length; i++){
+    var box = this.shortarm.children[i];
+    box.position.set( 0, i, 0);
+    //length of arms:
+    box.position.multiplyScalar(shortlen);
+
+
+
+    var val =  -(speed / 12) * (relativeFrame - i*shortflop) + snarescale * this.snareAnalysis.getValue(frame - i*shortflop);
+
+    box.position.applyAxisAngle(new THREE.Vector3(0,0,1), val);
+  }
+}
+
 geomatrixLayer.prototype.update = function(frame, relativeFrame) {
+  this.updateFloppy(frame, relativeFrame);
   this.plane.material.uniforms.time.value = relativeFrame + 100*this.snareAnalysis.getValue(frame);
-
-  this.cone.material.uniforms.time.value = frame;
-
-  var scale = Math.sin(relativeFrame/100);
-  this.cone.scale.set(scale, scale, scale);
-
-  this.cone.rotation.y = Math.sin(relativeFrame/1000)*200;
-
-  this.cone.lookAt(new THREE.Vector3(Math.cos(smoothstep(0, 12, relativeFrame/1000)/2)*60,
-                                     Math.sin(smoothstep(0, 12, relativeFrame/1000)/2)*60,
-                                     1)
-                  );
 };
 
 geomatrixLayer.prototype.render = function(renderer, interpolation) {
