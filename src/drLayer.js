@@ -39,8 +39,8 @@ drLayer.prototype.update = function(frame, relativeFrame) {
     var overlayAmount = 0;
     var start_time = 6950
     if(frame < start_time + 200) {
-      this.line1 = 'Some clocks are more efficient than others!';
-      this.line2 = 'This one has 58 minutes in 1 hour.';
+      this.line1 = "Thanks for the great party, Solskogen.";
+      this.line2 = "We'll see you all next year too!";
       overlayAmount = smoothstep(0, 1, (frame - start_time) / 50);
     }
     else if(frame < start_time + 550) {
