@@ -78,7 +78,7 @@ geomatrixLayer.prototype.update = function(frame, relativeFrame) {
   this.cone.material.uniforms.time.value = frame;
 
   var scale = Math.sin(relativeFrame/100);
-  //this.cone.scale.set(scale, scale, scale);
+  this.cone.scale.set(scale, scale, scale);
 
   this.cone.rotation.y = Math.sin(relativeFrame/1000)*200;
 
