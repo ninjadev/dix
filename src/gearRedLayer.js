@@ -59,7 +59,7 @@ gearRedLayer.prototype.init_gear = function() {
     });
   };
   this.gear = new THREE.Object3D();
-  loadObject(prefix + 'gear3.obj', gear_material, this.gear);
+  loadObject(prefix + 'gear9.obj', gear_material, this.gear);
   this.scene.add(this.gear);
 }
 

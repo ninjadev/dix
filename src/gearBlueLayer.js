@@ -60,7 +60,7 @@ gearBlueLayer.prototype.init_gear = function() {
     });
   };
   this.gear = new THREE.Object3D();
-  loadObject(prefix + 'gear1.obj', gear_material, this.gear);
+  loadObject(prefix + 'gear7.obj', gear_material, this.gear);
   this.scene.add(this.gear);
 }
 
