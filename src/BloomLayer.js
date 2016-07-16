@@ -61,7 +61,12 @@ BloomLayer.prototype.update = function(frame) {
     this.stab += 5;
   }
   var multiplier = this.noStabs ? 1 : this.stab;
-  this.shaderPass.copyUniforms.opacity.value = this.amount * multiplier;
+  var extra = 0;
+  if(BEAN >= 289 && BEAN < 672) {
+    multiplier = this.stab * 0.5;
+    extra = 0.5;
+  }
+  this.shaderPass.copyUniforms.opacity.value = this.amount * multiplier + extra;
 };
 
 BloomLayer.prototype.getEffectComposerPass = function() {
