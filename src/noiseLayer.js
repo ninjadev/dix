@@ -11,7 +11,7 @@ noiseLayer.prototype.getEffectComposerPass = function() {
 };
 
 noiseLayer.prototype.update = function(frame, relativeFrame) {
-  this.shaderPass.uniforms.amount.value = 0.15 + 0.025 * this.snareAnalysis.getValue(frame);
+  this.shaderPass.uniforms.amount.value = 0.11 + 0.02 * this.snareAnalysis.getValue(frame);
   this.shaderPass.uniforms.time.value = frame;
 };
 
