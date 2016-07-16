@@ -398,23 +398,31 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
     this.camera.position.z = this.gear7.position.z * 1.4 - 1.6;
     this.camera.lookAt(new THREE.Vector3(0,1.1,0));
 
-    this.camera.rotation.z = -angle7; 
+    //this.camera.rotation.z = -angle7; 
+    this.camera.rotation.z = smoothstep(0, -Math.PI, animation_progress * 1.8 );
 
-    this.gear7.position.set(  smoothstep(this.gear7_init_position_x, this.gear7_clock_position_x, animation_progress),
-                              smoothstep(this.gear7_init_position_y, this.gear7_clock_position_y, animation_progress),
-                              smoothstep(this.gear7_init_position_z, this.gear7_clock_position_z, animation_progress));
+    this.gear7.position.set(  smoothstep(this.gear7_init_position_x, this.gear7_clock_position_x, animation_progress * 1.2),
+                              smoothstep(this.gear7_init_position_y, this.gear7_clock_position_y, animation_progress * 1.2),
+                              smoothstep(this.gear7_init_position_z, this.gear7_clock_position_z, animation_progress * 1.2));
 
     this.gear7.rotation.z = angle7;
+
+    if (frame > 2450) {
+      this.camera.position.x = smoothstep(0, -1.7 , (frame - 2450)/(2490-2450) );
+      this.camera.position.y = smoothstep(2, 0, (frame - 2450)/(2490-2450) );
+      this.camera.position.z = smoothstep(-3.07, 0, (frame - 2450)/(2490-2450) );
+      this.camera.lookAt(new THREE.Vector3(0,1.1 ,smoothstep(0, -2, (frame - 2450)/(2490-2450))));
+    }
   }
 
   if(relativeFrame > start_assembly_time && relativeFrame < end_assembly_time) {
     var animation_progress = (relativeFrame - start_assembly_time)/(end_assembly_time-start_assembly_time) * 1.7;
 
-    this.camera.position.x = -12 + animation_progress * 12;
-    this.camera.position.y = 2;
-    this.camera.position.z = 12;
+    this.camera.position.x = smoothstep(-12, -7, animation_progress * 1.0);
+    this.camera.position.y = smoothstep(2, -1, animation_progress * 1.0);
+    this.camera.position.z = smoothstep(12, 0, animation_progress * 1.0);
   
-    this.camera.lookAt(new THREE.Vector3(0,-2.8,0));
+    this.camera.lookAt(new THREE.Vector3(0, smoothstep(-2, 0 , animation_progress * 1.4),smoothstep(0,-2, animation_progress*1)));
 
     this.clock_body_back.position.set(  smoothstep(this.clock_body_back_init_position_x, this.clock_body_back_clock_position_x, animation_progress - 0.70),
                                         smoothstep(this.clock_body_back_init_position_y, this.clock_body_back_clock_position_y, animation_progress - 0.70),
@@ -426,9 +434,6 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
     this.minute_hand.position.set(  smoothstep(this.minute_hand_init_position_x, this.minute_hand_clock_position_x, animation_progress - 0.55),
                                     smoothstep(this.minute_hand_init_position_y, this.minute_hand_clock_position_y, animation_progress - 0.55),
                                     smoothstep(this.minute_hand_init_position_z, this.minute_hand_clock_position_z, animation_progress - 0.55));
-    this.hour_hand.position.set(  smoothstep(this.hour_hand_init_position_x, this.hour_hand_clock_position_x, animation_progress - 0.50),
-                                  smoothstep(this.hour_hand_init_position_y, this.hour_hand_clock_position_y, animation_progress - 0.50),
-                                  smoothstep(this.hour_hand_init_position_z, this.hour_hand_clock_position_z, animation_progress - 0.50));
 
     this.pendulum.position.set( smoothstep(this.pendulum_init_position_x, this.pendulum_clock_position_x, animation_progress - 0.40),
                                 smoothstep(this.pendulum_init_position_y, this.pendulum_clock_position_y, animation_progress - 0.40),
@@ -455,11 +460,20 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
     this.gear7.position.set(  smoothstep(this.gear7_init_position_x, this.gear7_clock_position_x, animation_progress - 0.10),
                               smoothstep(this.gear7_init_position_y, this.gear7_clock_position_y, animation_progress - 0.10),
                               smoothstep(this.gear7_init_position_z, this.gear7_clock_position_z, animation_progress - 0.10));
+
+    if(frame > 2643) {
+      this.camera.position.x = smoothstep(-7, 1.5, (frame - 2643)/(2796-2643));
+      this.camera.position.y = -1 + 1.34   * Math.sin(Math.PI * (frame - 2643)/(2796-2643));
+      this.camera.position.z = smoothstep(0, -2.6  , (frame - 2643)/(2796-2643));
+    }
+  }
+
+  if(frame > 2803 && frame < 3101) {
   }
 
   if(relativeFrame > start_clock_time) {
     var clock_speed = 0.02 + 0.3 * Math.floor((relativeFrame - start_clock_time)/ 500);
-
+ 
     this.pendulum.rotation.z = 0.3 * Math.sin(frame * clock_speed * 2.5);
 
     var angle1 = clock_speed * (relativeFrame - start_clock_time ) * -0.1;
