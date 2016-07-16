@@ -62,7 +62,7 @@ function phonographLayer(layer, demo) {
 
   this.renderPass = new THREE.RenderPass(this.scene, this.camera);
   this.renderPass.clear = true;
-  var bloomPass = new THREE.BloomPass(4, 25, 4, 1024);
+  var bloomPass = new THREE.BloomPass(2, 25, 4, 1024);
   this.glowEffectComposer = new THREE.EffectComposer(demo.renderer);
   this.glowEffectComposer.addPass(this.renderPass);
   this.glowEffectComposer.addPass(bloomPass);
@@ -361,6 +361,10 @@ phonographLayer.prototype.update = function(frame, relativeFrame) {
   this.refractionMaterial.opacity = smoothstep(0, 0.6, opacityTimer);
 
   this.cameraController.updateCamera(relativeFrame);
+  /*
+  this.camera.position.set(0.43,0.67,-1.99);
+  this.camera.lookAt(new THREE.Vector3(0.43,0.62,-2));
+  */
   var relativeBEAN = BEAN - BEAN_FOR_FRAME(this.startFrame);
   if (relativeBEAN > 168 && relativeBEAN < 192) {
     if (BEAT && BEAN % 6 == 0) {
@@ -575,7 +579,7 @@ phonographLayer.prototype.initSpinwires = function() {
     this.mainObject.add(light);
     this.lights.push(light);
     var lightCenter = new THREE.Mesh(lightCenterGeometry, new THREE.MeshBasicMaterial({
-      color: 0xcc7f4c
+      color: 0xcccccc
     }));
     this.mainObject.add(lightCenter);
     this.lightCenters.push(lightCenter);
