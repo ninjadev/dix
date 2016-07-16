@@ -446,13 +446,13 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
                                     smoothstep(this.minute_hand_init_position_z, this.minute_hand_clock_position_z, animation_progress - 0.55));
 
     this.pendulum.position.set( smoothstep(this.pendulum_init_position_x, this.pendulum_clock_position_x, animation_progress - 0.40),
-                                smoothstep(this.pendulum_init_position_y, this.pendulum_clock_position_y, animation_progress - 0.40),
+                                smoothstep(this.pendulum_init_position_y, this.pendulum_clock_position_y, animation_progress - 0.70),
                                 smoothstep(this.pendulum_init_position_z, this.pendulum_clock_position_z, animation_progress - 0.40));
 
     this.gear1.position.set(  smoothstep(this.gear1_init_position_x, this.gear1_clock_position_x, animation_progress - 0.40),
                               smoothstep(this.gear1_init_position_y, this.gear1_clock_position_y, animation_progress - 0.40),
                               smoothstep(this.gear1_init_position_z, this.gear1_clock_position_z, animation_progress - 0.40));
-    this.gear2.position.set(  smoothstep(this.gear3r2_init_position_x, this.gear2_clock_position_x, animation_progress - 0.35),
+    this.gear2.position.set(  smoothstep(this.gear2_init_position_x, this.gear2_clock_position_x, animation_progress - 0.35),
                               smoothstep(this.gear2_init_position_y, this.gear2_clock_position_y, animation_progress - 0.35),
                               smoothstep(this.gear2_init_position_z, this.gear2_clock_position_z, animation_progress - 0.35));
     this.gear3.position.set(  smoothstep(this.gear3_init_position_x, this.gear3_clock_position_x, animation_progress - 0.30),
@@ -472,10 +472,14 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
                               smoothstep(this.gear7_init_position_z, this.gear7_clock_position_z, animation_progress - 0.10));
 
     if(frame > 2643) {
-      this.camera.position.x = smoothstep(-7, 1.5, (frame - 2643)/(2796-2643));
-      this.camera.position.y = -1 + 1.34   * Math.sin(Math.PI * (frame - 2643)/(2796-2643));
-      this.camera.position.z = smoothstep(0, -2.6  , (frame - 2643)/(2796-2643));
+      this.camera.position.x = smoothstep(-7, 0.6, (frame - 2643)/(2796-2643));
+      this.camera.position.y = -1 + 1.80  * Math.sin(Math.PI * (frame - 2643)/(2796+150-2643));
+      this.camera.position.z = smoothstep(0, -2.3  , (frame - 2643)/(2796-2643));
     }
+  }
+
+  if(frame > 2730 && frame < 2796) {
+    this.camera.lookAt(new THREE.Vector3(50, 7.85, smoothstep(-16.39, -49, (frame - 2730)/(2796-2730))));
   }
 
   if(frame > 2803 && frame < 3101) {
@@ -495,6 +499,36 @@ clockLayer.prototype.update = function(frame, relativeFrame) {
     this.camera.position.y = smoothstep(1.36, 1.7, animation_progress);
     this.camera.position.z = smoothstep(-0.93, 13.64, animation_progress);
     this.camera.lookAt(new THREE.Vector3(0, 0.61, -2.23));
+  }
+
+if(frame >  2500 && relativeFrame <= start_clock_time) {
+    var clock_speed = 100; 
+ 
+    //this.pendulum.rotation.z = 0.3 * Math.sin(frame * clock_speed * 2.5);
+
+    var angle1 = clock_speed * (relativeFrame - 2500 ) * -0.1;
+    var angle2 = -angle1 * 24 / 34;
+    var angle3 = -angle2 * 10 / 34;
+    var angle4 = -angle3 * 10 / 34;
+    var angle5 = -angle4 * 10 / 34;
+    var angle6 = -angle5 * 10 / 34;
+    var angle7 = -angle6 * 10 / 34;
+    var angle8 = -angle7 * 12 / 12;
+    var angle9 = -angle8 * 12 / 24;
+
+    this.second_hand.rotation.z = angle1;
+    this.minute_hand.rotation.z = angle5;
+    this.hour_hand.rotation.z = angle9;
+
+    this.gear1.rotation.z = angle1;
+    this.gear2.rotation.z = angle2;
+    this.gear3.rotation.z = angle3;
+    this.gear4.rotation.z = angle4;
+    this.gear5.rotation.z = angle5 - 0.03;
+    this.gear6.rotation.z = angle6;
+    this.gear7.rotation.z = angle7;
+    this.gear8.rotation.z = angle8;
+    this.gear9.rotation.z = angle9; 
   }
 
   if(relativeFrame > start_clock_time) {
