@@ -1,5 +1,6 @@
 {
-    "name": "Dr. Crankwork Steamfist",
+    "title": "Crankwork Steamfist",
+    "authors": ["iverjo",  "sigveseb",  "cristea",  "run", "finninde",  "capitalism",  "A Jacobsen", "profit", "stiaje", "alf"],
     "music": {
         "bpm": 130,
         "subdivision": 6
