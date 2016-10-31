@@ -2,6 +2,10 @@
 
 ![](CrankworkSteamfist.png)
 
+[YouTube](https://www.youtube.com/watch?v=oDtGu8RjBb4)
+
+[Pouët](http://www.pouet.net/prod.php?which=67774)
+
 ```
          --- Dr. Crankwork Steamfist ---
                    by Ninjadev
