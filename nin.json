@@ -1,6 +1,8 @@
 {
     "title": "Crankwork Steamfist",
+    "description": "Crankwork Steamfist is Ninjadev's entry in the new school demo compo at Solskogen 2016",
     "authors": ["iverjo",  "sigveseb",  "cristea",  "run", "finninde",  "capitalism",  "A Jacobsen", "profit", "stiaje", "alf"],
+    "previewImage": "https://github.com/ninjadev/dix/raw/master/CrankworkSteamfist.png",
     "music": {
         "bpm": 130,
         "subdivision": 6
