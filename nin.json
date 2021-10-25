@@ -4,5 +4,6 @@
     "music": {
         "bpm": 130,
         "subdivision": 6
-    }
+    },
+    "googleAnalyticsID": "UA-80811966-1"
 }
